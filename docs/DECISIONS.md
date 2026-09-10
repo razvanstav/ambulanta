@@ -9,6 +9,7 @@ Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile urm
 - **D63 — Confirmat:** titularul nu poate închide fișa înainte de finalul stabilit al turei. **Alegere de implementare:** începutul și finalul sunt obligatorii la cerere, fără posibilitatea scurtării ulterior. Turele vechi fără program îl stabilesc o singură dată.
 - **D64 — Adoptat pentru D61/D63:** fără retur fizic, titularul închide direct după final; cu retur, magazia confirmă primirea și închide, fiind distinctă de titular. Modifică D11 numai pentru închiderile fără retur. Consumul, returul, versiunea finală și eliberarea mașinii sunt atomice.
 - **D65 — Stare locală:** migrarea nouă și aplicația au fost verificate local. Configurația Supabase este pe alt calculator, conform beneficiarului. Nu se publică versiunea nouă înainte de aplicarea migrării; commitul folosește `[skip netlify]`.
+- **D66 — Confirmat:** beneficiarul a autorizat explicit trimiterea commitului pe GitHub și activarea în Supabase/Netlify. Commitul `d073780` a fost trimis în `origin/main`; activarea așteaptă autentificarea în dashboarduri, apoi aplicarea migrării înaintea deployului.
 
 Contractul curent și verificările: [VEHICLE-STOCK](VEHICLE-STOCK.md). Deciziile istorice de mai jos se citesc cu aceste înlocuiri.
 

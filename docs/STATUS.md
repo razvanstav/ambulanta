@@ -29,8 +29,10 @@ Reperul anterior al acestui increment: `283da32`, branch `main`.
 
 Contract și procedură: [VEHICLE-STOCK](VEHICLE-STOCK.md). Commitul acestui increment
 folosește `[skip netlify]`, deoarece codul nou necesită mai întâi migrarea.
-Progresul este salvat numai local. Revizuirea automată a refuzat push-ul în
-`origin/main`, cerând autorizarea explicită a publicării modificărilor pe GitHub.
+Beneficiarul a autorizat explicit push-ul, migrarea Supabase și publicarea Netlify.
+Commitul aplicației `d073780` este sincronizat în `origin/main`. Migrarea și
+publicarea așteaptă autentificarea beneficiarului în dashboardurile Supabase și
+Netlify pe acest calculator; ambele sesiuni de browser sunt neautentificate.
 
 ## Starea găzduită anterioară — M07
 
