@@ -5,6 +5,7 @@ import { isUuid } from "@/modules/identity/policy";
 import { createEvidenceStorageClient } from "@/modules/evidence/storage-server";
 import { MAX_FILE_SIZE, validateEvidence } from "@/modules/evidence/validation";
 import { hasSameOrigin } from "@/modules/evidence/request-origin";
+import { FILE_SIZE_MESSAGE } from "@/modules/evidence/limits";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
   if (!hasSameOrigin(request.headers.get("origin"), request.headers.get("host")))
     return fail("Origine nepermisă.", 403);
   if (Number(request.headers.get("content-length")) > MAX_FILE_SIZE + 100_000)
-    return fail("Fișier prea mare: maximum 10 MB.", 413);
+    return fail(FILE_SIZE_MESSAGE, 413);
   const client = await createSupabaseServerClient();
   const {
     data: { user },
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       length += part.value.byteLength;
       if (length > MAX_FILE_SIZE + 100_000) {
         await reader.cancel();
-        return fail("Fișier prea mare: maximum 10 MB.", 413);
+        return fail(FILE_SIZE_MESSAGE, 413);
       }
       chunks.push(Buffer.from(part.value));
     }
@@ -53,8 +54,7 @@ export async function POST(request: Request) {
     !["document", "signature"].includes(kind)
   )
     return fail("Dovadă nevalidă.");
-  if (!file.size || file.size > MAX_FILE_SIZE)
-    return fail("Fișierul trebuie să aibă între 1 octet și 10 MB.", 413);
+  if (!file.size || file.size > MAX_FILE_SIZE) return fail(FILE_SIZE_MESSAGE, 413);
   const { data: draft } = await client
     .from("closeout_versions")
     .select("id")

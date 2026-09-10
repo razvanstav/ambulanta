@@ -3,6 +3,7 @@
 import { useRef, useState, type FormEvent, type PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/primitives";
+import { MAX_FILE_MB, MAX_FILE_SIZE, FILE_SIZE_MESSAGE } from "./limits";
 
 const confirmation =
   "Confirm cantitățile afișate în această versiune a ciornei declarației de închidere.";
@@ -76,6 +77,11 @@ export function EvidenceUpload({
         return;
       }
       form.set("file", blob, "semnatura.png");
+    }
+    const file = form.get("file");
+    if (!(file instanceof File) || !file.size || file.size > MAX_FILE_SIZE) {
+      setMessage(FILE_SIZE_MESSAGE);
+      return;
     }
     form.set("version", versionId);
     form.set("kind", signature ? "signature" : "document");
@@ -164,8 +170,8 @@ export function EvidenceUpload({
               />
             </label>
             <p className="identity-note">
-              PDF, JPEG sau PNG · maximum 10 MB/fișier · 5 documente per versiune. Pentru HEIC,
-              exportă JPEG. Fotografii și documente fictive pentru demo.
+              PDF, JPEG sau PNG · maximum {MAX_FILE_MB} MB/fișier · 5 documente per versiune. Pentru
+              HEIC, exportă JPEG. Fotografii și documente fictive pentru demo.
             </p>
             {preview && (
               <img

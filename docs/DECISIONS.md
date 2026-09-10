@@ -99,6 +99,21 @@ Implementare M00, 10 septembrie 2026: D07–D08 sunt adoptate tehnic pentru fund
   configurarea unui serviciu de validare de încredere pe găzduire și verificarea
   limitei HTTP pentru fișierele de 10 MB. Nu s-a făcut publicare în M07.
 
+## Publicare M07 — 10 septembrie 2026
+
+- **D59 — Confirmat, înlocuiește restricția de găzduire D54/D58:** beneficiarul
+  a cerut publicarea și a aprobat explicit configurarea cheii secrete Supabase
+  în proiectul Netlify `ambulanta` pentru dovezi. Variabila
+  `SUPABASE_EVIDENCE_SECRET_KEY` este secretă, numai în Production, fără prefix
+  public. Numele separat păstrează crearea conturilor Auth doar local.
+  Planul Free nu permite selectarea individuală a scopurilor: secretul este
+  disponibil pentru Builds, Functions și Runtime, fără Post processing.
+- **D60 — Adoptat pentru demonstrația Netlify:** limita HTTP efectivă pentru
+  încărcări binare este aproximativ 4,5 MB. Demo acceptă maximum 4 MB/fișier,
+  verificat în browser și server, cu mesaj explicit. Local rămân 10 MB, iar
+  bucketul păstrează plafonul 10 MB. Transportul pentru documente mai mari este
+  backlog P01; nu se ocolește validarea și nu se acordă scrieri directe Storage.
+
 ## Cum se modifică o decizie
 
 Clarificare de flux, 10 septembrie 2026: D30–D33 sunt cerințele noi ale beneficiarului, inclusiv confirmarea explicită a predării la acceptarea fișei. D34–D36 explică integrarea lor în modelul existent; D35 rămâne propunerea pentru rezervarea mașinii, nu o cerință confirmată. Detaliile sunt în `WORKFLOWS.md`. Se actualizează M01 (două perspective), M02 (contul șefului de tură, acces propriu și logistică centrală), M03 (flotă și eligibilitate), M06 (cerere, fișă și acceptare), M07–M09 (dovezi proprii, închidere și vizibilitate) și scenariul P01. Codul rămâne la fundația M00; această clarificare nu implementează modulele respective.

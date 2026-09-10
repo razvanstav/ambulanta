@@ -5,20 +5,18 @@ Actualizat: 10 septembrie 2026
 ## Punctul actual
 
 **M00–M07 sunt implementate. M07 este verificat cu PostgreSQL, Storage și browser real.**
-Această conversație implementează numai M07 și integrarea necesară în ture.
+Incrementul M07 este în curs de verificare pe Netlify la cererea beneficiarului.
 
 - Branch comun: `main`, remote `origin`, repository `razvanstav/ambulanta`.
-- Reper anterior verificat: **`11aef70`**, documentația stării M04–M06; implementarea
-  anterioară este `c7d1eab`. Hashul nou M07 se raportează după commit.
+- Reper anterior verificat: **`7707565`**, implementarea M07, pe `main` și `origin/main`.
 - Commiturile și push-ul sunt autorizate (D26, D50).
 - Proiect Supabase Free: **ambulanta**, `roxvzbhsszesglcaadcl`.
 - Următorul modul funcțional: **M08 — Închiderea și raportul turei**.
-- Publicare anticipată: configurația Netlify este pregătită; contul este conectat,
-  planul **Free** verificat, 300 credite disponibile înaintea publicării.
-  Importul GitHub nu a deschis autorizarea în browserul controlabil. Beneficiarului
-  i s-a cerut conectarea repository-ului `razvanstav/ambulanta` în pagina
-  `https://app.netlify.com/start`. Nu există încă deploy sau URL public verificat.
-  Starea importului nu a fost reverificată în M07 și nu s-a inițiat un deploy.
+- Publicare anticipată: proiectul Netlify existent **ambulanta**, conectat la GitHub,
+  public la [ambulanta.netlify.app](https://ambulanta.netlify.app/autentificare).
+  Deployul `7707565` avea variabilele Supabase lipsă. Au fost configurate URL-ul,
+  cheia publicabilă și secretul validatorului aprobat explicit (D59).
+  Redeployul și verificările online sunt în curs; limita demo este 4 MB/fișier.
 
 ## Ce funcționează
 

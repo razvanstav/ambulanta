@@ -2,7 +2,8 @@ import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream } from "pdf-lib";
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024;
+import { MAX_FILE_SIZE, MAX_FILE_MB, FILE_SIZE_MESSAGE } from "./limits";
+export { MAX_FILE_SIZE } from "./limits";
 export const CONFIRMATION =
   "Confirm cantitățile afișate în această versiune a ciornei declarației de închidere.";
 
@@ -12,8 +13,7 @@ export async function validateEvidence(
   mime: string,
   signature = false,
 ) {
-  if (!bytes.length || bytes.length > MAX_FILE_SIZE)
-    throw new Error("Fișierul trebuie să aibă între 1 octet și 10 MB.");
+  if (!bytes.length || bytes.length > MAX_FILE_SIZE) throw new Error(FILE_SIZE_MESSAGE);
   if (signature && mime !== "image/png") throw new Error("Semnătura trebuie să fie PNG.");
   const ext = filename.toLowerCase().split(".").pop();
   if (
@@ -119,6 +119,7 @@ export async function validateEvidence(
       mime === "image/png" ? pipeline.png() : pipeline.jpeg({ quality: 90 })
     ).toBuffer();
   }
-  if (stored.length > MAX_FILE_SIZE) throw new Error("Fișierul procesat depășește 10 MB.");
+  if (stored.length > MAX_FILE_SIZE)
+    throw new Error(`Fișierul procesat depășește ${MAX_FILE_MB} MB.`);
   return { bytes: stored, hash: createHash("sha256").update(stored).digest("hex") };
 }
