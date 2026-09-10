@@ -6,6 +6,8 @@ Starea curentă a implementării este în `STATUS.md`; verifică și codul și i
 
 Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M00–M09, apoi **P01 — Publicare demo**. M10–M11 rămân documentate pentru o eventuală utilizare operațională și nu sunt condiții pentru prima prezentare. Auditul de bază, drepturile și corectitudinea stocului rămân parte din modulele inițiale.
 
+Actualizare de flux, 10 septembrie 2026: aplicația are perspectivele **„Logistică / Magazie”** și **„Tura mea”**. Șeful de tură inițiază cererea și selectează mașina; acceptarea fișei pregătite de magazie confirmă predarea și pornește efectiv tura, atomic. [WORKFLOWS](WORKFLOWS.md) descrie fluxul și propunerile pentru rezervarea mașinii. Modulele rămân în aceeași ordine.
+
 ## Ordinea de lucru
 
 | Modul | Rezultatul vizibil | Depinde de | Exemplu de branch |
@@ -38,6 +40,8 @@ Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M
 
 **Include:** bară laterală, antet, selector vizual de substație, navigație, carduri, tabel cu filtre, formulare și stări standard. Folosește `reference/dashboard-reference.png` pentru culori, spațiere și densitate. Interfață în română, cu adaptare la telefon.
 
+Pregătește două perspective vizuale: vederea de ansamblu „Logistică / Magazie” și „Tura mea”, cu „Start tură”, alegerea mașinii și previzualizarea fișei primite. Include stările „Nicio mașină disponibilă”, „În așteptarea fișei” și „Fișă de acceptat”. Paginile de prezentare nu acordă roluri reale; accesul efectiv se implementează în M02, iar operațiile în M06.
+
 **Acceptare:** pagini navigabile, aspect verificat pe calculator și telefon, etichete și controale accesibile, stări fără date/încărcare/eroare. Orice exemplu este marcat „Date demonstrative”; butoanele pentru funcții încă neimplementate nu pretind că salvează.
 
 **Limite:** componente vizuale, layout și pagini de prezentare; fără a inventa un backend temporar care trebuie înlocuit ulterior.
@@ -46,15 +50,17 @@ Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M
 
 **Include:** autentificare, sesiune pe server, utilizatori invitați/creați prin fluxul administrativ configurat, substații, roluri și selector funcțional. Creează structura de audit și înregistrează modificările de drepturi. Se introduce prima migrare SQL și politicile de acces. Administratorul inițial este creat printr-o procedură documentată, fără parolă universală în repository.
 
-**Acceptare:** două substații demonstrative cu utilizatori diferiți nu își pot accesa reciproc datele; schimbarea manuală a identificatorului în URL nu ocolește accesul; rolurile sunt verificate și la operațiile pe server. Șeful nu își poate acorda singur rol de administrator global.
+Definește distinct logistica centrală (vedere și operații în toate substațiile instituției, atribuite explicit), gestionarul local și șeful de tură (numai date proprii). Contul șefului de tură este individual; legătura efectivă cu angajatul se integrează în M03. M02 definește contractul de identitate și regula de proprietar, fără tabele de ture fictive.
+
+**Acceptare:** utilizatorii cu drepturi locale în substații diferite nu își pot accesa reciproc datele; schimbarea manuală a identificatorului în URL nu ocolește accesul; rolurile sunt verificate și la operațiile pe server. Logistica centrală poate accesa explicit toate substațiile instituției, fără să administreze conturi sau roluri. Nici șeful de tură, nici gestionarul local ori șeful de substație nu își pot acorda singuri roluri globale. Contractul de acces propriu este verificat comportamental în M02; izolarea fișelor/turelor între doi șefi din aceeași substație se verifică pe entitățile reale în M06 și pentru dovezi/rapoarte în M07–M09.
 
 **Limite:** `identity`, `substations`, infrastructura minimă de audit și integrarea cu navigația. Configurarea serviciilor reale este necesară aici; lipsa accesului se raportează explicit, fără a eticheta autentificarea simulată drept finalizată.
 
 ## M03 — Personal, titulari și mașini
 
-**Include:** angajați, apartenență la substație, activ/inactiv, bifă titular, cont opțional și mașini. Șeful/adminul gestionează titularii. Pregătește interfața publică de citire a titularilor eligibili pentru M06.
+**Include:** angajați, apartenență la substație, activ/inactiv, bifă titular, cont opțional pentru evidență și mașini active/apte de utilizare. Șeful de substație/adminul gestionează titularii. Legătura cu un cont individual este obligatorie pentru operarea „Tura mea”. Pregătește interfața publică de citire a titularilor eligibili și flotei; ocuparea mașinilor prin cereri/ture se integrează în M06.
 
-**Acceptare:** un angajat simplu nu apare în lista eligibilă; bifarea și debifarea actualizează lista; un angajat poate exista fără cont; mașinile și angajații sunt limitați la substația potrivită; schimbările sunt auditate.
+**Acceptare:** un angajat simplu nu apare în lista eligibilă; bifarea și debifarea actualizează lista; un angajat poate exista fără cont, dar nu poate opera personal „Tura mea” până la asocierea contului. Identitatea titularului se rezolvă din cont pe server, fără posibilitatea alegerii altui angajat de către șeful de tură. Mașinile și angajații sunt limitați la substația potrivită; mașinile inactive sau indisponibile tehnic sunt excluse din selecție; schimbările sunt auditate.
 
 **Limite:** `employees`, `vehicles`, permisiunile necesare și propriile migrări. Nu construiește încă predarea.
 
@@ -76,9 +82,9 @@ Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M
 
 ## M06 — Ture și predare
 
-**Include:** ture, mașină, titular, interval, dată operațională, selectarea loturilor, predare inițială și suplimentări. Prezintă separat produsele din depozit și produsele aflate în ture.
+**Include:** „Start tură” inițiat de șeful de tură, selecția și rezervarea mașinii, cerere în așteptare, fișă pregătită/trimisă de magazie cu versiuni pe lot și cantitate, acceptare de titular fără editare, predare și pornire atomică. Include semnalarea neconcordanțelor, înlocuirea fișei și anularea cererii înainte de predare. Suplimentările au fișe separate, acceptate în aceeași tură, fără repornire. Data operațională folosește momentul efectiv al acceptării inițiale, separat de intervalul planificat. Prezintă separat cererile, turele deschise, depozitul și produsele aflate în ture.
 
-**Acceptare:** 100 în depozit și 10 predate produc 90 în depozit și 10 în tură; nontitularii sunt respinși și de operația server; două predări simultane nu consumă același disponibil; dublu clic nu dublează predarea; nu există două ture active pentru aceeași mașină/titular conform regulii inițiale.
+**Acceptare:** fișa trimisă pentru 10 din 100 păstrează soldul 100; acceptarea produce 90 în depozit, 10 în tură și tura deschisă în aceeași tranzacție. Nontitularii, utilizatorii inactivi, fișa veche/retrasă și acceptarea de către alt cont sunt respinse pe server. Doi șefi din aceeași substație nu pot citi sau modifica reciproc fișele/turele; magazia nu poate accepta în locul titularului. Două cereri simultane nu rezervă aceeași mașină; două acceptări nu consumă același disponibil. Stocul devenit insuficient între trimitere și acceptare nu produce acceptare sau mișcări parțiale. Repetarea cererii, inclusiv cu altă cheie pentru aceeași fișă, nu dublează predarea. Înlocuirea/anularea concurentă cu acceptarea are un singur rezultat valid. Anularea înainte de predare eliberează mașina și invalidează fișa. Suplimentarea acceptată păstrează momentul inițial și mașina turei. Unicitatea mașinii/titularului acoperă cererile în așteptare, turele deschise și cele în așteptarea închiderii.
 
 **Limite:** `shifts`, integrare prin contractele `inventory`, paginile și migrările necesare. Regresie obligatorie pentru recepțiile din M05.
 
@@ -88,6 +94,8 @@ Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M
 
 **Acceptare:** încărcare și previzualizare, semnare reală pe ecran tactil, resetare înainte de trimitere, refuz pentru semnătură goală și fișier nevalid; altă substație nu poate descărca dovada; schimbarea cantităților invalidează asocierea cu semnătura anterioară. În UI este clar că raportul este ciornă.
 
+Verifică și că un alt șef de tură din aceeași substație nu poate vedea/descărca dovezile. Acceptarea fișei de predare din M06 păstrează identitatea contului și versiunea fișei; nu înlocuiește semnătura sau dovezile pentru închiderea din M07.
+
 **Limite:** `evidence` și partea de declarație/versiune din `shifts`. Contractul de validare a dovezilor este documentat pentru M08.
 
 ## M08 — Închiderea și raportul turei
@@ -96,19 +104,27 @@ Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M
 
 **Acceptare:** scenariul 100/10/6/4 se încheie cu 94 în depozit; consumul nu scade încă o dată depozitul; închiderea repetată nu dublează returul; dovezile invalide sau neconcordanța cantităților blochează închiderea. Eșecul PDF nu redeschide tura. Raportul păstrează datele chiar dacă produsul sau angajatul este ulterior redenumit.
 
+Șeful de tură completează și trimite numai declarația proprie; magazia confirmă returul și finalizează închiderea. Testează refuzul închiderii definitive de către titular și accesul între doi titulari ai aceleiași substații. Mașina se eliberează la închiderea confirmată, conform regulii inițiale D17/D35.
+
 **Limite:** `shifts`, contractele tranzacționale din `inventory`, verificarea din `evidence` și raportul individual din `reports`. Aceste modificări între module sunt necesare integrării, nu o rescriere a lor.
 
 ## M09 — Rapoarte și dashboard
 
 **Include:** filtre pe ture/zile/săptămâni și interval, rapoarte de consum, mișcări și stoc, PDF/CSV, indicatori reali și grafice relevante. Înlocuiește exemplele din M01 cu citiri autentificate. Include lista turelor neînchise.
 
+Vederea de ansamblu a logisticii centrale acoperă substațiile instituției, iar gestionarul local vede numai aria atribuită. „Tura mea” afișează exclusiv fișele, turele și rapoartele proprii. Cererile fără fișă și fișele de acceptat sunt distincte de turele efectiv pornite.
+
 **Acceptare:** totalurile se reconciliază cu rapoartele individuale și jurnalul; turele peste miezul nopții respectă data operațională; mișcările de depozit folosesc momentul înregistrării; filtrele și exporturile respectă substația; nu există amestec de unități în indicatori.
+
+Filtrele și exporturile șefului de tură verifică și proprietarul, nu doar substația. Acceptarea după miezul nopții folosește noua dată operațională chiar dacă cererea sau intervalul planificat începeau în ziua anterioară.
 
 **Limite:** `reports`, `dashboard` și interogările de citire necesare; nicio modificare a formulelor de stoc pentru a „potrivi” un raport.
 
 ## P01 — Publicare demo
 
 **Include:** date fictive pentru Roșiori, două mașini și câțiva angajați/produse; scenariu pregătit de recepție–predare–consum/retur–semnătură–raport; conturi de test individuale; proiect Supabase Free și aplicație Next.js publicată pe Netlify Free. Configurează build-ul din repository-ul distant ales de utilizator și adresa gratuită Netlify. Leagă domeniul propriu doar dacă este dorit și disponibil.
+
+Scenariul folosește un cont de logistică și două conturi de șef de tură: selecție mașină → fișă pregătită de magazie → acceptare și pornire → consum/retur → verificare magazie și raport. Demonstrează și vederea de ansamblu, și faptul că cei doi șefi nu văd reciproc datele.
 
 **Acceptare:** linkul funcționează pe calculator și telefon; fluxul complet poate fi prezentat cu date fictive; documentele de test rămân private; cheile și parolele nu apar în Git sau în interfața publică; există o procedură pentru refacerea datelor demonstrative, limitată strict la mediul demo. Verifică bugetele gratuite și accesul înainte de prezentare. Dacă lipsesc accesul la servicii sau destinația Git, pregătește configurația și raportează exact dependența, fără a declara site-ul publicat.
 

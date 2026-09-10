@@ -10,11 +10,17 @@ Planul și imaginea de referință sunt păstrate în Git. `README.md` descrie i
 
 - Branch comun: `main`.
 - Repository: `https://github.com/razvanstav/ambulanta.git`, configurat ca `origin`; beneficiarul a autorizat trimiterea progresului acolo.
-- La început nu exista Git local, iar repository-ul distant a fost verificat gol. Primul commit păstrează planul original: **`bfefbb4`**. Commitul fundației se raportează în răspunsul de predare și se verifică în Git la conversația următoare.
+- Reper verificat la începutul clarificării de flux: **`697def3`** — fundația M00, pe `main`, cu directorul de lucru curat și `origin/main` la același reper local. Planul original este păstrat în `bfefbb4`. Commitul documentației actualizate se raportează în răspunsul de predare.
 - Ținta rămâne MVP cu date fictive, Netlify Free + Supabase Free; parcurs M00–M09, apoi P01. Domeniul propriu este opțional.
-- Următoarea lucrare: **M01 — Interfața comună**, folosind `docs/reference/dashboard-reference.png`.
+- Următoarea lucrare: **M01 — Interfața comună**, cu perspectivele „Logistică / Magazie” și „Tura mea”, folosind `docs/reference/dashboard-reference.png` și `docs/WORKFLOWS.md`.
 
-## Verificări efectuate
+## Ultima lucrare — clarificarea logicii aplicației
+
+Beneficiarul a confirmat cele două perspective: logistica distribuie și vede ansamblul activității, iar șeful de tură vede numai propriile fișe și ture. Șeful de tură inițiază „Start tură”, selectează mașina disponibilă și acceptă fișa magaziei fără să editeze cantitățile. A confirmat explicit că **acceptarea fișei scade magazia și pornește efectiv tura, atomic**. Fără fișă, cererea rămâne în așteptare.
+
+Deciziile D30–D36 și `WORKFLOWS.md` consemnează fluxul, accesul, versiunile fișelor și distincția dintre cerințe confirmate și propunerea de rezervare/anulare a mașinii. Arhitectura, criteriile modulelor relevante, README și instrucțiunile proiectului au fost aliniate. Au fost revizuite coerența fluxului și diferențele Git și au fost rulate verificarea formatării și `git diff --check`. Modificările sunt numai de documentație; nu au fost reluate testele aplicației și nu s-au implementat roluri, ture, migrări sau logică de stoc.
+
+## Verificări M00 — reperul `697def3`
 
 Cu Node.js **24.19.0** și npm **10.2.0**:
 
@@ -37,7 +43,7 @@ Prima rulare Playwright în mediul restricționat a trecut testele, dar a întâ
 
 - Nu au fost introduse migrări, tabele, contracte de stoc sau clienți Supabase. `src/modules` și `src/lib` documentează responsabilitățile; implementările se adaugă la etapa lor.
 - Nu există autentificare, stoc, ture, dovezi sau rapoarte funcționale. Testele M00 nu validează aceste funcții; modulele relevante vor introduce teste comportamentale și verificări pe PostgreSQL real.
-- Generarea automată Next.js de instrucțiuni pentru agenți este dezactivată prin `agentRules: false`, astfel încât `AGENTS.md` furnizat rămâne neschimbat.
+- Generarea automată Next.js de instrucțiuni pentru agenți este dezactivată prin `agentRules: false`; `AGENTS.md` se actualizează explicit cu regulile beneficiarului.
 - M01 introduce navigația, antetul, selectorul vizual de substație și componentele comune, inclusiv shadcn/ui când este necesar. Nu are dependențe externe care să blocheze pornirea.
 - Supabase și autentificarea reală se configurează în M02. Netlify și publicarea demo-ului rămân P01; în M00 nu s-au creat conturi, servicii sau publicări.
 

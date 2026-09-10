@@ -6,6 +6,8 @@ Aplicație web în română pentru evidența produselor și a turelor substații
 
 Repository: [razvanstav/ambulanta](https://github.com/razvanstav/ambulanta).
 
+Fluxul stabilit are două perspective în aceeași aplicație: **Logistică / Magazie**, pentru distribuție și vederea de ansamblu, și **Tura mea**, pentru șeful de tură și datele sale proprii. Șeful de tură apasă „Start tură”, alege mașina disponibilă și acceptă fișa pregătită de magazie. Acceptarea scade stocul și pornește efectiv tura, atomic. Aceste cerințe sunt planificate în [WORKFLOWS](docs/WORKFLOWS.md); codul este încă la M00.
+
 ## Pornire locală
 
 Cerințe: Git, **Node.js 24.19.0** și **npm 10.2.0**. Versiunea Node este consemnată în `.node-version` și `.nvmrc`, iar managerul în `package.json`. Folosește versiunea Node indicată prin managerul tău de versiuni sau instalatorul oficial. Dacă este necesar, instalează managerul fixat cu `npm install --global npm@10.2.0`.

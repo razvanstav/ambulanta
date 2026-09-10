@@ -1,6 +1,6 @@
 # Arhitectură — Gestiune substații
 
-Versiune de plan: 1.1 · 10 septembrie 2026 · Limbă interfață: română
+Versiune de plan: 1.2 · 10 septembrie 2026 · Limbă interfață: română
 
 Actualizare de scop: beneficiarul dorește deocamdată un MVP funcțional pentru prezentare, cu găzduire gratuită. Păstrăm fluxurile de gestiune și construim M00–M09, apoi P01 pentru publicarea demo-ului. Datele de prezentare sunt fictive. M10–M11 și cerințele exclusiv operaționale din acest document sunt pentru o etapă ulterioară.
 
@@ -8,6 +8,9 @@ Actualizare de scop: beneficiarul dorește deocamdată un MVP funcțional pentru
 
 Aplicația urmărește medicamente, consumabile și accesorii în una sau mai multe substații. Roșiori este prima substație, introdusă ca înregistrare configurabilă, fără reguli speciale în cod.
 
+- Există două perspective: „Logistică / Magazie”, pentru distribuție și vedere de ansamblu, și „Tura mea”, pentru șeful de tură, limitat la propriile fișe și ture. [Fluxul detaliat](WORKFLOWS.md) include cerințele confirmate și propunerile tehnice.
+- Șeful de tură inițiază „Start tură” și alege mașina dintre cele disponibile. Magazia pregătește produsele, loturile și cantitățile fișei; șeful de tură acceptă versiunea primită fără să o editeze.
+- Acceptarea fișei confirmă predarea și pornește efectiv tura în aceeași tranzacție. Pregătirea și trimiterea fișei nu modifică stocurile.
 - Recepția mărește stocul depozitului substației.
 - Predarea către titular, pentru o mașină și o tură, scade imediat stocul disponibil în depozit.
 - Numai angajații activi marcați ca titulari pot primi produse pentru ture noi.
@@ -24,7 +27,7 @@ Acestea sunt alegeri de proiectare, nu cerințe deja confirmate de beneficiar:
 
 - O instituție administrează mai multe substații; prima versiune nu este o platformă comercială pentru instituții independente.
 - Fiecare substație are inițial un depozit disponibil. Structura admite ulterior mai multe locații.
-- Titularul poate avea cont propriu, dar nu este obligatoriu. Gestionarul poate completa declarația și poate colecta semnătura pe dispozitivul său.
+- Angajatul poate exista în evidență fără cont. În fluxul principal, șeful de tură este titularul responsabil, cu cont individual legat de angajat, necesar pentru pornirea și acceptarea propriei ture. La închidere, colectarea unei semnături pe dispozitivul gestionarului poate rămâne disponibilă, cu identități distincte.
 - Gestionarul confirmă returul fizic și închide definitiv tura. Titularul poate pregăti declarația pentru tura proprie.
 - Politica dovezilor este configurabilă pe substație: `optional` sau `at_least_one`. Propunerea inițială este `at_least_one`: document/fotografie SAU semnătură. Ambele pot fi atașate.
 - Medicamentele se urmăresc pe lot și expirare; pentru alte produse această urmărire poate fi opțională.
@@ -34,6 +37,8 @@ Acestea sunt alegeri de proiectare, nu cerințe deja confirmate de beneficiar:
 ## 3. Organizare tehnică
 
 Un monolit modular: o singură aplicație și o singură bază de date, cu responsabilități delimitate în cod. Acest lucru permite ca emiterea, returul și închiderea să fie salvate coerent.
+
+Cele două perspective folosesc același proiect, cu navigație și operații permise după identitatea autentificată. Vederea de ansamblu nu amestecă soldurile substațiilor; fiecare distribuție are o substație concretă.
 
 | Componentă | Alegere propusă | Scop |
 | --- | --- | --- |
@@ -77,31 +82,36 @@ Supabase permite funcții de bază de date apelabile din aplicație. Funcțiile 
 
 ## 4. Utilizatori, angajați și drepturi
 
-Angajatul este persoana din evidența substației. Contul de utilizator este identitatea care se autentifică. Legătura dintre ele este opțională. Proprietatea „titular” aparține apartenenței angajatului la substație, nu înlocuiește un rol de acces.
+Angajatul este persoana din evidența substației. Contul de utilizator este identitatea care se autentifică. Legătura poate lipsi pentru un angajat doar înregistrat, dar este obligatorie pentru șeful de tură care operează „Tura mea”. Proprietatea „titular” aparține apartenenței angajatului la substație, nu înlocuiește un rol de acces. În acest flux șeful de tură este titularul responsabil, distinct de șeful substației.
 
 | Rol / proprietate | Drepturi propuse |
 | --- | --- |
 | Administrator instituție | Creează substații, atribuie roluri și vede toate substațiile |
+| Logistică centrală / șefă magazie | Vede ansamblul tuturor substațiilor instituției și poate recepționa, pregăti/trimite fișe, confirma retururi și închide ture; rol instituțional acordat explicit, fără drept implicit de administrare a conturilor |
 | Șef substație | Administrează personalul local, bifează titulari, vede stocuri și rapoarte; aprobă corecții |
-| Gestionar | Recepționează, distribuie, confirmă retururi și închide ture în substațiile atribuite |
-| Titular cu cont | Vede turele proprii, completează consumul/returul declarat, atașează dovezi și semnează |
+| Gestionar local | Funcțiile de magazie și vederea activității numai în substațiile atribuite |
+| Șef de tură / titular cu cont | Inițiază propria cerere, alege o mașină disponibilă, acceptă fișa primită fără editare; vede numai fișele/turele proprii, declară consumul/returul propriu, atașează dovezi și semnează |
 | Angajat fără proprietatea titular | Rămâne în evidență; nu apare ca destinatar la predare |
 
 Un utilizator poate avea mai multe roluri. Șeful poate fi și gestionar prin atribuire explicită. Conturile operaționale sunt individuale. Deactivarea proprietății „titular” oprește predările noi, dar permite rezolvarea turelor deja deschise și păstrează istoricul.
 
 Filtrarea pe substație se aplică la pagini, operații, rapoarte și fișiere. În baza de date se folosesc politici Row Level Security și permisiuni explicite; acestea nu sunt înlocuite de filtrul vizibil din dashboard. [Documentația RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
+Pentru „Tura mea”, apartenența la aceeași substație nu este suficientă: se verifică și că fișa/tura aparține angajatului legat de cont. Lista mașinilor disponibile expune doar informațiile necesare selecției, fără detalii despre turele altora. Rolul de logistică centrală permite accesul instituțional explicit, iar un gestionar local nu îl poate obține printr-un parametru sau prin schimbarea meniului. Acceptarea aparține titularului autentificat; magazia nu acceptă în numele lui.
+
 ## 5. Fluxul turei
 
-Stări propuse: `draft` → `open` → `pending_close` → `closed`. O ciornă fără mișcări poate deveni `cancelled`.
+Stări propuse: `draft` → `awaiting_issue` → `awaiting_acceptance` → `open` → `pending_close` → `closed`. Înainte de predare, o cerere poate deveni `cancelled`. Acceptarea ca moment al predării și pornirii este confirmată (D33); rezervarea mașinii în așteptare este propunerea D35. Detaliile sunt în [WORKFLOWS](WORKFLOWS.md).
 
-1. **Pregătire:** gestionarul selectează substația, titularul, mașina, intervalul și produsele. Ciorna nu schimbă stocul și nu rezervă cantități.
-2. **Predare:** la confirmare se verifică drepturile, titularul activ, disponibilitatea loturilor și lipsa unei ture active incompatibile. Cantitățile trec din depozit în evidența turei. Tura devine deschisă.
-3. **Suplimentare:** dacă este nevoie, o predare suplimentară se adaugă ca operație separată, păstrând prima predare. Este permisă doar în starea `open`.
-4. **Declarație:** la final se completează consumul și returul pentru fiecare produs/lot. Se pregătește versiunea raportului și se atașează dovada. Tura poate fi trimisă în așteptarea verificării.
-5. **Confirmare:** gestionarul verifică returul fizic. Într-o singură tranzacție se înregistrează consumul, returul, versiunea finală a raportului și închiderea.
+1. **Start tură:** șeful de tură își selectează mașina activă, aptă de utilizare și liberă în substația autorizată. Confirmarea creează propria cerere `awaiting_issue` și rezervă mașina atomic. Identitatea titularului vine din sesiune. Stocul nu se modifică, iar tura încă nu este pornită.
+2. **Pregătire și trimitere:** magazia stabilește produsele, loturile și cantitățile. Ciorna se poate pregăti anterior, dar versiunea trimisă este legată de cererea, mașina și titularul concret. Trimiterea produce `awaiting_acceptance`, fără scădere sau rezervare de cantități. Fără fișă, șeful vede „În așteptarea fișei”.
+3. **Acceptare și predare:** șeful de tură acceptă versiunea exactă, fără editare. Serverul verifică din nou identitatea, drepturile, eligibilitatea, mașina, versiunea și loturile. O singură tranzacție salvează acceptarea, mută cantitățile din depozit în tură și trece în `open`. `started_at` este momentul acestei tranzacții, iar data operațională derivă din el în `Europe/Bucharest`; intervalul planificat este separat.
+4. **Neconcordanță sau anulare:** titularul semnalează diferențele, iar magazia emite o versiune nouă; versiunea veche nu se mai poate accepta. Până la predare, anularea cererii eliberează mașina și invalidează fișa, cu audit. Schimbarea mașinii cere o cerere nouă. Fișa acceptată nu se modifică.
+5. **Suplimentare:** magazia trimite o nouă fișă, acceptată de titular prin același mecanism atomic. Operația este separată, permisă numai în `open`; nu repornește tura și nu schimbă mașina, titularul sau momentul inițial.
+6. **Declarație:** șeful de tură completează consumul și returul propriu pe lot/alocare, pregătește raportul și dovezile, apoi trimite spre verificare (`pending_close`).
+7. **Confirmare finală:** magazia verifică returul fizic. Într-o singură tranzacție înregistrează consumul, returul, versiunea finală a raportului și închiderea.
 
-Titularul și mașina nu pot avea două ture active simultan, ca regulă inițială. Verificarea se face și în baza de date; starea `pending_close` rămâne activă. După prima predare, substația, titularul și mașina turei nu se schimbă prin simpla editare a formularului.
+Titularul și mașina sunt unici între cererile/turele în `awaiting_issue`, `awaiting_acceptance`, `open` și `pending_close`, cu verificare în PostgreSQL. Ciorna netrimisă `draft` nu rezervă mașina sau cantități. Anularea înainte de predare ori închiderea confirmată eliberează mașina. După prima predare, substația, titularul și mașina nu se schimbă prin simpla editare a formularului.
 
 Pentru fiecare alocare dintr-un lot:
 
@@ -135,6 +145,8 @@ Exemplu: 100 seringi în depozit → 10 predate → 90 în depozit și 10 în tu
 Reguli obligatorii pentru implementare:
 
 - Recepțiile, predările și închiderile sunt atomice: toate liniile reușesc sau nu se aplică nimic.
+- Acceptarea folosește exclusiv liniile versiunii de fișă emise de magazie, citite pe server. Interfața titularului nu trimite cantități arbitrare către motor. Identitatea acceptantului și autorul fișei sunt păstrate separat. Fișa pregătită sau trimisă nu scade și nu rezervă cantități.
+- Acceptarea are unicitate pe versiunea fișei și tranziția turei, inclusiv la chei de cerere diferite. Fișa retrasă/înlocuită, cererea anulată, stocul insuficient sau pierderea eligibilității blochează întreaga operație; nu rămân acceptări ori mișcări parțiale. Retragerea/înlocuirea și acceptarea concurentă se serializează pe aceleași înregistrări.
 - Soldurile locațiilor deținute nu pot deveni negative.
 - Fiecare comandă are o cheie de idempotență: repetarea aceleiași cereri după dublu clic sau timeout întoarce rezultatul deja salvat. Aceeași cheie cu alt conținut este respinsă.
 - Concurența se controlează prin blocarea turei și soldurilor necesare într-o ordine stabilă, apoi reverificarea disponibilității. PostgreSQL oferă blocări la nivel de rând pentru aceste operații. [Documentația PostgreSQL](https://www.postgresql.org/docs/current/explicit-locking.html).
@@ -154,11 +166,11 @@ Schema de mai jos descrie entitățile necesare, fără a crea de pe acum toate 
 | --- | --- |
 | `substations` | Nume, cod, activă/inactivă, fus orar, politică dovezi |
 | `profiles` | Contul autentificat, nume afișat, legătură opțională la angajat |
-| `user_global_roles` | Atribuirea controlată a rolului de administrator al instituției |
+| `user_global_roles` | Roluri instituționale acordate explicit: administrator și logistică centrală, cu permisiuni distincte |
 | `user_station_roles` | Utilizator, substație, rol; administratorul instituției este acordat separat |
 | `employees` | Identitate internă, nume, stare activă; fără date despre pacienți |
 | `employee_assignments` | Angajat, substație, activ, `is_titular`; unic pe apartenență |
-| `vehicles` | Substație, număr de înmatriculare/indicativ, stare activă |
+| `vehicles` | Substație, număr de înmatriculare/indicativ, stare activă și aptă de utilizare; ocuparea derivă din cereri/ture |
 | `products` | Cod, denumire, categorie, unitate de bază, precizie, urmărire lot/expirare |
 | `station_product_settings` | Produs, substație, prag minim, activ local |
 | `stock_lots` | Substație, produs, cod lot, expirare, blocat; lot intern pentru produsele neurmărite comercial |
@@ -167,7 +179,9 @@ Schema de mai jos descrie entitățile necesare, fără a crea de pe acum toate 
 | `inventory_operations` | Tip, autor, moment, cheie idempotentă, document/tură, referință de corecție |
 | `inventory_movements` | Operație, lot, sursă, destinație, cantitate; jurnal append-only |
 | `receipts`, `receipt_lines` | Furnizor ca text în MVP, număr document, dată, produs, lot, cantitate; legătură la operație |
-| `shifts` | Substație, mașină, titular, interval, dată operațională, stare, versiune |
+| `shifts` | Cererea și tura: substație, mașină, titular, interval planificat, moment efectiv `started_at`, dată operațională, stare, versiune |
+| `issue_sheet_versions`, `issue_sheet_lines` | Fișă inițială/suplimentare, versiune, autor magazie, substație, titular, cerere/tură, mașină, linii pe lot și cantitate; versiunea trimisă este păstrată, modificările cer înlocuire |
+| `issue_sheet_acceptances` | Versiunea exactă acceptată, contul titularului, momentul și operația de predare; unicitate pentru a preveni dubla predare |
 | `shift_allocations` | Tură, lot, cantitate cumulată predată; legături la mișcările de predare |
 | `shift_closeout_versions` | Tură, versiune, autor, stare, conținut înghețat, hash, versiune înlocuită dacă există |
 | `shift_closeout_lines` | Versiune raport, alocare/lot, predat, consumat, returnat |
@@ -258,7 +272,7 @@ AGENTS.md                   instrucțiuni pentru contribuții
 
 Modulele expun interfețe publice și nu importă detaliile interne ale vecinilor. `receipts` și `shifts` folosesc `inventory` pentru mișcări; nu modifică solduri pe cont propriu. `reports` și `dashboard` citesc date și nu schimbă stocuri. `evidence` confirmă dovezi, dar numai operația de închidere finalizează tura.
 
-Operații publice de proiectat: `postReceipt`, `issueToShift`, `addShiftIssue`, `saveCloseoutDraft`, `submitCloseout`, `closeShift`, `registerEvidence`, `generateShiftReport`, `postCorrection`. Fiecare comandă de stoc primește cheia idempotentă; cele care schimbă tura primesc și versiunea așteptată. Contractele și erorile se documentează în modulul care le introduce.
+Operații publice de proiectat: `postReceipt`, `requestShiftStart`, `cancelShiftRequest`, `prepareIssueSheet`, `submitIssueSheet`, `reportIssueMismatch`, `acceptIssueSheet`, `saveCloseoutDraft`, `submitCloseout`, `closeShift`, `registerEvidence`, `generateShiftReport`, `postCorrection`. `acceptIssueSheet` primește identitatea versiunii și cheia cererii, iar liniile și identitatea titularului sunt rezolvate pe server. `issueToShift` / `addShiftIssue` sunt contractele motorului de stoc utilizate intern de acceptare, nu operații accesibile browserului care ar ocoli fișa. Fiecare comandă de stoc primește cheia idempotentă; cele care schimbă tura primesc și versiunea așteptată. Contractele și erorile se documentează în modulul care le introduce.
 
 Limita unui modul nu este o interdicție de a atinge fișiere comune. O migrare SQL, o rută sau un contract comun poate necesita o modificare mică pentru integrare. Aceasta trebuie justificată și verificată asupra consumatorilor afectați. Refactorizările fără legătură se amână într-un modul separat.
 
@@ -276,7 +290,7 @@ Mediile de dezvoltare/test și producție sunt separate. Migrările bazei de dat
 
 1. 100 primite, 10 predate, 6 consumate, 4 returnate → 94 în depozit, 0 rămase în tură.
 2. Angajat nebifat ca titular sau inactiv → nu poate fi selectat și este respins și pe server.
-3. Utilizator din altă substație → nu poate citi sau modifica tura, raportul ori fișierele.
+3. Utilizator cu drepturi limitate la altă substație → nu poate citi sau modifica tura, raportul ori fișierele.
 4. Două predări simultane peste disponibil → cel mult una reușește; nu apare sold negativ.
 5. Dublu clic, timeout și reluare la predare/închidere → o singură mișcare efectivă.
 6. Consumat + returnat diferit de predat → tura rămâne neînchisă, fără retur parțial salvat accidental.
@@ -288,6 +302,12 @@ Mediile de dezvoltare/test și producție sunt separate. Migrările bazei de dat
 12. Redenumirea/dezactivarea unui angajat sau produs → raportul istoric își păstrează informațiile.
 13. Semnare pe telefon, trimitere declarație de titular și confirmare de gestionar → identități păstrate separat și cantități consecvente.
 14. Corecție aprobată → originalul rămâne intact, soldul se reconciliază și noul raport indică versiunea înlocuită.
+15. Doi șefi de tură din aceeași substație → fiecare vede numai propriile cereri, fișe, ture, dovezi și rapoarte; modificarea URL-ului sau identificatorului nu ocolește proprietarul.
+16. Logistică centrală cu rol atribuit → vede activitatea tuturor substațiilor instituției; gestionarul local rămâne limitat, iar niciunul nu își poate atribui singur drepturi globale.
+17. Două cereri pentru aceeași mașină → una singură o rezervă; anularea înainte de predare o eliberează și invalidează fișa aferentă.
+18. Fișă trimisă → stoc neschimbat; acceptare → stocul, acceptarea și pornirea turei se salvează împreună. Stoc insuficient între trimitere și acceptare → niciuna dintre ele nu se finalizează.
+19. Fișă înlocuită/retrasă, cantități trimise arbitrar de titular sau acceptare în numele altuia → refuz; reluarea unei acceptări, inclusiv cu altă cheie, nu dublează predarea.
+20. Cerere creată înainte de miezul nopții, acceptare după miezul nopții → data operațională este cea a pornirii efective. Suplimentarea nu modifică această dată.
 
 ## 13. Funcționalități ulterioare
 

@@ -21,6 +21,9 @@ Aceste reguli sunt pentru implementarea incrementală a aplicației. Livrarea in
 
 ## Reguli de gestiune
 
+- Aplicația are două perspective: „Logistică / Magazie”, pentru distribuție și vedere de ansamblu, și „Tura mea”, pentru șeful de tură autentificat, limitat la propriile fișe și ture. Șeful de tură nu este același rol cu șeful de substație.
+- Șeful de tură inițiază „Start tură” și selectează o mașină disponibilă. Magazia stabilește produsele, loturile și cantitățile fișei; șeful de tură acceptă versiunea primită, fără să o editeze. Fluxul și presupunerile sunt în `docs/WORKFLOWS.md`.
+- Acceptarea fișei confirmă predarea, scade magazia și pornește efectiv tura, atomic. Pregătirea sau trimiterea fișei nu modifică soldurile.
 - „Pe minus” înseamnă consumat. Interfața folosește eticheta clară „Consumat”.
 - Doar angajații activi marcați ca titulari în substație primesc predări noi.
 - Predarea scade depozitul. Consumul închide cantitatea aflată în tură. Returul confirmat crește depozitul.
