@@ -11,6 +11,9 @@ Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile urm
 - **D65 — Aplicat:** migrarea precedă publicarea aplicației. Migrarea 007 a fost aplicată tranzacțional prin SQL Editor și înregistrată în istoricul Supabase; soldurile existente au fost reconciliate cu jurnalul. Configurația privată locală rămâne pe alt calculator.
 - **D66 — Confirmat și executat:** beneficiarul a autorizat trimiterea pe GitHub și activarea în Supabase/Netlify, apoi s-a autentificat în dashboarduri. Implementarea `d073780` a fost publicată prin deployul manual al commitului `50eae63`, `6aa31299110cc36e9cb9fbd9`, după migrare. Variabilele secrete existente nu au fost modificate.
 
+- **D67 — Confirmat:** finalul turei este redus la consum și restul rămas în mașină. Titularul completează numai „Cât s-a consumat”, vede restul calculat și folosește un singur buton care salvează declarația, postează consumul și închide tura. Dovezile și returul fizic nu mai fac parte din fluxul curent; un retur deja trimis înaintea schimbării poate fi finalizat de magazie.
+- **D68 — Confirmat:** interfața folosește o paletă deschisă, calmă, cu fundal gri foarte deschis, panouri albe, text închis și accente albastre/verzi cu contrast clar.
+
 Contractul curent și verificările: [VEHICLE-STOCK](VEHICLE-STOCK.md). Deciziile istorice de mai jos se citesc cu aceste înlocuiri.
 
 | ID | Stare | Decizie | Motiv / efect |

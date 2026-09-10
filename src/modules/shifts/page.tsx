@@ -13,7 +13,7 @@ import { units } from "@/modules/catalog/rules";
 import { getShifts } from "./index";
 import { IssueEditor } from "./issue-editor";
 import { RefreshData } from "@/components/ui/refresh-data";
-import { EvidencePolicy, EvidenceWorkspace } from "@/modules/evidence/page";
+import { EvidenceWorkspace } from "@/modules/evidence/page";
 import { requestShift, acceptIssueSheet, changeIssueSheet, cancelShift } from "./actions";
 
 const states = {
@@ -85,7 +85,6 @@ export async function ShiftsWorkspace({
       <div className="station-links">
         <RefreshData />
       </div>
-      <EvidencePolicy stationId={stationId} identity={identity} />
       {own && (
         <Panel
           title={holder ? `Titular: ${holder.display_name}` : "Pregătirea turei"}

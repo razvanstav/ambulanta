@@ -1,221 +1,45 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
-import { PDFDocument } from "pdf-lib";
-import sharp from "sharp";
-import { randomUUID } from "node:crypto";
-import { MAX_FILE_SIZE, FILE_SIZE_MESSAGE } from "../../src/modules/evidence/limits";
 
-export async function verifyEvidenceFlow(
+export async function verifySimpleCloseout(
   leader: Page,
   operator: Page,
   shiftTitle: string,
   info: TestInfo,
 ) {
-  const workspace = leader.getByRole("region", { name: "Declarație de închidere" });
-  const draft = workspace
-    .locator("form")
-    .filter({ has: leader.getByRole("button", { name: "Salvează ciorna declarației" }) });
-  const allocations = await draft.locator(".closeout-line").all();
+  const workspace = leader.getByRole("region", { name: "Încheierea turei" });
+  await expect(workspace.getByRole("heading", { name: "Închide tura" })).toBeVisible();
+  await expect(workspace).toContainText(
+    "Scrie doar cât s-a consumat. Diferența rămâne automat în mașină.",
+  );
+
+  const allocations = await workspace.locator(".closeout-line").all();
+  expect(allocations.length).toBeGreaterThan(0);
   for (const allocation of allocations) {
     const quantity = Number((await allocation.innerText()).match(/Preluat: (\d+)/)![1]);
     await allocation.locator('input[name="consumed"]').fill("1");
     await expect(allocation.locator(".remaining-stock")).toContainText(String(quantity - 1));
   }
-  await draft.getByRole("button", { name: "Salvează ciorna declarației" }).click();
-  await expect(
-    workspace.getByRole("heading", { name: "Declarație v1 · cantități salvate" }),
-  ).toBeVisible();
-  const signature = workspace
-    .locator("form")
-    .filter({ has: leader.getByRole("button", { name: "Salvează semnătura", exact: true }) });
-  await signature.getByRole("checkbox").check();
-  await signature.getByRole("button", { name: "Salvează semnătura", exact: true }).click();
-  await expect(signature.getByRole("alert")).toContainText("goală");
-  async function draw(page: Page, mobile: boolean) {
-    const canvas = page.getByLabel("Zonă pentru semnătură");
-    await canvas.scrollIntoViewIfNeeded();
-    const box = (await canvas.boundingBox())!;
-    const points = Array.from({ length: 30 }, (_, i) => ({
-      x: box.x + box.width * (0.1 + i * 0.022),
-      y: box.y + box.height * (0.5 + 0.2 * Math.sin(i / 2)),
-    }));
-    if (mobile) {
-      const session = await page.context().newCDPSession(page);
-      await session.send("Input.dispatchTouchEvent", {
-        type: "touchStart",
-        touchPoints: [points[0]],
-      });
-      for (const point of points.slice(1))
-        await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [point] });
-      await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-      await session.detach();
-    } else {
-      await page.mouse.move(points[0].x, points[0].y);
-      await page.mouse.down();
-      for (const point of points.slice(1)) await page.mouse.move(point.x, point.y);
-      await page.mouse.up();
-    }
-  }
-  await draw(leader, info.project.name.startsWith("mobile"));
-  await signature.getByRole("button", { name: "Șterge și refă semnătura" }).click();
-  await signature.getByRole("button", { name: "Salvează semnătura", exact: true }).click();
-  await expect(signature.getByRole("alert")).toContainText("goală");
-  await draw(leader, info.project.name.startsWith("mobile"));
-  await signature.getByRole("button", { name: "Salvează semnătura", exact: true }).click();
-  await expect(
-    workspace.getByRole("img", { name: "Semnătura declarată", exact: false }),
-  ).toBeVisible();
-  await expect(
-    workspace.getByText("Ciorna are cantități reconciliate", { exact: false }),
-  ).toBeVisible();
 
-  const uploadForm = workspace
-    .locator("form")
-    .filter({ has: leader.getByRole("button", { name: "Încarcă dovada", exact: true }) });
-  const oversized = Buffer.alloc(MAX_FILE_SIZE + 1);
-  await uploadForm.getByLabel("Document sau fotografie").setInputFiles({
-    name: "prea-mare.pdf",
-    mimeType: "application/pdf",
-    buffer: oversized,
-  });
-  await uploadForm.getByRole("button", { name: "Încarcă dovada" }).click();
-  await expect(uploadForm.getByRole("alert")).toHaveText(FILE_SIZE_MESSAGE);
-  const tooLarge = await leader.context().request.post("/api/evidence", {
-    headers: { origin: new URL(leader.url()).origin },
-    multipart: {
-      version: await workspace.locator('input[name="expected_version"]').inputValue(),
-      request_key: randomUUID(),
-      kind: "document",
-      file: { name: "prea-mare.pdf", mimeType: "application/pdf", buffer: oversized },
-    },
-  });
-  expect(tooLarge.status(), await tooLarge.text()).toBe(413);
-  expect((await tooLarge.json()).message).toBe(FILE_SIZE_MESSAGE);
-  await uploadForm.getByLabel("Document sau fotografie").setInputFiles({
-    name: "fals.pdf",
-    mimeType: "application/pdf",
-    buffer: Buffer.from("%PDF-1.7 fals %%EOF"),
-  });
-  await uploadForm.getByRole("button", { name: "Încarcă dovada" }).click();
-  await expect(uploadForm.getByRole("alert")).toBeVisible();
-  const pdf = await PDFDocument.create();
-  pdf.addPage().drawText("Document fictiv M07 - fara date reale", { x: 40, y: 760, size: 18 });
-  pdf.addPage().drawText("Pagina a doua - document fictiv", { x: 40, y: 760, size: 18 });
-  await uploadForm.getByLabel("Document sau fotografie").setInputFiles({
-    name: "document-demo.pdf",
-    mimeType: "application/pdf",
-    buffer: Buffer.from(await pdf.save()),
-  });
-  await uploadForm.getByRole("button", { name: "Încarcă dovada" }).click();
-  await expect(workspace.getByText("document-demo.pdf", { exact: true })).toBeVisible();
-  await workspace.getByText("Previzualizare PDF", { exact: true }).click();
+  await expect(workspace.locator('input[name="returned"]')).toHaveCount(allocations.length);
+  await expect(workspace.getByText("Retur fizic", { exact: false })).toHaveCount(0);
+  await expect(workspace.getByText("Dovada consumului", { exact: false })).toHaveCount(0);
   await expect(
-    workspace.getByRole("img", { name: "PDF: document-demo.pdf — pagina 1" }),
-  ).toHaveAttribute("data-rendered", "true");
-  await workspace.getByRole("button", { name: "Pagina următoare" }).click();
-  await expect(
-    workspace.getByRole("img", { name: "PDF: document-demo.pdf — pagina 2" }),
-  ).toHaveAttribute("data-rendered", "true");
-  await workspace.getByRole("button", { name: "Pagina anterioară" }).click();
-  await expect(
-    workspace.getByRole("img", { name: "PDF: document-demo.pdf — pagina 1" }),
-  ).toHaveAttribute("data-rendered", "true");
-  // CDP omits file bytes from captured multipart postData. Construct a complete
-  // request explicitly to verify a real replay, rather than replaying truncated data.
-  const replayArgs = {
-    headers: { origin: new URL(leader.url()).origin },
-    multipart: {
-      version: await workspace.locator('input[name="expected_version"]').inputValue(),
-      request_key: randomUUID(),
-      kind: "document",
-      file: {
-        name: "replay-demo.pdf",
-        mimeType: "application/pdf",
-        buffer: Buffer.from(await pdf.save()),
-      },
-    },
-  };
-  const initial = await leader.context().request.post("/api/evidence", replayArgs);
-  expect(initial.status(), await initial.text()).toBe(200);
-  const replay = await leader.context().request.post("/api/evidence", replayArgs);
-  expect(replay.status(), await replay.text()).toBe(200);
-  expect((await replay.json()).id).toBe((await initial.json()).id);
-  const photo = await sharp({
-    create: { width: 320, height: 180, channels: 3, background: "#326b9b" },
-  })
-    .jpeg()
-    .toBuffer();
-  await uploadForm
-    .getByLabel("Document sau fotografie")
-    .setInputFiles({ name: "foto-demo.jpg", mimeType: "image/jpeg", buffer: photo });
-  await expect(uploadForm.getByRole("img")).toBeVisible();
-  await uploadForm.getByRole("button", { name: "Încarcă dovada" }).click();
-  await expect(workspace.getByRole("img", { name: "Dovadă fotografică" })).toBeVisible();
-  const privateLink = (await workspace
-    .getByRole("link", { name: "Deschide dovada privată" })
-    .first()
-    .getAttribute("href"))!;
-  const download = await leader.context().request.get(privateLink);
-  expect(download.status()).toBe(200);
-  expect(download.headers()["cache-control"]).toContain("no-store");
-  await leader.screenshot({ path: info.outputPath("m07-semnatura-si-dovezi.png"), fullPage: true });
+    workspace.getByRole("button", { name: "Închide tura și actualizează stocul" }),
+  ).toBeDisabled();
   expect(await leader.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
     true,
   );
+  await leader.screenshot({ path: info.outputPath("inchidere-simpla.png"), fullPage: true });
 
-  await workspace.getByText("Modifică declarația — creează versiune nouă", { exact: true }).click();
-  const first = draft.locator(".closeout-line").first();
-  const issued = Number((await first.innerText()).match(/Preluat: (\d+)/)![1]);
-  await first.locator('input[name="consumed"]').fill("2");
-  await expect(first.locator(".remaining-stock")).toContainText(String(issued - 2));
-  await draft.getByRole("button", { name: "Salvează ciorna declarației" }).click();
-  await expect(
-    workspace.getByRole("heading", { name: "Declarație v2 · cantități salvate" }),
-  ).toBeVisible();
-  await expect(
-    workspace.getByText("Mai este necesară cel puțin o dovadă", { exact: false }),
-  ).toBeVisible();
-  await expect(
-    signature.getByRole("button", { name: "Salvează semnătura", exact: true }),
-  ).toBeVisible();
-  await workspace.getByText("Istoricul ciornelor și al dovezilor", { exact: true }).click();
-  await workspace
-    .getByText("Ciornă v1 — dovezi valabile numai pentru această versiune", { exact: true })
-    .click();
-  await expect(
-    workspace.getByRole("img", { name: "Semnătura declarată", exact: false }),
-  ).toBeVisible();
   const base = leader.url().replace(/\/tura-mea$/, "");
-  await operator.goto(`${base}/ture`);
+  await operator.goto(base + "/ture");
   const operatorShift = operator
     .locator("section.panel")
     .filter({ has: operator.getByRole("heading", { name: shiftTitle, exact: true }) });
-  const capture = operatorShift
-    .locator("form")
-    .filter({ has: operator.getByRole("button", { name: "Salvează semnătura", exact: true }) });
-  await capture.getByLabel("Numele semnatarului").fill("Semnatar fictiv la magazie");
-  await capture.getByRole("checkbox").check();
-  // Scope to the intended shift: other open fixtures also contain signature canvases.
-  const target = capture.getByLabel("Zonă pentru semnătură");
-  await target.scrollIntoViewIfNeeded();
-  const box = (await target.boundingBox())!;
-  await operator.mouse.move(box.x + 20, box.y + 40);
-  await operator.mouse.down();
-  await operator.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.7, { steps: 12 });
-  await operator.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.3, { steps: 12 });
-  await operator.mouse.up();
-  await capture.getByRole("button", { name: "Salvează semnătura", exact: true }).click();
   await expect(
-    operatorShift.getByText("Semnătură: Semnatar fictiv la magazie", { exact: true }),
-  ).toBeVisible();
-  await leader.reload();
-  await expect(
-    workspace.getByText("Semnătură: Semnatar fictiv la magazie", { exact: true }),
+    operatorShift.getByText("Titularul completează consumul", { exact: false }),
   ).toBeVisible();
   await expect(
-    workspace.getByRole("button", { name: "Elimină semnătura din ciornă", exact: true }),
+    operatorShift.getByRole("button", { name: "Închide tura și actualizează stocul" }),
   ).toHaveCount(0);
-  await expect(
-    workspace.getByRole("button", { name: "3. Închide tura", exact: true }),
-  ).toBeDisabled();
-  return privateLink;
 }

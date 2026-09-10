@@ -15,11 +15,9 @@ export function DeclarationFields({
   index: number;
 }) {
   const [consumed, setConsumed] = useState(String(previous?.consumed ?? 0));
-  const [returned, setReturned] = useState(String(previous?.returned ?? 0));
   const remaining =
     (Math.round(Number(line.quantity) * 1000) -
-      Math.round(Number(consumed.replace(",", ".")) * 1000) -
-      Math.round(Number(returned.replace(",", ".")) * 1000)) /
+      Math.round(Number(consumed.replace(",", ".")) * 1000)) /
     1000;
   return (
     <div className="closeout-line">
@@ -30,12 +28,14 @@ export function DeclarationFields({
         Preluat: {formatQuantity(line.quantity)} {units[line.base_unit]}
       </p>
       <input type="hidden" name="allocation_id" value={line.id} />
-      <div className="form-columns">
+      <input type="hidden" name="returned" value="0" />
+      <div className="closeout-amounts">
         <label>
-          Consumat — alocarea {index + 1}
+          Cât s-a consumat
           <input
             name="consumed"
             inputMode="decimal"
+            aria-label={`Consumat — ${line.product_name}, alocarea ${index + 1}`}
             required
             value={consumed}
             onChange={(event) => setConsumed(event.target.value)}
@@ -50,22 +50,6 @@ export function DeclarationFields({
           </strong>
         </div>
       </div>
-      <details open={Number(returned) > 0}>
-        <summary>Returnez fizic materiale în magazie</summary>
-        <p className="identity-note">
-          Completează doar ce predai efectiv magaziei. Materialele rămase în mașină nu sunt retur.
-        </p>
-        <label>
-          Retur fizic — alocarea {index + 1}
-          <input
-            name="returned"
-            inputMode="decimal"
-            required
-            value={returned}
-            onChange={(event) => setReturned(event.target.value)}
-          />
-        </label>
-      </details>
     </div>
   );
 }

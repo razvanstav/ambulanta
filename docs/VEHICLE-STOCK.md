@@ -11,21 +11,17 @@ Actualizat: 10 septembrie 2026. Cerința nouă înlocuiește returul implicit la
    deja în mașină și completările primite pentru tura curentă.
 3. Dacă există stoc în mașină, magazia poate trimite o fișă de preluare fără
    completare. Acceptarea nu produce o nouă scădere a magaziei.
-4. Titularul declară consumul. Restul se calculează automat și rămâne în mașină.
-   Returul fizic este opțional, într-o secțiune separată.
-5. Documentul/fotografia justifică consumul declarat; semnătura confirmă întreaga
-   declarație (consumat, rămas, retur). Ambele sunt legate de versiunea exactă.
-   Semnătura validată nu poate fi eliminată nici prin RPC. Corectarea cantităților
-   creează o versiune nouă; dovezile precedente rămân în istoric.
-6. După finalul programat, titularul poate închide tura fără retur fizic.
-   Închiderea scade consumul din mașină și eliberează mașina/titularul atomic.
-   Dacă există retur fizic, declarația se îngheață în `pending_close`; magazia
-   confirmă primirea și închiderea. Până atunci soldurile nu sunt modificate.
+4. La final titularul completează numai cantitatea consumată. Restul se calculează
+   imediat și rămâne în mașină. Nu există câmp de retur sau pași pentru dovezi.
+5. După finalul programat, un singur buton salvează declarația, scade consumul,
+   păstrează restul în mașină, închide tura și eliberează mașina/titularul atomic.
+6. Declarațiile și dovezile vechi rămân în istoric. Un retur început înaintea
+   simplificării poate fi confirmat de magazie.
 
 **Exemplu:** magazie 100 → predare 10 → magazie 90, mașină 10 → consum 7 →
 magazie 90, mașină 3. Următoarea tură preia cele 3 fără altă scădere a magaziei.
 
-Pe fiecare alocare: **preluat = consumat + rămas în mașină + retur fizic**.
+Pe fiecare alocare: **preluat = consumat + rămas în mașină**.
 În timpul turei, stocul afișat este soldul înregistrat; ciorna nu reprezintă
 mișcare de stoc. Consumul este înregistrat la închiderea confirmată.
 
@@ -51,6 +47,10 @@ mișcare de stoc. Consumul este înregistrat la închiderea confirmată.
   dată, cu final în viitor. Declarațiile din modelul vechi se salvează din nou.
 
 ## Activare pe Supabase și Netlify
+
+Migrarea 008 adaugă închiderea simplă într-o singură tranzacție și face dovezile
+opționale. Se aplică după migrarea 007 și înaintea versiunii de interfață care
+apelează noua funcție.
 
 Migrarea nouă este `202609100007_vehicle_stock_closeout.sql`. Cele șase migrări
 anterioare nu se modifică și nu se rerulează. Migrarea 007 a fost aplicată și

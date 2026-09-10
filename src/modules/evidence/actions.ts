@@ -58,6 +58,53 @@ export async function saveDraft(_previous: ActionResult, form: FormData): Promis
     "Ciorna a fost salvată într-o versiune nouă. Atașează dovezile pentru această versiune.",
   );
 }
+
+export async function completeSimpleCloseout(
+  _previous: ActionResult,
+  form: FormData,
+): Promise<ActionResult> {
+  const station = String(form.get("station") ?? "");
+  await requireSubstation(station);
+  const shift = String(form.get("shift") ?? "");
+  const version = String(form.get("expected_version") ?? "");
+  const key = String(form.get("request_key") ?? "");
+  const ids = form.getAll("allocation_id").map(String);
+  const consumed = form.getAll("consumed").map((value) => String(value).replace(",", "."));
+  if (
+    !isUuid(shift) ||
+    !isUuid(key) ||
+    (version && !isUuid(version)) ||
+    !ids.length ||
+    ids.length > 1000 ||
+    ids.some((id) => !isUuid(id)) ||
+    ids.length !== consumed.length ||
+    consumed.some((value) => !/^\d{1,9}(\.\d{1,3})?$/.test(value))
+  )
+    return { message: "Completează cantitatea consumată pentru fiecare produs." };
+
+  const client = await createSupabaseServerClient();
+  const { data } = await client
+    .from("shifts")
+    .select("id")
+    .eq("id", shift)
+    .eq("substation_id", station)
+    .maybeSingle();
+  if (!data) return { message: "Tura nu este accesibilă." };
+
+  const { error } = await client.rpc("close_shift_simple", {
+    p_shift: shift,
+    p_expected_version: version || null,
+    p_request_key: key,
+    p_lines: ids.map((id, index) => ({
+      allocation_id: id,
+      consumed: consumed[index],
+      returned: "0",
+    })),
+  });
+  if (error?.message?.includes("finalul programat"))
+    return { message: "Tura poate fi închisă numai după data și ora finalului programat." };
+  return finish(error, "Tura a fost închisă. Restul materialelor a rămas în stocul mașinii.");
+}
 export async function removeEvidence(
   _previous: ActionResult,
   form: FormData,

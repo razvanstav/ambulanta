@@ -487,6 +487,35 @@ try {
     [id.vehicle],
   );
   check("shortage rolls back partial movements, operation and shift state");
+  await db.query(await readFile(new URL(migrations[7], dir), "utf8"));
+  const simpleAllocations = (
+    await holder.query(
+      "select id,quantity::numeric from public.shift_stock_allocations where shift_id=$1 order by id",
+      [third],
+    )
+  ).rows;
+  let toConsume = 2;
+  const simpleLines = simpleAllocations.map((allocation) => {
+    const consumed = Math.min(Number(allocation.quantity), toConsume);
+    toConsume -= consumed;
+    return {
+      allocation_id: allocation.id,
+      consumed: String(consumed),
+      returned: "0",
+    };
+  });
+  await rpc(holder, "close_shift_simple", [third, full, randomUUID(), JSON.stringify(simpleLines)]);
+  assert.equal(await balance("vehicle"), 9);
+  assert.equal(
+    (await db.query("select state from public.shifts where id=$1", [third])).rows[0].state,
+    "closed",
+  );
+  assert.equal(
+    (await db.query("select bool_and(evidence_policy='optional') ok from public.substations"))
+      .rows[0].ok,
+    true,
+  );
+  check("one-step close records consumption and leaves the remainder in the vehicle");
   const mismatch = await db.query(`select b.id from public.stock_balances b where b.quantity <>
     coalesce((select sum(case when m.destination_id=b.location_id then m.quantity else -m.quantity end) from public.inventory_movements m where m.lot_id=b.lot_id and (m.source_id=b.location_id or m.destination_id=b.location_id)),0)`);
   assert.equal(mismatch.rowCount, 0);

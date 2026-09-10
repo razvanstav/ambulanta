@@ -4,6 +4,19 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
+**În lucru pentru publicare:** interfața a fost trecută pe o paletă deschisă,
+cu text închis și panouri albe. Finalul turei are acum numai cantitatea consumată,
+restul calculat în mașină și un singur buton de închidere. Migrarea 008 face
+operația atomică și elimină dovada/returul din fluxul curent, păstrând compatibilitatea
+pentru retururi vechi aflate deja în verificare.
+
+- npm run check: format, lint, tipuri, 16 unitare și build trecute.
+- PostgreSQL local: 14 scenarii trecute; închiderea dintr-un pas consumă 2 din 11,
+  lasă 9 în mașină și păstrează reconcilierea integrală cu jurnalul.
+- Paleta a fost inspectată în Chromium pe ecranul de stoc; textele secundare și
+  tabelele au fost ajustate după inspecția vizuală.
+- Sunt necesare aplicarea migrării 008 înaintea deployului și verificarea online.
+
 Actualizare acces: la cererea explicită a beneficiarului a fost creat un
 administrator suplimentar pentru instituția demo, cu profil activ și rol global
 `administrator`. Autentificarea pe Netlify și accesul la `/administrare` au fost

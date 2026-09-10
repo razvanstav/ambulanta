@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
-import { verifyEvidenceFlow } from "./evidence-flow";
+import { verifySimpleCloseout } from "./evidence-flow";
 type Fixture = {
   accounts: Record<string, { email: string; password: string }>;
   stations: Record<string, string>;
@@ -180,17 +180,7 @@ test.describe("M04–M07 circuit real", () => {
       true,
     );
     await leader.screenshot({ path: info.outputPath("tura.png"), fullPage: true });
-    const privateLink = await verifyEvidenceFlow(
-      leader,
-      page,
-      `AMB-${account.toUpperCase()} · ${account}`,
-      info,
-    );
-    const outsider = await browser.newContext({ baseURL: new URL(page.url()).origin });
-    const outsiderPage = await outsider.newPage();
-    await login(outsiderPage, f.accounts.m06b);
-    expect((await outsider.request.get(privateLink)).status()).toBe(404);
-    await outsider.close();
+    await verifySimpleCloseout(leader, page, `AMB-${account.toUpperCase()} · ${account}`, info);
     await leader.goto(`${base}/catalog`);
     await expect(leader.getByRole("heading", { name: "Pagina nu a fost găsită" })).toBeVisible();
     await context.close();
