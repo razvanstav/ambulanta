@@ -19,11 +19,11 @@ culori, tipografie și atmosferă vizuală; funcțiile provin din plan și WORKF
 - Următorul modul: **M02 — Conturi, substații și roluri**. Necesită serviciul
   Supabase real, autentificare și verificarea accesului pe server/PostgreSQL.
 
-Implementarea M01 este salvată local în **`fcb85eb`**. Push-ul către `origin/main`
-a fost blocat de verificarea automată de aprobare: autorizarea din documentație
-nu a fost acceptată pentru exportul către repository-ul extern. Nu s-a efectuat
-sincronizarea; este necesară confirmarea explicită a beneficiarului. Acest lucru
-nu blochează verificarea sau folosirea locală a interfeței.
+Implementarea M01 este salvată în **`fcb85eb`**. După confirmarea explicită a
+beneficiarului din 10 septembrie 2026, push-ul către `origin/main` a reușit până
+la reperul **`fdb7d6a`**, inclusiv nota de predare. Blocajul de aprobare anterior
+este rezolvat. Codul și documentația M01 sunt sincronizate în repository-ul
+GitHub; aplicația rămâne locală, fără publicare Netlify.
 
 ## Ce funcționează în M01
 
