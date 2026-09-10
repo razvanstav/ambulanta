@@ -15,7 +15,10 @@ mutațiile în `actions.ts`; toate folosesc sesiunea utilizatorului și RLS.
 
 Fiecare modul expune contractele publice prin `index.ts`. Paginile din `src/app`
 rămân puncte de intrare subțiri. Un modul nu importă detalii interne din altul.
-Mișcările de stoc vor trece exclusiv prin `inventory` și tranzacțiile PostgreSQL.
+Mișcările de stoc trec exclusiv prin motorul intern PostgreSQL din `inventory`.
+M04 adaugă `catalog`, M05 `inventory`, iar M06 `shifts`. Formularele de linii sunt
+comune recepțiilor și fișelor; acceptarea trimite doar identificatorul versiunii,
+fără cantități arbitrare. RPC-urile reverifică drepturile și starea în tranzacție.
 
 Testele unitare viitoare se așază lângă cod, în fișiere `*.test.ts` / `*.test.tsx`.
 Testele de tranzacții, concurență și RLS M02/M03 rulează pe PostgreSQL real prin

@@ -2199,6 +2199,34 @@ td strong {
     font-size: 22px;
   }
 }
+.catalog-subheading {
+  margin: 22px 20px 8px;
+  font-size: 14px;
+}
+.panel > .identity-note {
+  margin: 18px 24px;
+}
+.main-content > .station-links {
+  margin-bottom: 20px;
+}
+.catalog-lots {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+.catalog-lot {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+.catalog-lot-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

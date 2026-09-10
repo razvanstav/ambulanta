@@ -56,6 +56,31 @@ Clarificări consemnate la 10 septembrie 2026: discuția despre PHP/MySQL a fost
 
 Implementare M00, 10 septembrie 2026: D07–D08 sunt adoptate tehnic pentru fundație (Next.js App Router și structură modulară); serviciile Supabase se configurează în M02. Tailwind CSS este instalat, componentele comune și shadcn/ui se introduc în M01. Alegerea tehnică nu transformă presupunerile de gestiune în cerințe confirmate. D26 înlocuiește instrucțiunea inițială din promptul M00 de a păstra commiturile numai local. Repository-ul indicat este public; în el intră codul, planul și referința vizuală furnizată, fără date operaționale sau secrete.
 
+## Decizii M04–M06 și publicare anticipată — 10 septembrie 2026
+
+- **D48 — Adoptat M04:** catalogul comun se administrează de administrator și
+  logistica centrală. Pragurile, activarea locală și loturile se gestionează de
+  rolurile logistice în substația autorizată. Șeful de tură vede doar propriile
+  fișe și alocări.
+- **D49 — Adoptat M04:** unitatea, precizia și urmărirea sunt fixe după primul
+  lot, iar identitatea lotului este fixă de la creare. Regula protejează și toate
+  mișcările viitoare. Expirarea se consideră la sfârșitul zilei locale înscrise.
+- **D50 — Confirmat:** beneficiarul a cerut continuarea în această conversație
+  și cu M05 și M06, urmată de salvarea progresului în Git.
+- **D51 — Confirmat:** beneficiarul a cerut un link public pentru incrementul
+  disponibil, înainte de M07–M09. Este o publicare demo anticipată; P01 integral
+  și circuitul cu dovezi/închidere/rapoarte rămân după M09.
+- **D52 — Adoptat M05–M06:** administratorul, logistica și gestionarul execută
+  operațiile de magazie. Șeful local consultă; dreptul operațional se acordă prin
+  rol gestionar explicit. Blocarea pe instituție serializează comenzile de stoc,
+  metadatele, eligibilitatea și revocările pentru volumul demo.
+- **D53 — Adoptat M06:** autorul fișei este distinct de titular. Fișele se
+  salvează în versiuni noi; ciornele nu sunt vizibile titularului. Rezervarea
+  propusă în D35 este implementată, fără rezervarea stocului la trimiterea fișei.
+- **D54 — Aplicarea D40 la publicare:** cheia secretă Supabase rămâne exclusiv
+  locală. Găzduirea folosește URL-ul și cheia publicabilă; conturile existente
+  funcționează, iar crearea conturilor noi se face din mediul local.
+
 ## Cum se modifică o decizie
 
 Clarificare de flux, 10 septembrie 2026: D30–D33 sunt cerințele noi ale beneficiarului, inclusiv confirmarea explicită a predării la acceptarea fișei. D34–D36 explică integrarea lor în modelul existent; D35 rămâne propunerea pentru rezervarea mașinii, nu o cerință confirmată. Detaliile sunt în `WORKFLOWS.md`. Se actualizează M01 (două perspective), M02 (contul șefului de tură, acces propriu și logistică centrală), M03 (flotă și eligibilitate), M06 (cerere, fișă și acceptare), M07–M09 (dovezi proprii, închidere și vizibilitate) și scenariul P01. Codul rămâne la fundația M00; această clarificare nu implementează modulele respective.

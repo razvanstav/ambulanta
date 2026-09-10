@@ -34,8 +34,28 @@ for (const id of accountIds) {
 }
 for (const id of fixture.institutions) {
   // Privileged cleanup is limited to generated test institutions; application users cannot delete audit.
-  for (const table of ["employee_assignments", "employees", "vehicles"]) {
-    checked(await admin.from(table).delete().eq("institution_id", id), "Curățare date M03 de test");
+  for (const table of [
+    "issue_sheet_acceptances",
+    "issue_sheet_lines",
+    "issue_sheet_versions",
+    "receipt_lines",
+    "receipts",
+    "inventory_movements",
+    "stock_balances",
+    "inventory_operations",
+    "inventory_locations",
+    "shifts",
+    "stock_lots",
+    "station_product_settings",
+    "products",
+    "employee_assignments",
+    "employees",
+    "vehicles",
+  ]) {
+    checked(
+      await admin.from(table).delete().eq("institution_id", id),
+      "Curățare date de test M03/M04",
+    );
   }
   checked(
     await admin.from("role_assignments").delete().eq("institution_id", id),

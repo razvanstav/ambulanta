@@ -83,6 +83,8 @@ export async function createAccount(
   form: FormData,
 ): Promise<ActionResult> {
   await requireAdministrator();
+  if (!process.env.SUPABASE_SECRET_KEY)
+    return { message: "Crearea conturilor este disponibilă din mediul local de administrare." };
   const name = text(form, "name");
   const email = text(form, "email");
   const password = String(form.get("password") ?? "");

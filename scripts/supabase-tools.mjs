@@ -1,5 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes } from "node:crypto";
+import { setTimeout } from "node:timers/promises";
+
+// A Supabase gateway can briefly lag the Auth issuer clock. Retry only the
+// explicit pre-execution JWT rejection, never an uncertain mutation response.
+async function testFetch(...args) {
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(...args);
+    if (response.status !== 401 || attempt === 3) return response;
+    const error = await response
+      .clone()
+      .json()
+      .catch(() => null);
+    if (error?.code !== "PGRST303" || error?.message !== "JWT issued at future") return response;
+    await setTimeout(500);
+  }
+}
 
 export function configuration() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -11,7 +27,10 @@ export function configuration() {
 }
 export function publicClient() {
   const { url, key } = configuration();
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: testFetch },
+  });
 }
 export function privilegedClient() {
   const { url, secret } = configuration();

@@ -126,8 +126,8 @@ export async function VehiclesPage({
         </Panel>
       )}
       <p className="identity-note">
-        Disponibilitatea tehnică este verificată. Rezervarea și ocuparea efectivă printr-o tură vor
-        fi disponibile odată cu pornirea turelor.
+        Disponibilitatea tehnică este administrată aici. Lista pentru Start tură exclude și mașinile
+        rezervate sau ocupate de o cerere ori o tură.
       </p>
     </>
   );

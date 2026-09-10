@@ -59,28 +59,35 @@ export async function AdminPage() {
           title="Creează cont"
           description="Contul este creat fără roluri. Transmite parola individual, apoi atribuie accesul mai jos."
         >
-          <ActionForm action={createAccount} submitLabel="Creează contul">
-            <label>
-              Nume afișat
-              <input name="name" required minLength={2} maxLength={120} autoComplete="off" />
-            </label>
-            <label>
-              Adresă de e-mail
-              <input type="email" name="email" required maxLength={254} autoComplete="off" />
-            </label>
-            <label>
-              Parolă inițială
-              <input
-                type="password"
-                name="password"
-                required
-                minLength={12}
-                maxLength={128}
-                autoComplete="new-password"
-              />
-            </label>
-            <Reason />
-          </ActionForm>
+          {process.env.SUPABASE_SECRET_KEY ? (
+            <ActionForm action={createAccount} submitLabel="Creează contul">
+              <label>
+                Nume afișat
+                <input name="name" required minLength={2} maxLength={120} autoComplete="off" />
+              </label>
+              <label>
+                Adresă de e-mail
+                <input type="email" name="email" required maxLength={254} autoComplete="off" />
+              </label>
+              <label>
+                Parolă inițială
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  minLength={12}
+                  maxLength={128}
+                  autoComplete="new-password"
+                />
+              </label>
+              <Reason />
+            </ActionForm>
+          ) : (
+            <p className="identity-note">
+              Conturile noi se creează din mediul local de administrare. Conturile existente pot
+              folosi aplicația și drepturile lor pot fi gestionate mai jos.
+            </p>
+          )}
         </Panel>
       </div>
       <Panel

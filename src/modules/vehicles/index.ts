@@ -20,7 +20,10 @@ export async function getVehicles(stationId: string): Promise<Vehicle[]> {
   if (error) throw new Error("Mașinile nu au putut fi încărcate.");
   return data as Vehicle[];
 }
-// M06 will add occupied/reserved state and an atomic check when starting a request.
 export async function getAvailableVehicles(stationId: string) {
-  return (await getVehicles(stationId)).filter((vehicle) => vehicle.active && vehicle.operational);
+  await requireSubstation(stationId);
+  const client = await createSupabaseServerClient();
+  const { data, error } = await client.rpc("list_available_vehicles", { p_substation: stationId });
+  if (error) throw new Error("Disponibilitatea mașinilor nu a putut fi verificată.");
+  return data as Vehicle[];
 }

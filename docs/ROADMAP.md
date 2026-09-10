@@ -124,6 +124,11 @@ Filtrele și exporturile șefului de tură verifică și proprietarul, nu doar s
 
 ## P01 — Publicare demo
 
+Actualizare 10 septembrie 2026: beneficiarul a cerut publicarea anticipată a
+incrementului M06. Aceasta nu înseamnă finalizarea P01: scenariul complet cu
+dovezi, închidere și rapoarte rămâne dependent de M07–M09. Starea găzduirii este
+consemnată în `STATUS.md`.
+
 **Include:** date fictive pentru Roșiori, două mașini și câțiva angajați/produse; scenariu pregătit de recepție–predare–consum/retur–semnătură–raport; conturi de test individuale; proiect Supabase Free și aplicație Next.js publicată pe Netlify Free. Configurează build-ul din repository-ul distant ales de utilizator și adresa gratuită Netlify. Leagă domeniul propriu doar dacă este dorit și disponibil.
 
 Scenariul folosește un cont de logistică și două conturi de șef de tură: selecție mașină → fișă pregătită de magazie → acceptare și pornire → consum/retur → verificare magazie și raport. Demonstrează și vederea de ansamblu, și faptul că cei doi șefi nu văd reciproc datele.

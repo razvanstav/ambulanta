@@ -1,8 +1,9 @@
 # Perspectivele aplicației și fluxul turei
 
-Actualizat: 10 septembrie 2026. Acest document descrie cerințele și propunerile
-pentru modulele următoare. În cod sunt implementate fundația M00 și interfața
-demonstrativă M01; operațiile de mai jos nu sunt încă implementate pe server.
+Actualizat: 10 septembrie 2026. Circuitul cerere → fișă → acceptare → suplimentare
+este implementat în M06, cu recepții și stoc din M05. Contractele și verificările
+sunt în [SHIFTS](SHIFTS.md) și [INVENTORY](INVENTORY.md). Închiderea, dovezile și
+rapoartele de mai jos rămân pentru M07–M09.
 
 ## Două perspective, aceeași aplicație
 

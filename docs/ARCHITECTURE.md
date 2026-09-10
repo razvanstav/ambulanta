@@ -80,6 +80,18 @@ Browserul nu modifică direct soldurile. Operațiile de stoc se execută prin fu
 
 Supabase permite funcții de bază de date apelabile din aplicație. Funcțiile privilegiate vor avea drepturi de execuție restrânse, `search_path` fix și verificări explicite ale rolului și substației. [Documentația funcțiilor](https://supabase.com/docs/guides/database/functions).
 
+M04–M06 sunt implementate prin migrările `202609100003`–`202609100005`.
+Contractele concrete sunt în [CATALOG](CATALOG.md), [INVENTORY](INVENTORY.md) și
+[SHIFTS](SHIFTS.md). Motorul intern `app_private.move_stock` actualizează jurnalul
+și soldurile atomic; `post_receipt` și `accept_issue_sheet` sunt comenzile publice.
+Blocarea pe instituție este comună cu administrarea și revocările. Proiecția
+de sold nu poate fi scrisă de client. Metadatele produsului sunt fixe de la primul
+lot; liniile fișelor păstrează instantanee ale denumirii, unității și lotului.
+
+Beneficiarul a solicitat publicare demo anticipată după M06 (D51), separat de
+P01 integral. Cheia secretă rămâne locală; pe găzduire funcționează conturile
+existente, iar crearea Auth se face din mediul local (D54).
+
 ## 4. Utilizatori, angajați și drepturi
 
 Angajatul este persoana din evidența substației. Contul de utilizator este identitatea care se autentifică. Legătura poate lipsi pentru un angajat doar înregistrat, dar este obligatorie pentru șeful de tură care operează „Tura mea”. Proprietatea „titular” aparține apartenenței angajatului la substație, nu înlocuiește un rol de acces. În acest flux șeful de tură este titularul responsabil, distinct de șeful substației.

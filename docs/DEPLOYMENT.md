@@ -1,0 +1,44 @@
+# Publicare demo anticipată după M06
+
+Beneficiarul a autorizat publicarea acestui increment înainte de P01 integral.
+Aplicația folosește exclusiv date fictive și conturi individuale existente.
+Starea publicării și URL-ul verificat se păstrează în [STATUS](STATUS.md).
+
+## Configurare Netlify
+
+Repository: `https://github.com/razvanstav/ambulanta`, branch `main`.
+`netlify.toml` fixează `npm run build`, directorul `.next`, Node 24.19.0,
+npm 10.2.0 și dezactivarea telemetriei Next. Runtime-ul Next.js este detectat de
+Netlify; nu se face export static, deoarece aplicația folosește SSR și Server Actions.
+
+În configurația mediului Netlify se introduc numai:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+Valorile vin din configurația locală autorizată. Nu se pune cheia secretă pe
+găzduire și nu se încarcă `.env.local`, `private/`, fixturele sau parolele.
+Administrarea datelor/rolurilor folosește sesiunea și RPC-urile; crearea de
+conturi Auth noi rămâne disponibilă numai în mediul local.
+
+Se selectează planul Free și adresa gratuită Netlify. Documentația oficială
+consultată la 10 septembrie 2026 arată 300 credite/lună cu limită strictă, fără
+reîncărcare automată pentru planul Free. Nu se activează upgrade sau abonament.
+[Planuri Netlify](https://www.netlify.com/pricing/),
+[limite Free](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/).
+
+După publicare se verifică pagina de autentificare, accesul prin sesiune,
+catalogul, stocurile și „Tura mea”, inclusiv antetele private și izolarea.
+Supabase Auth rămâne fără înscriere publică. Migrările sunt aplicate separat;
+un push sau deploy nu le rerulează.
+
+## Acces demonstrativ
+
+Administratorul este în `private/initial-admin.json`, titularii în
+`private/m03-demo-accounts.json`. Fișierele sunt numai locale. Nu transmite
+parole în mesaje publice, repository sau URL-uri. `/demo` este previzualizarea
+vizuală M01, iar aplicația persistentă începe la `/autentificare`.
+
+La M06, turele acceptate rămân deschise: M07–M08 vor adăuga dovezile,
+consumul/returul și închiderea. Publicarea acestui increment nu declară P01
+integral sau utilizare operațională.

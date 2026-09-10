@@ -40,6 +40,9 @@ export function AuthenticatedShell({
   if (station && canViewLogistics(identity, station.id))
     navigation.push(
       { href: `${base}/logistica`, label: "Logistică / Magazie", icon: "box" },
+      { href: `${base}/catalog`, label: "Catalog și loturi", icon: "box" },
+      { href: `${base}/stocuri`, label: "Stocuri și recepții", icon: "box" },
+      { href: `${base}/ture`, label: "Cereri și ture", icon: "pulse" },
       { href: `${base}/personal`, label: "Personal", icon: "users" },
       { href: `${base}/masini`, label: "Mașini", icon: "ambulance" },
     );

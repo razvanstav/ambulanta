@@ -3,12 +3,11 @@
 Aplicație în română pentru evidența produselor și a turelor substațiilor de
 ambulanță. Ținta este un MVP cu date fictive, Supabase Free și Netlify Free.
 
-**Stare: M03 — Personal, titulari și mașini.** Autentificarea, administrarea,
-personalul și flota folosesc Supabase real: 10 angajați, dintre care 3 titulari,
-și 5 mașini fictive în Roșiori. Interfața demonstrativă M01 rămâne la `/demo`. Stocurile,
-turele, dovezile și rapoartele se implementează în modulele următoare. Aplicația
-nu este încă publicată.
-
+**Stare: M04–M06 — Catalog, recepții și ture.** Autentificarea, personalul,
+catalogul, loturile, stocul și circuitul cerere–fișă–acceptare folosesc Supabase
+real. Roșiori are 10 angajați fictivi, 3 titulari, 5 mașini și 6 produse cu stoc
+inițial. Dovezile, consumul/returul, închiderea și rapoartele urmează în M07–M09.
+Publicarea anticipată a fost autorizată; starea linkului este în STATUS.
 Repository: [razvanstav/ambulanta](https://github.com/razvanstav/ambulanta).
 Starea verificată și următorul modul: [STATUS](docs/STATUS.md).
 
@@ -26,7 +25,7 @@ Copy-Item .env.example .env.local
 
 Completează local conexiunea Supabase și urmează [configurarea M02](docs/ACCESS.md)
 pentru administrator și [M03](docs/PERSONNEL.md) pentru personal/flotă. În proiectul
-Supabase actual migrările M02 și M03 sunt deja aplicate; nu le rerula.
+Supabase actual migrările M02–M06 sunt deja aplicate; nu le rerula.
 Nu suprascrie o configurație locală existentă.
 
 ```powershell
@@ -62,7 +61,7 @@ Accesul celor trei titulari este numai în `private/m03-demo-accounts.json`.
 
 Fluxul de gestiune rămâne cel din [WORKFLOWS](docs/WORKFLOWS.md): șeful de tură
 cere pornirea, magazia pregătește fișa, iar acceptarea confirmă predarea și
-pornește tura atomic. M01 îl ilustrează; operațiile reale urmează în M06.
+pornește tura atomic. Circuitul real include neconcordanțe, versiuni noi și suplimentări.
 
 ## Verificări
 
@@ -86,7 +85,7 @@ npm run test:e2e
 npm run test:integration:cleanup
 ```
 
-Sunt 6 teste unitare, 19 grupuri de teste PostgreSQL și 32 de cazuri E2E cu
+Sunt 11 teste unitare, 44 grupuri de teste PostgreSQL și 34 de cazuri E2E cu
 fixturea Supabase. Fără fixture, testele de acces real sunt explicit omise.
 Nu confunda o rulare omisă cu validarea drepturilor. Toate parolele și fișierele
 de test sunt locale, ignorate de Git. Datele operaționale nu sunt permise în teste.
@@ -123,7 +122,7 @@ docs/                   Plan și starea verificată
 ```
 
 Lucrăm pe baza comună `main`, cu commituri și push în `origin`, fără force push
-sau resetări destructive. Găzduirea aplicației rămâne **P01**, după M00–M09.
+sau resetări destructive. Publicarea anticipată M06 este autorizată; **P01** integral rămâne după M09.
 M10–M11 sunt pentru eventuala utilizare operațională.
 
 Memoria proiectului: [STATUS](docs/STATUS.md), [DECISIONS](docs/DECISIONS.md),
