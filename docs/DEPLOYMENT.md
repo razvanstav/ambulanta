@@ -6,6 +6,12 @@ Starea publicării și URL-ul verificat se păstrează în [STATUS](STATUS.md).
 
 ## Configurare Netlify
 
+Contul Netlify este conectat, pe planul Free. Importul este pregătit la
+[Creare proiect Netlify](https://app.netlify.com/start); conectarea GitHub trebuie
+finalizată pentru repository-ul `razvanstav/ambulanta`. Butonul GitHub nu a deschis
+autorizarea în browserul controlabil, iar beneficiarul a fost rugat să completeze
+acest pas. Nu crea alt proiect dacă importul a fost între timp finalizat.
+
 Repository: `https://github.com/razvanstav/ambulanta`, branch `main`.
 `netlify.toml` fixează `npm run build`, directorul `.next`, Node 24.19.0,
 npm 10.2.0 și dezactivarea telemetriei Next. Runtime-ul Next.js este detectat de

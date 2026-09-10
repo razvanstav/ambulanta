@@ -8,14 +8,16 @@ Actualizat: 10 septembrie 2026
 Continuarea cu M05/M06 și publicarea anticipată au fost cerute explicit de beneficiar.
 
 - Branch comun: `main`, remote `origin`, repository `razvanstav/ambulanta`.
-- Reper anterior verificat: **`68feaeb`**, M03; director curat la început.
-  Hashul nou se raportează după commit.
+- Reper anterior verificat: **`c7d1eab`**, implementarea M04–M06, trimisă în
+  `origin/main`. Hashul actualizării documentației se raportează după commit.
 - Commiturile și push-ul sunt autorizate (D26, D50).
 - Proiect Supabase Free: **ambulanta**, `roxvzbhsszesglcaadcl`.
 - Următorul modul funcțional: **M07 — Dovezi și semnătură**.
 - Publicare anticipată: configurația Netlify este pregătită; contul este conectat,
   planul **Free** verificat, 300 credite disponibile înaintea publicării.
-  Deploy-ul și URL-ul public nu sunt încă validate în acest reper.
+  Importul GitHub nu a deschis autorizarea în browserul controlabil. Beneficiarului
+  i s-a cerut conectarea repository-ului `razvanstav/ambulanta` în pagina
+  `https://app.netlify.com/start`. Nu există încă deploy sau URL public verificat.
 
 ## Ce funcționează
 
@@ -98,6 +100,13 @@ Build-ul local folosește `NEXT_TELEMETRY_DISABLED=1` pentru a evita scrierea
 telemetriei în afara workspace-ului. Node 24.19.0 / npm 10.2.0; lansatoare în
 `.tools/bin`, Chromium în `.tools/browsers`. Capturile și fixturele sunt ignorate.
 
+După verificarea finală, `npm run test:integration:cleanup` a trecut. Au fost
+eliminate numai instituțiile și conturile generate de teste. Citirea ulterioară
+confirmă în demo: 10 angajați, 5 mașini, 6 produse, 6 loturi, o recepție și zero
+ture. Cele șase solduri inițiale au rămas 10, 25,50, 100, 150, 200 și 200, fiecare
+în unitatea produsului său. Pentru o nouă rulare E2E de acces real trebuie recreată
+fixturea prin `test:integration`.
+
 ## Limite și continuare
 
 Turele pornite rămân deschise până la M07–M08. Nu există încă dovezi/semnături,
@@ -108,15 +117,15 @@ parolelor rămâne administrativă.
 Publicarea anticipată M06 nu finalizează P01 integral. Procedura este în
 [DEPLOYMENT](DEPLOYMENT.md).
 
-| Modul                    | Stare                                       |
-| ------------------------ | ------------------------------------------- |
-| M00–M03                  | Finalizate                                  |
-| M04 — Catalog și loturi  | Finalizat                                   |
-| M05 — Recepții și stoc   | Finalizat                                   |
-| M06 — Ture și predare    | Finalizat                                   |
-| M07 — Dovezi             | Următorul modul                             |
-| M08 — Închidere          | Neînceput                                   |
-| M09 — Rapoarte           | Neînceput                                   |
-| Publicare anticipată M06 | Configurație pregătită, deploy de verificat |
-| P01 complet              | După M09                                    |
-| M10–M11                  | Etapă ulterioară                            |
+| Modul                    | Stare                                                 |
+| ------------------------ | ----------------------------------------------------- |
+| M00–M03                  | Finalizate                                            |
+| M04 — Catalog și loturi  | Finalizat                                             |
+| M05 — Recepții și stoc   | Finalizat                                             |
+| M06 — Ture și predare    | Finalizat                                             |
+| M07 — Dovezi             | Următorul modul                                       |
+| M08 — Închidere          | Neînceput                                             |
+| M09 — Rapoarte           | Neînceput                                             |
+| Publicare anticipată M06 | Așteaptă conectarea repository-ului GitHub în Netlify |
+| P01 complet              | După M09                                              |
+| M10–M11                  | Etapă ulterioară                                      |
