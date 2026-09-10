@@ -172,3 +172,13 @@ Publicarea anticipată M07 nu finalizează P01 integral. Procedura este în
 | Publicare anticipată M07 | Publicată la ambulanta.netlify.app și verificată desktop/mobil              |
 | P01 complet              | După M09                                                                    |
 | M10–M11                  | Etapă ulterioară                                                            |
+
+## Actualizare acces după publicare — 10 septembrie 2026
+
+La cererea explicită a beneficiarului a fost creat încă un cont individual de
+șef de tură, asociat unui angajat activ și titular în Roșiori. Sunt acum
+11 angajați și 4 titulari eligibili; flota și stocurile nu au fost modificate.
+Autentificarea și rezolvarea titularului propriu au fost verificate în Supabase.
+Datele de acces sunt păstrate numai în folderul privat, exclus din Git.
+Nu s-a modificat politica generală a parolelor sau codul aplicației.
+Reper anterior verificat: `4dea697`; această actualizare nu necesită redeploy.
