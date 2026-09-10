@@ -1,8 +1,8 @@
 # Gestiune substații
 
-**Increment local nou:** stoc permanent pe mașină, preluare între ture și
-închidere după finalul programat. Migrarea 007 este verificată local, dar nu a
-fost încă aplicată pe Supabase; site-ul public rămâne la M07. Vezi
+**Increment publicat:** stoc permanent pe mașină, preluare între ture și
+închidere după finalul programat. Migrarea 007 este aplicată în Supabase,
+iar versiunea nouă este publicată pe Netlify. Vezi
 [starea curentă](docs/STATUS.md) și [noul flux](docs/VEHICLE-STOCK.md).
 
 Aplicație în română pentru evidența produselor și a turelor substațiilor de

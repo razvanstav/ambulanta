@@ -53,9 +53,12 @@ mișcare de stoc. Consumul este înregistrat la închiderea confirmată.
 ## Activare pe Supabase și Netlify
 
 Migrarea nouă este `202609100007_vehicle_stock_closeout.sql`. Cele șase migrări
-anterioare nu se modifică și nu se rerulează. Această migrare nu a fost aplicată
-pe proiectul găzduit în această sesiune: configurația privată este pe alt
-calculator. Site-ul public păstrează versiunea M07.
+anterioare nu se modifică și nu se rerulează. Migrarea 007 a fost aplicată și
+înregistrată în Supabase pe 10 septembrie 2026. Soldurile vechi au fost transferate
+fără diferențe de jurnal. Netlify a publicat apoi commitul `50eae63`, deploy
+`6aa31299110cc36e9cb9fbd9`. Nici migrarea 007 nu se rerulează pe acest proiect.
+
+Procedura pentru un alt mediu și verificările extinse rămase:
 
 1. Din mediul cu accesul Supabase, aplică migrarea nouă pe proiectul demo
    `roxvzbhsszesglcaadcl`, într-o fereastră fără operații de stoc concurente.

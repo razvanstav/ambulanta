@@ -8,8 +8,8 @@ Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile urm
 - **D62 — Confirmat:** eliminarea semnăturii din ciornă nu mai este oferită. Implementarea interzice eliminarea semnăturii validate inclusiv prin RPC; schimbarea cantităților păstrează originalul și cere o nouă versiune.
 - **D63 — Confirmat:** titularul nu poate închide fișa înainte de finalul stabilit al turei. **Alegere de implementare:** începutul și finalul sunt obligatorii la cerere, fără posibilitatea scurtării ulterior. Turele vechi fără program îl stabilesc o singură dată.
 - **D64 — Adoptat pentru D61/D63:** fără retur fizic, titularul închide direct după final; cu retur, magazia confirmă primirea și închide, fiind distinctă de titular. Modifică D11 numai pentru închiderile fără retur. Consumul, returul, versiunea finală și eliberarea mașinii sunt atomice.
-- **D65 — Stare locală:** migrarea nouă și aplicația au fost verificate local. Configurația Supabase este pe alt calculator, conform beneficiarului. Nu se publică versiunea nouă înainte de aplicarea migrării; commitul folosește `[skip netlify]`.
-- **D66 — Confirmat:** beneficiarul a autorizat explicit trimiterea commitului pe GitHub și activarea în Supabase/Netlify. Commitul `d073780` a fost trimis în `origin/main`; activarea așteaptă autentificarea în dashboarduri, apoi aplicarea migrării înaintea deployului.
+- **D65 — Aplicat:** migrarea precedă publicarea aplicației. Migrarea 007 a fost aplicată tranzacțional prin SQL Editor și înregistrată în istoricul Supabase; soldurile existente au fost reconciliate cu jurnalul. Configurația privată locală rămâne pe alt calculator.
+- **D66 — Confirmat și executat:** beneficiarul a autorizat trimiterea pe GitHub și activarea în Supabase/Netlify, apoi s-a autentificat în dashboarduri. Implementarea `d073780` a fost publicată prin deployul manual al commitului `50eae63`, `6aa31299110cc36e9cb9fbd9`, după migrare. Variabilele secrete existente nu au fost modificate.
 
 Contractul curent și verificările: [VEHICLE-STOCK](VEHICLE-STOCK.md). Deciziile istorice de mai jos se citesc cu aceste înlocuiri.
 

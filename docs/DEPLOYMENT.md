@@ -1,5 +1,20 @@
 # Publicare demo anticipată după M07
 
+## Actualizare publicată — stoc permanent pe mașină
+
+La 10 septembrie 2026, după autentificarea beneficiarului, migrarea
+`202609100007_vehicle_stock_closeout.sql` a fost aplicată prin SQL Editor,
+în tranzacție împreună cu înregistrarea versiunii în istoricul Supabase.
+Soldurile au fost păstrate și reconciliate cu jurnalul; RLS și restricțiile
+de execuție au fost verificate. Migrările 001–007 nu se rerulează.
+
+Deployul manual Netlify `6aa31299110cc36e9cb9fbd9` a publicat commitul
+`50eae63` (implementare `d073780`) la 23:27 Europe/Bucharest. Buildul și
+publicarea au reușit; pagina de autentificare funcționează. Variabilele existente
+au fost păstrate. Testele complete găzduite Auth/Storage nu au fost repetate
+din această clonă fără configurația privată. PDF-ul final M08 și rapoartele M09
+rămân de implementat; detaliile M07 de mai jos sunt istorice.
+
 Beneficiarul a autorizat publicarea incrementului M07 înainte de P01 integral.
 Aplicația folosește exclusiv date fictive și conturi individuale existente.
 

@@ -4,10 +4,10 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
-**Modificare locală: stoc permanent pe mașină și închidere după finalul turei.**
-Codul și migrarea 007 sunt implementate și verificate local; **nu sunt încă
-activate pe Supabase/Netlify**. Configurația privată este pe alt calculator.
-Reperul anterior al acestui increment: `283da32`, branch `main`.
+**Publicat: stoc permanent pe mașină și închidere după finalul turei.**
+Migrarea 007 este aplicată în Supabase, iar Netlify a publicat versiunea nouă
+la 10 septembrie 2026, 23:27 Europe/Bucharest. Reper verificat: `50eae63`,
+care include implementarea `d073780`, branch `main`.
 
 - Magazie 100 → predare 10 → consum 7 → magazie 90, mașină 3. Următoarea
   tură preia restul fără o nouă scădere a magaziei; stoc vizibil pe mașină.
@@ -24,15 +24,20 @@ Reperul anterior al acestui increment: `283da32`, branch `main`.
 - Închiderea prin buton după final a fost verificată pe mobil: consum înregistrat,
   stoc rămas în mașină și afișarea automată a istoricului. Regresia E2E disponibilă
   local: 18 teste trecute, 16 omise explicit din lipsa fixturelor Supabase reale.
-- Urmează aplicarea migrării 007 din mediul cu acces, verificările reale
-  Supabase/Netlify și continuarea M08 cu PDF individual; M09 rămâne ulterior.
+- Supabase găzduit: migrarea 007 înregistrată; cele două solduri vechi de tură
+  (7 și 5, pe loturi distincte) sunt acum pe mașină. Magazia este neschimbată,
+  alocările sunt păstrate, jurnalul se reconciliază cu zero diferențe. RLS este
+  activ, iar comenzile interne și închiderea anonimă sunt inaccesibile.
+- Netlify: deploy `6aa31299110cc36e9cb9fbd9`, commit `50eae63`, Published;
+  build, funcții, redirecturi și postprocesare reușite. Pagina publică de
+  autentificare se încarcă. Suita completă Auth/Storage nu a fost repetată
+  în această clonă, deoarece configurația privată este pe alt calculator.
+- Urmează continuarea M08 cu PDF individual; M09 rămâne ulterior.
 
-Contract și procedură: [VEHICLE-STOCK](VEHICLE-STOCK.md). Commitul acestui increment
-folosește `[skip netlify]`, deoarece codul nou necesită mai întâi migrarea.
-Beneficiarul a autorizat explicit push-ul, migrarea Supabase și publicarea Netlify.
-Commitul aplicației `d073780` este sincronizat în `origin/main`. Migrarea și
-publicarea așteaptă autentificarea beneficiarului în dashboardurile Supabase și
-Netlify pe acest calculator; ambele sesiuni de browser sunt neautentificate.
+Contract și procedură: [VEHICLE-STOCK](VEHICLE-STOCK.md). Beneficiarul a autorizat
+push-ul, migrarea Supabase și publicarea Netlify și s-a autentificat în ambele
+dashboarduri. Migrarea a precedat deployul manual. Nu au fost schimbate secretele
+de găzduire. Commiturile de documentație folosesc `[skip netlify]`.
 
 ## Starea găzduită anterioară — M07
 
