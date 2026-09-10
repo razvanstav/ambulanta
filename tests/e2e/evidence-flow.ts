@@ -2,6 +2,7 @@ import { expect, type Page, type TestInfo } from "@playwright/test";
 import { PDFDocument } from "pdf-lib";
 import sharp from "sharp";
 import { randomUUID } from "node:crypto";
+import { MAX_FILE_SIZE, FILE_SIZE_MESSAGE } from "../../src/modules/evidence/limits";
 
 export async function verifyEvidenceFlow(
   leader: Page,
@@ -70,6 +71,25 @@ export async function verifyEvidenceFlow(
   const uploadForm = workspace
     .locator("form")
     .filter({ has: leader.getByRole("button", { name: "Încarcă dovada", exact: true }) });
+  const oversized = Buffer.alloc(MAX_FILE_SIZE + 1);
+  await uploadForm.getByLabel("Document sau fotografie").setInputFiles({
+    name: "prea-mare.pdf",
+    mimeType: "application/pdf",
+    buffer: oversized,
+  });
+  await uploadForm.getByRole("button", { name: "Încarcă dovada" }).click();
+  await expect(uploadForm.getByRole("alert")).toHaveText(FILE_SIZE_MESSAGE);
+  const tooLarge = await leader.context().request.post("/api/evidence", {
+    headers: { origin: new URL(leader.url()).origin },
+    multipart: {
+      version: await workspace.locator('input[name="expected_version"]').inputValue(),
+      request_key: randomUUID(),
+      kind: "document",
+      file: { name: "prea-mare.pdf", mimeType: "application/pdf", buffer: oversized },
+    },
+  });
+  expect(tooLarge.status(), await tooLarge.text()).toBe(413);
+  expect((await tooLarge.json()).message).toBe(FILE_SIZE_MESSAGE);
   await uploadForm.getByLabel("Document sau fotografie").setInputFiles({
     name: "fals.pdf",
     mimeType: "application/pdf",

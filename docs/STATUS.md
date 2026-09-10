@@ -5,10 +5,11 @@ Actualizat: 10 septembrie 2026
 ## Punctul actual
 
 **M00–M07 sunt implementate. M07 este verificat cu PostgreSQL, Storage și browser real.**
-Incrementul M07 este în curs de verificare pe Netlify la cererea beneficiarului.
+Incrementul M07 este publicat și verificat pe Netlify la cererea beneficiarului.
 
 - Branch comun: `main`, remote `origin`, repository `razvanstav/ambulanta`.
-- Reper anterior verificat: **`7707565`**, implementarea M07, pe `main` și `origin/main`.
+- Reper anterior verificat: **`8838e84`**, corecția de publicare M07, pe `main` și
+  `origin/main`; codul aplicației publice corespunde acestui commit.
 - Commiturile și push-ul sunt autorizate (D26, D50).
 - Proiect Supabase Free: **ambulanta**, `roxvzbhsszesglcaadcl`.
 - Următorul modul funcțional: **M08 — Închiderea și raportul turei**.
@@ -16,7 +17,11 @@ Incrementul M07 este în curs de verificare pe Netlify la cererea beneficiarului
   public la [ambulanta.netlify.app](https://ambulanta.netlify.app/autentificare).
   Deployul `7707565` avea variabilele Supabase lipsă. Au fost configurate URL-ul,
   cheia publicabilă și secretul validatorului aprobat explicit (D59).
-  Redeployul și verificările online sunt în curs; limita demo este 4 MB/fișier.
+  Redeployul `6aa2ebff27c92f00093ef0d1` și verificările online au reușit;
+  limita demo este 4 MB/fișier. Plan Free reverificat: 254,9/300 credite
+  disponibile la verificare, trei deployuri de producție, fără card sau upgrade.
+  Commitul final de documentație/teste folosește `[skip netlify]`, pentru a nu
+  consuma încă un deploy fără schimbarea codului aplicației.
 
 ## Ce funcționează
 
@@ -43,7 +48,8 @@ Incrementul M07 este în curs de verificare pe Netlify la cererea beneficiarului
   alocare. Ciornele sunt versiuni nemodificabile, cu snapshot și SHA-256 în DB.
   O versiune nouă cere dovezi noi; suplimentarea acceptată face neactuală ciorna
   care nu o include. Nu se modifică stocuri și nu se închide tura.
-- PDF/JPEG/PNG private, validare efectivă pe server, 10 MB/fișier, 5 documente și
+- PDF/JPEG/PNG private, validare efectivă pe server, 4 MB/fișier pe Netlify
+  (10 MB local), 5 documente și
   o semnătură per versiune. Semnare cu deget/stylus/mouse, resetare, nume și
   confirmare obligatorii. Colectorul autentificat rămâne distinct de semnatar.
 - Previzualizare foto și PDF cu paginare prin Mozilla PDF.js, inclusiv pe mobil;
@@ -68,13 +74,11 @@ Instituția „SAJ — Demonstrație” păstrează **10 angajați fictivi, dint
 ele. Alexandria nu a fost populată cu stoc prin aceste scripturi.
 
 Administratorul este în `private/initial-admin.json`; titularii în
-`private/m03-demo-accounts.json`. Parolele și cheia secretă sunt exclusiv locale,
-ignorate de Git. Publicarea folosește numai URL-ul și cheia publicabilă Supabase.
+`private/m03-demo-accounts.json`. Parolele rămân exclusiv locale, ignorate de Git.
+Publicarea folosește URL-ul, cheia publicabilă și, cu aprobarea explicită D59,
+`SUPABASE_EVIDENCE_SECRET_KEY` pentru validatorul server al dovezilor.
 Crearea de conturi noi rămâne locală; cele existente funcționează și pe găzduire.
-M07 folosește cheia secretă locală și pentru atestarea validării fișierelor;
-aceasta nu a fost transmisă către Netlify. Publicarea M07/P01 necesită configurarea
-serviciului de validare de încredere pe găzduire și verificarea limitei HTTP de
-încărcare. Configurația anticipată M06 nu poate încărca dovezi M07.
+Secretul de dovezi este configurat numai în contextul Production și nu este public.
 
 ## Migrări
 
@@ -134,6 +138,17 @@ fixturea prin `test:integration`.
 
 ## Limite și continuare
 
+Publicarea M07: `npm run check` a trecut cu limita de 4 MB, iar cele 56 grupuri
+PostgreSQL/Storage au fost repetate cu succes. Circuitul `stock-shifts.spec.ts`
+a trecut **2/2 pe site-ul Netlify**, desktop și Pixel 7, cu autentificare, catalog,
+recepție, predare, ciornă, semnătură, PDF paginat și fotografie. Browserul și API-ul
+refuză explicit fișierul de 4 MB + 1 octet; replay-ul nu dublează dovada,
+descărcările au `no-store`, alt titular nu are acces. Screenshotul mobil a fost
+inspectat; PDF-ul și semnătura se afișează. TypeScript și formatul testelor au trecut.
+Scanarea celor 140 fișiere Git și 21 fișiere publice de build nu a găsit cheia
+secretă sau parolele fixturei. Curățarea finală a eliminat toate instituțiile
+temporare și a reconfirmat inventarul demonstrativ de mai sus, fără ture sau dovezi.
+
 Turele pornite rămân deschise până la M08. Există ciorne și dovezi/semnături,
 dar nu există consum/retur confirmat, închidere, PDF final sau rapoarte agregate. Nu există actualizare
 automată în timp real. Conturile noi se creează din mediul local; recuperarea
@@ -142,18 +157,18 @@ Nu există antivirus sau curățare automată a obiectelor abandonate. Semnătur
 desenată nu certifică identitatea declarată. Aceste limite și integrarea exactă
 pentru M08 sunt în [EVIDENCE](EVIDENCE.md); demonstrația folosește numai date fictive.
 
-Publicarea anticipată M06 nu finalizează P01 integral. Procedura este în
+Publicarea anticipată M07 nu finalizează P01 integral. Procedura este în
 [DEPLOYMENT](DEPLOYMENT.md).
 
-| Modul                    | Stare                                                                                       |
-| ------------------------ | ------------------------------------------------------------------------------------------- |
-| M00–M03                  | Finalizate                                                                                  |
-| M04 — Catalog și loturi  | Finalizat                                                                                   |
-| M05 — Recepții și stoc   | Finalizat                                                                                   |
-| M06 — Ture și predare    | Finalizat                                                                                   |
-| M07 — Dovezi             | Finalizat local, cu Supabase/Storage real; publicarea serviciului de validare rămâne la P01 |
-| M08 — Închidere          | Următorul modul                                                                             |
-| M09 — Rapoarte           | Neînceput                                                                                   |
-| Publicare anticipată M06 | Așteaptă conectarea repository-ului GitHub în Netlify                                       |
-| P01 complet              | După M09                                                                                    |
-| M10–M11                  | Etapă ulterioară                                                                            |
+| Modul                    | Stare                                                                       |
+| ------------------------ | --------------------------------------------------------------------------- |
+| M00–M03                  | Finalizate                                                                  |
+| M04 — Catalog și loturi  | Finalizat                                                                   |
+| M05 — Recepții și stoc   | Finalizat                                                                   |
+| M06 — Ture și predare    | Finalizat                                                                   |
+| M07 — Dovezi             | Finalizat și verificat local și pe Netlify; maximum 4 MB per dovadă în demo |
+| M08 — Închidere          | Următorul modul                                                             |
+| M09 — Rapoarte           | Neînceput                                                                   |
+| Publicare anticipată M07 | Publicată la ambulanta.netlify.app și verificată desktop/mobil              |
+| P01 complet              | După M09                                                                    |
+| M10–M11                  | Etapă ulterioară                                                            |

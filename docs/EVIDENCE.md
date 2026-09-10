@@ -105,12 +105,12 @@ Validarea M07 folosește `SUPABASE_SECRET_KEY` numai pe server, în modulul
 în browser sau în Git. Cheia locală existentă permite circuitul complet local.
 Aceasta extinde utilizarea locală de la crearea Auth la validarea fișierelor.
 
-Configurația Netlify anticipată M06, cu numai cheia publicabilă, nu poate încărca
-dovezi M07. Conform D54, cheia secretă nu este transmisă automat către găzduire.
-La publicarea M07/P01 trebuie stabilit serviciul de validare de încredere și
-configurat secretul exclusiv pe server sau un serviciu separat echivalent.
-Trebuie verificată și limita HTTP a găzduirii pentru fișiere de 10 MB. În această
-conversație nu s-a publicat un site și nu s-au schimbat secretele de găzduire.
+La publicarea M07, beneficiarul a aprobat secretul pe Netlify (D59).
+`SUPABASE_EVIDENCE_SECRET_KEY` este numele preferat de validator, numai pe server;
+fallback-ul local rămâne `SUPABASE_SECRET_KEY`. Numele separat păstrează
+administrarea conturilor Auth doar local. Pe Netlify, limita acceptată este
+4 MB/fișier, identică în browser și API; local rămân 10 MB. Bucketul păstrează
+plafonul 10 MB. Configurația și motivul limitei sunt în [DEPLOYMENT](DEPLOYMENT.md).
 
 ## Verificări
 

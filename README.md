@@ -133,5 +133,7 @@ siguranță se păstrează separat.
 
 M07 adaugă ciorna declarației și dovezile private: [contract și configurare](docs/EVIDENCE.md).
 Validarea fișierelor necesită cheia secretă numai pe server. Configurația locală
-existentă este suficientă; configurația Netlify anticipată M06 nu oferă încă
-serviciul de validare M07. Trimiterea și închiderea efectivă urmează în M08.
+existentă este suficientă. [Demo public](https://ambulanta.netlify.app/autentificare)
+folosește validatorul Netlify cu limita 4 MB/fișier (10 MB local):
+[configurare și verificare](docs/DEPLOYMENT.md).
+Trimiterea și închiderea efectivă urmează în M08.
