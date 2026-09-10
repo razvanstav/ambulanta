@@ -85,7 +85,7 @@ npm run test:e2e
 npm run test:integration:cleanup
 ```
 
-Sunt 11 teste unitare, 44 grupuri de teste PostgreSQL și 34 de cazuri E2E cu
+Sunt 16 teste unitare, 56 grupuri de teste PostgreSQL/Storage și 34 de cazuri E2E cu
 fixturea Supabase. Fără fixture, testele de acces real sunt explicit omise.
 Nu confunda o rulare omisă cu validarea drepturilor. Toate parolele și fișierele
 de test sunt locale, ignorate de Git. Datele operaționale nu sunt permise în teste.
@@ -130,3 +130,8 @@ Memoria proiectului: [STATUS](docs/STATUS.md), [DECISIONS](docs/DECISIONS.md),
 [ACCESS](docs/ACCESS.md), [UI](docs/UI.md) și [AGENTS](AGENTS.md).
 Git păstrează codul, documentația și migrările; datele, dovezile și copiile de
 siguranță se păstrează separat.
+
+M07 adaugă ciorna declarației și dovezile private: [contract și configurare](docs/EVIDENCE.md).
+Validarea fișierelor necesită cheia secretă numai pe server. Configurația locală
+existentă este suficientă; configurația Netlify anticipată M06 nu oferă încă
+serviciul de validare M07. Trimiterea și închiderea efectivă urmează în M08.

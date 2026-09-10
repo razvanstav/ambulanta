@@ -34,7 +34,27 @@ for (const id of accountIds) {
 }
 for (const id of fixture.institutions) {
   // Privileged cleanup is limited to generated test institutions; application users cannot delete audit.
+  const evidence = checked(
+    await admin.from("evidence_files").select("object_path,substation_id").eq("institution_id", id),
+    "Inventar dovezi fixture",
+  );
+  for (const item of evidence) {
+    if (
+      !Object.values(fixture.stations).includes(item.substation_id) ||
+      !item.object_path.startsWith(`${item.substation_id}/`)
+    )
+      throw new Error("Calea dovezii nu aparține fixturei.");
+  }
+  for (let i = 0; i < evidence.length; i += 100)
+    checked(
+      await admin.storage
+        .from("shift-evidence")
+        .remove(evidence.slice(i, i + 100).map((e) => e.object_path)),
+      "Curățare fișiere fictive M07",
+    );
   for (const table of [
+    "evidence_files",
+    "closeout_versions",
     "issue_sheet_acceptances",
     "issue_sheet_lines",
     "issue_sheet_versions",

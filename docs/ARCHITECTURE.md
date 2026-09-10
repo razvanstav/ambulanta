@@ -216,6 +216,12 @@ apar fișele/turele, fără a fi folosit ca verificare asupra unui proprietar al
 
 ## 8. Documente, fotografii și semnătură pe ecran
 
+Implementarea M07 și contractul concret pentru M08 sunt în [EVIDENCE](EVIDENCE.md).
+`closeout_versions` păstrează ciornele nemodificabile; `evidence_files` leagă
+fișierele de versiune/hash, semnatar și colector. Validarea efectivă rulează pe
+server, cu atestare rezervată `service_role`, iar citirile folosesc sesiunea/RLS.
+Publicarea anticipată M06 nu configurează automat serviciul M07 pe găzduire.
+
 Ecranul de final de tură oferă: „Atașează document”, „Fă/alege o fotografie”, „Semnează pe ecran”, previzualizare și eliminarea dovezilor din ciornă. Semnătura se poate desena cu degetul, stylusul sau mouse-ul, cu acțiuni de ștergere și refacere înainte de trimitere.
 
 Se implementează o semnătură desenată și asociată unei confirmări, fără a promite o certificare juridică sau criptografică a identității. Semnatarul vede cantitățile și textul confirmării înainte de semnare. Dacă semnează pe dispozitivul gestionarului, se păstrează distinct numele semnatarului și contul persoanei care a colectat semnătura.

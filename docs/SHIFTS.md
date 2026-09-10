@@ -53,7 +53,6 @@ fișele vechi, loturile indisponibile, stocul concurent și cursele cu
 
 ## Limita actuală
 
-Turele pornite rămân deschise până la implementarea M07–M08. Nu există încă
-semnături, dovezi, consum/retur confirmat sau raport final. Nu marca demonstrația
-M06 drept circuit operațional complet. P01 integral rămâne după M09; beneficiarul
-a cerut separat publicarea anticipată a acestui increment.
+M07 adaugă ciorna declarației, dovezi private și semnătură, conform
+[EVIDENCE](EVIDENCE.md). Turele pornite rămân deschise până la M08: nu există
+consum/retur confirmat sau raport final. P01 integral rămâne după M09.

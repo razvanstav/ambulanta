@@ -81,6 +81,24 @@ Implementare M00, 10 septembrie 2026: D07–D08 sunt adoptate tehnic pentru fund
   locală. Găzduirea folosește URL-ul și cheia publicabilă; conturile existente
   funcționează, iar crearea conturilor noi se face din mediul local.
 
+## Decizii M07 — 10 septembrie 2026
+
+- **D55 — Adoptat M07:** numai titularul completează declarația proprie; magazia
+  poate colecta documente și semnătură pe versiunea salvată. Identitățile
+  semnatarului declarat și colectorului autentificat sunt distincte.
+- **D56 — Adoptat M07:** ciorne JSONB nemodificabile, cu snapshot pe alocare și
+  SHA-256 calculat în DB. Orice versiune nouă cere dovezi noi. Suplimentarea
+  acceptată face neactuală ciorna care nu include noile alocări.
+- **D57 — Adoptat M07:** limitele propuse sunt 10 MB/fișier, 5 documente și o
+  semnătură per versiune; PDF/JPEG/PNG. Politica implicită `at_least_one` se
+  configurează de administrator/șeful substației. Eliminarea este logică.
+- **D58 — Adoptat M07, completare D54:** atestarea validării fișierelor este
+  rezervată serverului, cu cheia secretă locală existentă. Citirile aplică RLS;
+  browserul nu are scrieri directe în Storage. D54 rămâne regula transferului
+  cheilor: nu trimitem automat cheia către Netlify. Publicarea M07/P01 necesită
+  configurarea unui serviciu de validare de încredere pe găzduire și verificarea
+  limitei HTTP pentru fișierele de 10 MB. Nu s-a făcut publicare în M07.
+
 ## Cum se modifică o decizie
 
 Clarificare de flux, 10 septembrie 2026: D30–D33 sunt cerințele noi ale beneficiarului, inclusiv confirmarea explicită a predării la acceptarea fișei. D34–D36 explică integrarea lor în modelul existent; D35 rămâne propunerea pentru rezervarea mașinii, nu o cerință confirmată. Detaliile sunt în `WORKFLOWS.md`. Se actualizează M01 (două perspective), M02 (contul șefului de tură, acces propriu și logistică centrală), M03 (flotă și eligibilitate), M06 (cerere, fișă și acceptare), M07–M09 (dovezi proprii, închidere și vizibilitate) și scenariul P01. Codul rămâne la fundația M00; această clarificare nu implementează modulele respective.

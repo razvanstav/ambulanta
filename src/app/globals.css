@@ -2237,3 +2237,61 @@ td strong {
     scroll-behavior: auto !important;
   }
 }
+/* M07: declaration and touch signature surfaces share the existing form language. */
+.closeout-workspace {
+  margin-block: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border, #e1e5ed);
+}
+.closeout-workspace summary,
+.evidence-policy summary {
+  cursor: pointer;
+  padding-block: 0.75rem;
+  font-weight: 600;
+}
+.closeout-line,
+.evidence-record {
+  padding: 1rem;
+  margin-block: 0.75rem;
+  border: 1px solid #e1e5ed;
+  border-radius: 0.75rem;
+}
+.evidence-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1.5rem;
+}
+.signature-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 20 / 7;
+  border: 2px dashed #9aabc4;
+  border-radius: 0.75rem;
+  background: white;
+  touch-action: none;
+}
+.evidence-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  margin-block: 0.75rem;
+  background: white;
+}
+.pdf-preview canvas {
+  width: 100%;
+  height: auto;
+  background: white;
+  border: 1px solid #e1e5ed;
+}
+.evidence-record a,
+.evidence-record strong {
+  overflow-wrap: anywhere;
+}
+.evidence-policy {
+  margin-block: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+}

@@ -9,6 +9,7 @@ export default defineConfig([
     ".next/**",
     "out/**",
     "dist/**",
+    "public/pdfjs/**",
     "next-env.d.ts",
     "coverage/**",
     "playwright-report/**",

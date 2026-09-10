@@ -40,11 +40,19 @@ un push sau deploy nu le rerulează.
 
 ## Acces demonstrativ
 
+**Completare M07:** configurația de mai sus este cea a incrementului M06.
+M07 validează fișierele pe un server de încredere folosind cheia secretă locală.
+Încărcările M07 nu vor funcționa într-un deploy care are numai cele două variabile
+publice. D54 rămâne respectată: cheia secretă nu a fost transmisă către Netlify.
+Înaintea publicării M07/P01 trebuie configurat serviciul de validare exclusiv pe
+server și verificată limita HTTP pentru fișiere de 10 MB; vezi [EVIDENCE](EVIDENCE.md).
+Această conversație M07 nu a inițiat un deploy.
+
 Administratorul este în `private/initial-admin.json`, titularii în
 `private/m03-demo-accounts.json`. Fișierele sunt numai locale. Nu transmite
 parole în mesaje publice, repository sau URL-uri. `/demo` este previzualizarea
 vizuală M01, iar aplicația persistentă începe la `/autentificare`.
 
-La M06, turele acceptate rămân deschise: M07–M08 vor adăuga dovezile,
-consumul/returul și închiderea. Publicarea acestui increment nu declară P01
+La M07, turele acceptate rămân deschise, cu ciorne și dovezi. M08 va adăuga
+consumul/returul confirmat și închiderea. Publicarea acestui increment nu declară P01
 integral sau utilizare operațională.

@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
+import { verifyEvidenceFlow } from "./evidence-flow";
 type Fixture = {
   accounts: Record<string, { email: string; password: string }>;
   stations: Record<string, string>;
@@ -15,14 +16,14 @@ async function login(page: Page, account: { email: string; password: string }) {
   await page.getByRole("button", { name: "Autentificare", exact: true }).click();
   await expect(page).not.toHaveURL(/autentificare/);
 }
-test.describe("M04–M06 circuit real", () => {
+test.describe("M04–M07 circuit real", () => {
   test.use({ actionTimeout: 10000 });
   test.skip(!fixture?.m06, "Rulează test:integration pentru fixturele M06.");
   test("catalog, recepție, neconcordanță, acceptare și suplimentare", async ({
     page,
     browser,
   }, info) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     const f = fixture!;
     const base = `/substatia/${f.stations.A}`;
     const suffix = randomBytes(4).toString("hex");
@@ -85,7 +86,12 @@ test.describe("M04–M06 circuit real", () => {
     const captured = await receiptRequest;
     const stockRow = page.getByRole("row").filter({ hasText: name });
     await expect(stockRow).toContainText("100 bucată");
-    const context = await browser.newContext({ baseURL: new URL(page.url()).origin });
+    const context = await browser.newContext({
+      baseURL: new URL(page.url()).origin,
+      viewport: page.viewportSize(),
+      isMobile: info.project.name.startsWith("mobile"),
+      hasTouch: info.project.name.startsWith("mobile"),
+    });
     const leader = await context.newPage();
     const account = info.project.name.startsWith("desktop") ? "m06uiDesktop" : "m06uiMobile";
     await login(leader, f.accounts[account]);
@@ -172,6 +178,17 @@ test.describe("M04–M06 circuit real", () => {
       true,
     );
     await leader.screenshot({ path: info.outputPath("tura.png"), fullPage: true });
+    const privateLink = await verifyEvidenceFlow(
+      leader,
+      page,
+      `AMB-${account.toUpperCase()} · ${account}`,
+      info,
+    );
+    const outsider = await browser.newContext({ baseURL: new URL(page.url()).origin });
+    const outsiderPage = await outsider.newPage();
+    await login(outsiderPage, f.accounts.m06b);
+    expect((await outsider.request.get(privateLink)).status()).toBe(404);
+    await outsider.close();
     await leader.goto(`${base}/catalog`);
     await expect(leader.getByRole("heading", { name: "Pagina nu a fost găsită" })).toBeVisible();
     await context.close();

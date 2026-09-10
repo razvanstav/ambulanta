@@ -3,6 +3,7 @@ node_modules/
 .next/
 out/
 dist/
+public/pdfjs/
 *.tsbuildinfo
 next-env.d.ts
 
