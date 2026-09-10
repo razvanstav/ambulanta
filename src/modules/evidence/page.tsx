@@ -97,7 +97,11 @@ export async function EvidenceWorkspace({
               <span className="closeout-summary-values">
                 <strong>Consumat {formatQuantity(line.consumed)}</strong>
                 <small>
-                  Rămas în mașină {formatQuantity(line.remaining ?? 0)}{" "}
+                  Rămas în mașină{" "}
+                  {formatQuantity(
+                    line.remaining ??
+                      Number(line.issued) - Number(line.consumed) - Number(line.returned ?? 0),
+                  )}{" "}
                   {units[line.base_unit as Unit]}
                 </small>
               </span>

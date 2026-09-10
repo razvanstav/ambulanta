@@ -48,9 +48,11 @@ mișcare de stoc. Consumul este înregistrat la închiderea confirmată.
 
 ## Activare pe Supabase și Netlify
 
-Migrarea 008 adaugă închiderea simplă într-o singură tranzacție și face dovezile
-opționale. Se aplică după migrarea 007 și înaintea versiunii de interfață care
-apelează noua funcție.
+Migrarea `202609100008_simple_closeout.sql` adaugă închiderea simplă într-o singură
+tranzacție și face dovezile opționale. A fost aplicată și înregistrată în Supabase
+pe 10 septembrie 2026. Funcția este acordată numai rolului `authenticated`, cele
+două substații au politica opțională, iar verificarea jurnalului a raportat 0
+diferențe.
 
 Migrarea nouă este `202609100007_vehicle_stock_closeout.sql`. Cele șase migrări
 anterioare nu se modifică și nu se rerulează. Migrarea 007 a fost aplicată și
@@ -58,23 +60,28 @@ anterioare nu se modifică și nu se rerulează. Migrarea 007 a fost aplicată �
 fără diferențe de jurnal. Netlify a publicat apoi commitul `50eae63`, deploy
 `6aa31299110cc36e9cb9fbd9`. Nici migrarea 007 nu se rerulează pe acest proiect.
 
-Procedura pentru un alt mediu și verificările extinse rămase:
+Interfața simplificată a fost publicată ulterior din commitul `b44e551`, deploy
+`6aa31946b0816dccbe519a4f`, după aplicarea migrării 008. Ambele migrări sunt deja
+active în proiectul demo și nu se rerulează.
 
-1. Din mediul cu accesul Supabase, aplică migrarea nouă pe proiectul demo
-   `roxvzbhsszesglcaadcl`, într-o fereastră fără operații de stoc concurente.
+Procedura pentru un alt mediu:
+
+1. Aplică migrările 007 și 008 în ordine, într-o fereastră fără operații de stoc
+   concurente.
 2. Verifică regresiile `npm run test:integration` cu fixture noi și apoi E2E.
    Curățarea fixturelor a fost adaptată noilor tabele și referințe finale.
-3. Publică versiunea aplicației numai după reușita migrării și verifică fluxul
-   pe Netlify, inclusiv încărcarea reală a dovezilor. Codul nou necesită migrarea.
+3. Publică versiunea aplicației numai după reușita migrărilor și verifică fluxul
+   pe Netlify. Codul nou necesită ambele migrări.
 
 ## Verificări locale
 
 `npm run check` verifică formatarea, lint, tipurile, 16 teste unitare și buildul.
 
-`tests/postgres/vehicle-stock.mjs` rulează 13 scenarii pe PostgreSQL real, într-o
+`tests/postgres/vehicle-stock.mjs` rulează 14 scenarii pe PostgreSQL real, într-o
 bază nouă izolată. Include migrarea cu stoc și semnătură existente, 10/7/3,
 preluarea următoare, retur, concurență, drepturi, ora de închidere, invalidarea
-versiunilor, rollback și reconcilierea integrală cu jurnalul.
+versiunilor, închiderea simplă dintr-un pas, rollback și reconcilierea integrală
+cu jurnalul.
 
 Necesită un server PostgreSQL local cu drept de creare a bazelor și modulul
 Node `pg`. Configurează `TEST_DATABASE_URL` cu adresa locală. `TEST_PG_MODULE`

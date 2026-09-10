@@ -4,7 +4,7 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
-**În lucru pentru publicare:** interfața a fost trecută pe o paletă deschisă,
+**Publicat: interfață lizibilă și final de tură simplificat.** Interfața a fost trecută pe o paletă deschisă,
 cu text închis și panouri albe. Finalul turei are acum numai cantitatea consumată,
 restul calculat în mașină și un singur buton de închidere. Migrarea 008 face
 operația atomică și elimină dovada/returul din fluxul curent, păstrând compatibilitatea
@@ -15,7 +15,11 @@ pentru retururi vechi aflate deja în verificare.
   lasă 9 în mașină și păstrează reconcilierea integrală cu jurnalul.
 - Paleta a fost inspectată în Chromium pe ecranul de stoc; textele secundare și
   tabelele au fost ajustate după inspecția vizuală.
-- Sunt necesare aplicarea migrării 008 înaintea deployului și verificarea online.
+- Migrarea 008 a fost aplicată și înregistrată în Supabase. Funcția este disponibilă
+  numai utilizatorilor autentificați, toate cele 2 substații au dovezile opționale,
+  iar reconcilierea jurnalului are 0 diferențe.
+- Netlify a publicat commitul `b44e551`, deploy `6aa31946b0816dccbe519a4f`.
+  Pagina publică de ture a fost verificată autentificat după publicare.
 
 Actualizare acces: la cererea explicită a beneficiarului a fost creat un
 administrator suplimentar pentru instituția demo, cu profil activ și rol global
