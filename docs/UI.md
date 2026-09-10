@@ -1,4 +1,4 @@
-# Interfața comună — M01
+# Interfața comună — M01 și integrarea M02
 
 Referința vizuală furnizată este inspirație, nu specificație funcțională. Paleta
 folosește bleumarin, suprafețe albastre închise, alb pentru text, albastru pentru
@@ -19,6 +19,11 @@ UI/Arial. Fonturile sunt locale; aspectul lor poate diferi între sisteme.
 
 ## Pagini
 
+În M02, toate rutele M01 din tabelul următor au prefixul `/demo` (pagina
+inițială este `/demo`, stocurile `/demo/stocuri` etc.). Sunt exclusiv exemple.
+Rutele autentificate sunt documentate în [ACCESS](ACCESS.md): `/autentificare`,
+`/administrare`, `/cont` și `/substatia/[id]`, cu verificări pe server și RLS.
+
 | Rută                                                           | Conținut M01                                                                                      |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `/`                                                            | Dashboard Logistică / Magazie, cereri și alerte demonstrative                                     |
@@ -37,8 +42,8 @@ Numărul produselor înseamnă repere distincte, nu suma cantităților.
 
 ## Integrare ulterioară
 
-M02 trebuie să înlocuiască selectorul/profilul demonstrativ cu identitate și
-substații autorizate pe server. Schimbarea meniului nu este control de acces.
+M02 folosește un shell autentificat cu identitate și substații autorizate pe server,
+păstrând exemplele M01 separat la `/demo`. Schimbarea meniului nu este control de acces.
 Datele din `demo/data.ts` nu trebuie utilizate ca fallback la eșecul autentificării.
 Legătura cont–angajat aparține M03; M06 implementează cererea și acceptarea atomică
 prin motorul de stoc. Fișa vizuală rămâne fără câmpuri editabile pentru titular.
@@ -55,3 +60,8 @@ salvărilor simulate, nu drepturi sau tranzacții. Tabelele late se derulează �
 containerul propriu, accesibil din tastatură. Meniul mobil folosește un dialog
 modal nativ, cu focus, Escape și buton de închidere. Mișcarea este redusă când
 utilizatorul preferă acest lucru.
+
+M02 adaugă formulare cu stări de salvare/eroare, selector autorizat, conturi și
+roluri, verificări de URL și Server Actions. Sunt 10 cazuri E2E suplimentare pe
+cele două dimensiuni (26 în total). Testele așteaptă pagina hidratată înainte de
+interacțiuni; meniul mobil este dezactivat până când se poate deschide efectiv.

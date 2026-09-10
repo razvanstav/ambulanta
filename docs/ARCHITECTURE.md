@@ -54,7 +54,7 @@ Cele două perspective folosesc același proiect, cu navigație și operații pe
 
 Versiunile exacte și managerul de pachete se fixează în M00 și se păstrează în lockfile. Nu se fac actualizări generale de dependențe în timpul altui modul.
 
-Fundația M00 adoptă Next.js App Router 16.3.4, React 19.3.0, TypeScript 5.9.3, Node.js 24.19.0 și npm 10.2.0; toate versiunile directe sunt exacte în `package.json`, cu `package-lock.json`. Tailwind CSS este configurat; shadcn/ui și componentele comune se introduc în M01. Directorul `src/modules` documentează limitele fără implementări fictive; clienții Supabase, migrările și structura de audit se introduc în M02. Repository-ul comun este `razvanstav/ambulanta`, cu progresul validat pe `main`.
+Fundația M00 adoptă Next.js App Router 16.3.4, React 19.3.0, TypeScript 5.9.3, Node.js 24.19.0 și npm 10.2.0; toate versiunile directe sunt exacte în `package.json`, cu `package-lock.json`. Tailwind CSS este configurat; M01 folosește componente React comune și controale native (D38). M02 introduce Supabase Auth/PostgreSQL, clienți SSR și prima migrare cu RLS și audit. Repository-ul comun este `razvanstav/ambulanta`, cu progresul validat pe `main`. Configurarea reală, contractele și testele de acces sunt în [ACCESS](ACCESS.md).
 
 Ținta de publicare pentru demo este Netlify Free + Supabase Free. Netlify construiește aplicația din Git și o servește pe o adresă gratuită `*.netlify.app`; domeniul propriu este opțional. Supabase furnizează datele, conturile și spațiul privat pentru fișiere. Se verifică limitele planurilor la configurare și înaintea prezentării; nu se presupune utilizare nelimitată și nu se activează abonamente plătite pentru demo. [Plan Netlify](https://www.netlify.com/pricing/), [Plan Supabase](https://supabase.com/pricing).
 
@@ -166,8 +166,8 @@ Schema de mai jos descrie entitățile necesare, fără a crea de pe acum toate 
 | --- | --- |
 | `substations` | Nume, cod, activă/inactivă, fus orar, politică dovezi |
 | `profiles` | Contul autentificat, nume afișat, legătură opțională la angajat |
-| `user_global_roles` | Roluri instituționale acordate explicit: administrator și logistică centrală, cu permisiuni distincte |
-| `user_station_roles` | Utilizator, substație, rol; administratorul instituției este acordat separat |
+| `institutions` | Instituția și starea activă; limita de izolare pentru toate substațiile și profilurile M02 |
+| `role_assignments` | Implementat M02: rol, utilizator, instituție, substație opțională; administrator/logistică sunt globale, celelalte roluri obligatoriu locale, impus prin constrângeri |
 | `employees` | Identitate internă, nume, stare activă; fără date despre pacienți |
 | `employee_assignments` | Angajat, substație, activ, `is_titular`; unic pe apartenență |
 | `vehicles` | Substație, număr de înmatriculare/indicativ, stare activă și aptă de utilizare; ocuparea derivă din cereri/ture |
@@ -193,6 +193,14 @@ Schema de mai jos descrie entitățile necesare, fără a crea de pe acum toate 
 Toate înregistrările operaționale sunt legate de substație. Cheile străine compuse sau constrângeri echivalente împiedică asocierea unei ture din Roșiori cu o mașină, un lot sau o dovadă din altă substație. Catalogul produselor poate fi comun; disponibilul și pragurile sunt locale.
 
 După ce un produs are mișcări, unitatea de bază nu se schimbă direct. Angajații, mașinile și produsele folosite în istoric se dezactivează. Raportul păstrează copii ale denumirilor, unităților, titularului și mașinii de la momentul închiderii.
+
+Precizare de implementare M02: `substations` conține momentan denumire, instituție și stare;
+codul, politica dovezilor și legătura profil–angajat se adaugă în modulele lor.
+`audit_events` păstrează autor, motiv și imaginile JSON înainte/după pentru profiluri,
+substații și drepturi. SQL-ul privilegiază operațiile explicite, nu conturile aplicației:
+utilizatorii autentificați au numai SELECT cu RLS; toate modificările M02 folosesc RPC.
+Contractul `can_access_owned_record` trebuie legat de proprietarul din rândul real când
+apar fișele/turele, fără a fi folosit ca verificare asupra unui proprietar ales de client.
 
 ## 8. Documente, fotografii și semnătură pe ecran
 

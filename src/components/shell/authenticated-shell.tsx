@@ -1,35 +1,58 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRef, type ReactNode } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Badge, Button } from "@/components/ui/primitives";
-import { DemoProvider, useDemo } from "@/modules/demo/context";
-import { demoSubstations, type DemoSubstationId } from "@/modules/demo/data";
-import { logisticsNavigation, shiftNavigation } from "./navigation";
+import {
+  canUseMyShift,
+  canViewLogistics,
+  isAdmin,
+  roleLabels,
+  stationRoles,
+  type Identity,
+} from "@/modules/identity/policy";
+import { signOut } from "@/modules/identity/actions";
+import type { NavigationItem } from "./navigation";
 import { useHydrated } from "./use-hydrated";
 
-function ShellContent({ children }: { children: ReactNode }) {
-  const hydrated = useHydrated();
+export function AuthenticatedShell({
+  identity,
+  stationId,
+  children,
+}: {
+  identity: Identity;
+  stationId?: string;
+  children: ReactNode;
+}) {
   const pathname = usePathname();
-  const isShift = pathname.startsWith("/demo/tura-mea");
-  const navigation = isShift ? shiftNavigation : logisticsNavigation;
-  const currentPage =
-    navigation.find((item) => item.href === pathname)?.label ?? "Gestiune substații";
-  const { substation, setSubstationId } = useDemo();
+  const hydrated = useHydrated();
+  const router = useRouter();
   const menu = useRef<HTMLDialogElement>(null);
-  const menuTrigger = useRef<HTMLButtonElement>(null);
-
+  const trigger = useRef<HTMLButtonElement>(null);
+  const stations = identity.substations.filter((item) => item.active);
+  const station = stations.find((item) => item.id === stationId);
+  const base = station ? `/substatia/${station.id}` : "";
+  const navigation: NavigationItem[] = station
+    ? [{ href: base, label: "Spațiul substației", icon: "grid" }]
+    : [];
+  if (station && canViewLogistics(identity, station.id))
+    navigation.push({ href: `${base}/logistica`, label: "Logistică / Magazie", icon: "box" });
+  if (station && canUseMyShift(identity, station.id))
+    navigation.push({ href: `${base}/tura-mea`, label: "Tura mea", icon: "pulse" });
+  if (isAdmin(identity))
+    navigation.push({ href: "/administrare", label: "Administrare", icon: "settings" });
+  navigation.push({ href: "/cont", label: "Contul meu", icon: "users" });
+  const current = navigation.find((item) => item.href === pathname)?.label ?? "Gestiune substații";
   function closeMenu() {
     menu.current?.close();
   }
-
   function sidebar() {
     return (
       <>
         <Link
-          href="/demo"
+          href="/"
           className="brand"
           onClick={closeMenu}
           aria-label="Gestiune substații — pagina inițială"
@@ -44,30 +67,15 @@ function ShellContent({ children }: { children: ReactNode }) {
             <small>Gestiune substații</small>
           </span>
         </Link>
-        <div className="perspective-switch">
-          <span className="nav-caption">PERSPECTIVĂ DEMO</span>
-          <Link
-            href={isShift ? "/demo" : "/demo/tura-mea"}
-            onClick={closeMenu}
-            className="perspective-link"
-          >
-            <span>
-              <Icon name={isShift ? "users" : "box"} />
-              {isShift ? "Tura mea" : "Logistică / Magazie"}
-            </span>
-            <Icon name="settings" />
-          </Link>
-          <p>Schimbă în {isShift ? "Logistică / Magazie" : "Tura mea"}</p>
-        </div>
-        <nav aria-label={isShift ? "Navigație Tura mea" : "Navigație Logistică"}>
-          <span className="nav-caption">{isShift ? "SPAȚIUL MEU" : "GESTIUNE"}</span>
-          {navigation.map((item, index) => (
+        <nav className="identity-navigation" aria-label="Navigație cont">
+          <span className="nav-caption">SPAȚIUL ECHIPEI</span>
+          {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={closeMenu}
+              className="nav-link"
               aria-current={pathname === item.href ? "page" : undefined}
-              className={`nav-link ${!isShift && index === 6 ? "nav-separated" : ""}`}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
@@ -85,17 +93,17 @@ function ShellContent({ children }: { children: ReactNode }) {
             <br />
             <strong>Claritate în fiecare tură.</strong>
           </p>
-          <div className="sidebar-version">
-            <span className="status-dot" />
-            Mediu de prezentare<span>v0.1</span>
-          </div>
+          <form action={signOut}>
+            <Button type="submit" variant="secondary">
+              Deconectare
+            </Button>
+          </form>
         </div>
       </>
     );
   }
-
   return (
-    <div className="app-shell" data-ready={hydrated}>
+    <div className="app-shell authenticated-shell" data-ready={hydrated}>
       <a className="skip-link" href="#continut">
         Sari la conținut
       </a>
@@ -104,15 +112,15 @@ function ShellContent({ children }: { children: ReactNode }) {
         ref={menu}
         className="mobile-menu"
         aria-label="Meniu principal"
-        onClose={() => menuTrigger.current?.focus()}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) closeMenu();
+        onClose={() => trigger.current?.focus()}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) closeMenu();
         }}
       >
         <div className="mobile-menu-content">
           <Button
-            variant="ghost"
             className="menu-close"
+            variant="ghost"
             aria-label="Închide meniul"
             onClick={closeMenu}
           >
@@ -124,20 +132,18 @@ function ShellContent({ children }: { children: ReactNode }) {
       <div className="app-body">
         <header className="topbar">
           <div className="breadcrumb">
-            <button
-              ref={menuTrigger}
-              type="button"
-              className="button button-ghost menu-trigger"
+            <Button
+              ref={trigger}
+              className="menu-trigger"
+              variant="ghost"
               aria-label="Deschide meniul"
               aria-haspopup="dialog"
               disabled={!hydrated}
               onClick={() => menu.current?.showModal()}
             >
               <Icon name="menu" />
-            </button>
-            <span className="breadcrumb-root">{isShift ? "Tura mea" : "Logistică"}</span>
-            <Icon name="chevron" />
-            <span>{currentPage}</span>
+            </Button>
+            <span>{current}</span>
           </div>
           <div className="header-controls">
             <label className="substation-control">
@@ -145,11 +151,17 @@ function ShellContent({ children }: { children: ReactNode }) {
               <span>
                 <small>Substația</small>
                 <select
-                  aria-label="Substația demonstrativă"
-                  value={substation.id}
-                  onChange={(event) => setSubstationId(event.target.value as DemoSubstationId)}
+                  aria-label="Substația activă"
+                  value={station?.id ?? ""}
+                  onChange={(event) => {
+                    if (stations.some((item) => item.id === event.target.value))
+                      router.push(`/substatia/${event.target.value}`);
+                  }}
                 >
-                  {demoSubstations.map((item) => (
+                  <option value="" disabled>
+                    {stations.length ? "Alege substația" : "Nicio substație atribuită"}
+                  </option>
+                  {stations.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
                     </option>
@@ -157,27 +169,35 @@ function ShellContent({ children }: { children: ReactNode }) {
                 </select>
               </span>
             </label>
-            <span className="header-divider" />
             <div className="demo-profile">
-              <span className="avatar">{isShift ? "MD" : "LG"}</span>
+              <span className="avatar">
+                {identity.displayName
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((part) => part[0])
+                  .join("")}
+              </span>
               <span>
-                <strong>{isShift ? "Mihai Dobre" : "Logistică / Magazie"}</strong>
-                <small>Profil demonstrativ</small>
+                <strong>{identity.displayName}</strong>
+                <small>
+                  {station
+                    ? stationRoles(identity, station.id)
+                        .map((role) => roleLabels[role])
+                        .join(" · ")
+                    : "Cont individual"}
+                </small>
               </span>
             </div>
           </div>
         </header>
         <div className="demo-banner">
-          <Badge tone="amber">
+          <Badge tone="green">
             <span className="status-dot" />
-            Date demonstrative
+            Sesiune autentificată
           </Badge>
-          <p>Previzualizare interfață. Operațiile nu se salvează.</p>
-          <span className="demo-banner-end">
-            {isShift ? "Perspectiva șefului de tură" : "Perspectiva logisticii"}
-          </span>
+          <p>Mediu de dezvoltare cu date fictive.</p>
         </div>
-        <main id="continut" tabIndex={-1} className="main-content" key={substation.id}>
+        <main id="continut" tabIndex={-1} className="main-content">
           {children}
         </main>
         <footer className="app-footer">
@@ -191,13 +211,5 @@ function ShellContent({ children }: { children: ReactNode }) {
         </footer>
       </div>
     </div>
-  );
-}
-
-export function AppShell({ children }: { children: ReactNode }) {
-  return (
-    <DemoProvider>
-      <ShellContent>{children}</ShellContent>
-    </DemoProvider>
   );
 }

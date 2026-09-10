@@ -7,6 +7,7 @@ async function expectFits(page: Page) {
 }
 
 async function openNavigation(page: Page) {
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ready", "true");
   const trigger = page.getByRole("button", { name: "Deschide meniul" });
   if (await trigger.isVisible()) await trigger.click();
 }
@@ -16,7 +17,7 @@ test("dashboard în română, cu exemple explicite și indicatori separați", as
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const response = await page.goto("/");
+  const response = await page.goto("/demo");
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle("Gestiune substații");
   await expect(page.locator("html")).toHaveAttribute("lang", "ro");
@@ -41,7 +42,7 @@ test("toate destinațiile meniului sunt navigabile și acțiunile viitoare sunt 
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/demo");
   for (const [label, path] of [
     ["Stocuri", "/stocuri"],
     ["Recepții", "/receptii"],
@@ -58,7 +59,7 @@ test("toate destinațiile meniului sunt navigabile și acțiunile viitoare sunt 
       .getByRole("navigation", { name: "Navigație Logistică" })
       .getByRole("link", { name: label, exact: true });
     await link.click();
-    await expect(page).toHaveURL(new RegExp(path === "/" ? "/$" : path + "$"));
+    await expect(page).toHaveURL(new RegExp(path === "/" ? "/demo$" : "/demo" + path + "$"));
     await expect(page.getByRole("heading", { level: 1, name: label, exact: true })).toBeVisible();
     await expectFits(page);
     if (!["/", "/stocuri"].includes(path)) {
@@ -71,7 +72,7 @@ test("toate destinațiile meniului sunt navigabile și acțiunile viitoare sunt 
 test("căutarea fără diacritice, filtrele combinate și revenirea din lipsa rezultatelor", async ({
   page,
 }, testInfo) => {
-  await page.goto("/stocuri");
+  await page.goto("/demo/stocuri");
   const search = page.getByRole("searchbox", { name: "Caută produs sau lot" });
   await search.fill("manusi");
   await expect(page.getByRole("status")).toHaveText("1 din 6 produse");
@@ -101,7 +102,7 @@ test("Tura mea previzualizează mașina și fișa fără cereri de salvare", asy
     if (!["GET", "HEAD"].includes(request.method())) writes.push(request.url());
   });
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/demo");
   await openNavigation(page);
   await page.getByRole("link", { name: "Logistică / Magazie", exact: true }).click();
   await expect(
@@ -142,7 +143,7 @@ test("Tura mea previzualizează mașina și fișa fără cereri de salvare", asy
 test("schimbarea substației păstrează contextul și golește selecțiile demonstrative", async ({
   page,
 }) => {
-  await page.goto("/tura-mea");
+  await page.goto("/demo/tura-mea");
   await page.getByRole("radio", { name: /DEMO-05/ }).check();
   await page.getByLabel("Substația demonstrativă").selectOption("alexandria");
   await expect(page.getByRole("heading", { name: "Nicio mașină disponibilă" })).toBeVisible();
@@ -164,7 +165,7 @@ test("schimbarea substației păstrează contextul și golește selecțiile demo
 });
 
 test("stări standard fără date, încărcare și eroare cu revenire", async ({ page }) => {
-  await page.goto("/setari");
+  await page.goto("/demo/setari");
   await page.getByRole("button", { name: "Încărcare", exact: true }).click();
   await expect(page.getByRole("status")).toHaveAttribute("aria-busy", "true");
   await page.getByRole("button", { name: "Eroare", exact: true }).click();
@@ -180,7 +181,8 @@ test("navigație cu tastatura și închidere accesibilă a meniului mobil", asyn
   page,
   isMobile,
 }) => {
-  await page.goto("/");
+  await page.goto("/demo");
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ready", "true");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Sari la conținut" })).toBeFocused();
   await page.keyboard.press("Enter");
@@ -202,11 +204,11 @@ test("navigație cu tastatura și închidere accesibilă a meniului mobil", asyn
 });
 
 test("adresă necunoscută și parametru de filtru nevalid", async ({ page }) => {
-  await page.goto("/pagina-inexistenta");
+  await page.goto("/demo/pagina-inexistenta");
   await expect(page.getByRole("heading", { name: "Pagina nu a fost găsită" })).toBeVisible();
   await page.getByRole("link", { name: "La privirea de ansamblu" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Privire de ansamblu" })).toBeVisible();
-  await page.goto("/stocuri?stare=nevalid");
+  await page.goto("/demo/stocuri?stare=nevalid");
   await expect(page.getByLabel("Stare stoc")).toHaveValue("toate");
   await expect(page.getByRole("status")).toHaveText("6 din 6 produse");
 });

@@ -1,5 +1,259 @@
 @import "tailwindcss";
 
+/* Identity and administrative forms share the existing visual tokens. */
+.login-page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 64px;
+  padding: 72px max(6vw, 24px) 88px;
+  position: relative;
+  background: radial-gradient(ellipse at 10% 20%, #12375966, transparent 60%);
+}
+.login-intro {
+  max-width: 600px;
+}
+.login-intro .brand {
+  padding: 0;
+  margin-bottom: 70px;
+}
+.login-intro h1 {
+  margin: 22px 0;
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+.login-intro h1 span {
+  color: var(--blue);
+}
+.login-intro > p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 470px;
+}
+.login-detail {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-top: 50px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.login-detail svg {
+  width: 52px;
+  height: 52px;
+  color: var(--red);
+}
+.login-card {
+  width: 100%;
+  max-width: 470px;
+  padding: 36px !important;
+  justify-self: end;
+  border-top: 2px solid var(--red) !important;
+}
+.login-card h2 {
+  font-size: 30px;
+  margin: 12px 0 8px;
+}
+.login-card .text-link {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+}
+.login-footer {
+  position: absolute;
+  bottom: 24px;
+  left: max(6vw, 24px);
+  color: var(--subtle);
+  font-size: 12px;
+}
+.identity-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+.identity-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+.identity-form fieldset:disabled {
+  opacity: 0.6;
+}
+.identity-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.identity-form input:not([type="checkbox"]):not([type="hidden"]) {
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--foreground);
+}
+.identity-form .check-label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  line-height: 1.5;
+}
+.identity-form input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  accent-color: var(--blue);
+  flex-shrink: 0;
+}
+.identity-form .button {
+  justify-self: start;
+}
+.login-card .identity-form .button {
+  width: 100%;
+  justify-self: stretch;
+}
+.identity-note {
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.form-success {
+  color: var(--green);
+  line-height: 1.6;
+}
+.form-error {
+  color: var(--red);
+  line-height: 1.6;
+}
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.identity-grid > .panel + .panel {
+  margin-top: 0;
+}
+.authenticated-shell .panel > .identity-form {
+  padding: 0 22px 22px;
+  margin-top: 0;
+}
+.authenticated-shell .panel > .station-links {
+  padding: 0 22px 22px;
+}
+.authenticated-shell .admin-records {
+  padding: 0 22px 4px;
+}
+.authenticated-shell .access-list {
+  margin: 0 22px 24px;
+}
+.identity-grid + .panel,
+.admin-records {
+  margin-bottom: 22px;
+}
+.admin-records {
+  margin-bottom: 0;
+}
+.admin-records details {
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.admin-records details:first-child {
+  border-top: 0;
+}
+.admin-records summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.admin-records summary > span:first-child::before {
+  content: "+ ";
+  color: var(--blue);
+}
+.admin-records details[open] summary > span:first-child::before {
+  content: "− ";
+}
+.admin-records summary small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.admin-records .identity-form {
+  max-width: 640px;
+}
+.role-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.role-group h3 {
+  font-size: 15px;
+}
+.station-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.access-list {
+  padding-left: 20px;
+  color: var(--muted);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.identity-navigation {
+  margin-top: 40px;
+}
+.sidebar-bottom > form {
+  margin: 22px 0;
+}
+.header-controls .demo-profile small {
+  max-width: 210px;
+  white-space: normal;
+}
+@media (max-width: 1000px) {
+  .login-page {
+    gap: 32px;
+  }
+  .login-card {
+    padding: 26px !important;
+  }
+}
+@media (max-width: 720px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding-top: 30px;
+    gap: 30px;
+  }
+  .login-intro .brand {
+    margin-bottom: 30px;
+  }
+  .login-intro h1 {
+    font-size: 34px;
+  }
+  .login-detail {
+    display: none;
+  }
+  .login-card {
+    justify-self: stretch;
+    max-width: none;
+  }
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 :root {
   color-scheme: dark;
   --background: #061222;

@@ -4,113 +4,105 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
-**M01 — Interfața comună este finalizat și verificat.** Aplicația are navigație
-în română, antet, selector vizual de substație și cele două perspective:
-**Logistică / Magazie** și **Tura mea**. Referința furnizată este folosită pentru
-culori, tipografie și atmosferă vizuală; funcțiile provin din plan și WORKFLOWS.
+**M02 — Conturi, substații și roluri este implementat și verificat pe Supabase real.**
+Aplicația folosește proiectul Free existent **ambulanta**, ales de beneficiar,
+`roxvzbhsszesglcaadcl`. Autentificarea, selectorul de substație, crearea conturilor,
+rolurile, dezactivarea și auditul folosesc serviciul real.
 
-- Branch comun: `main`.
-- Repository: `https://github.com/razvanstav/ambulanta.git`, remote `origin`;
-  commiturile și push-ul sunt autorizate prin D26.
-- Reper verificat la începutul M01: **`e8b0afe`**, pe `main`, director de lucru
-  curat și `origin/main` la același reper local. Fundația M00 este în `697def3`,
-  planul inițial în `bfefbb4`. Commitul M01 se raportează în răspunsul de predare.
-- Țintă: MVP cu date fictive, Netlify Free + Supabase Free; M00–M09, apoi P01.
-- Următorul modul: **M02 — Conturi, substații și roluri**. Necesită serviciul
-  Supabase real, autentificare și verificarea accesului pe server/PostgreSQL.
+- Branch comun: `main`, remote `origin`, repository `razvanstav/ambulanta`.
+- Reper anterior verificat: **`80a5e08`**, M01 sincronizat, director de lucru curat
+  la începutul M02. Hashul nou se raportează după commit; nu se include în sine.
+- Commiturile și push-ul progresului sunt autorizate explicit (D26).
+- Cheia secretă a proiectului a fost autorizată explicit pentru utilizare locală.
+  Rămâne în `.env.local`, ignorat de Git, fără afișare sau includere în repository.
+- Țintă: MVP fictiv, Netlify Free + Supabase Free; M00–M09 și apoi P01.
+- Următorul modul: **M03 — Angajați, titulari și mașini**.
 
-Implementarea M01 este salvată în **`fcb85eb`**. După confirmarea explicită a
-beneficiarului din 10 septembrie 2026, push-ul către `origin/main` a reușit până
-la reperul **`fdb7d6a`**, inclusiv nota de predare. Blocajul de aprobare anterior
-este rezolvat. Codul și documentația M01 sunt sincronizate în repository-ul
-GitHub; aplicația rămâne locală, fără publicare Netlify.
+## Ce funcționează
 
-## Ce funcționează în M01
+- Autentificare e-mail/parolă, sesiune SSR verificată cu Supabase Auth, refresh
+  cookie-uri și deconectare. Înscrierea publică și autentificarea anonimă sunt
+  oprite în Supabase. Conturile se creează numai administrativ.
+- Administratorul creează/redenumește/dezactivează substații, creează conturi
+  individuale și atribuie explicit roluri globale sau locale, cu motiv.
+- Logistica centrală vede toate substațiile instituției fără administrarea
+  conturilor. Gestionarul și șeful de substație sunt locali; șeful de tură are
+  perspectiva proprie. Sunt permise roluri multiple atribuite explicit.
+- Ruta `/substatia/[id]` și operațiile verifică accesul pe server și în DB.
+  Schimbarea manuală a identificatorului nu permite acces la altă substație.
+  Conturile fără roluri și conturile dezactivate au comportamente distincte.
+- Migrarea `202609100001_identity.sql` este aplicată și înregistrată în istoricul
+  Supabase. Cinci tabele cu RLS: instituții, profiluri, substații, roluri și audit.
+  Scrierile directe sunt interzise și administratorilor aplicației.
+- Mutațiile de drepturi sunt atomice, inclusiv auditul. Blocarea instituției și
+  reverificarea după blocare protejează împotriva revocărilor concurente.
+  Administratorul nu își poate modifica propriul acces.
+- Există instituția fictivă „SAJ — Demonstrație”, Roșiori și Alexandria, plus
+  administratorul inițial cu parolă aleatorie. Datele de conectare sunt exclusiv
+  în `private/initial-admin.json`; procedura se găsește în [ACCESS](ACCESS.md).
+- Prezentarea M01 se păstrează integral la `/demo`, cu culorile și tipografia
+  inspirate din referință. Zona autentificată nu folosește exemple ca fallback.
 
-- Layout comun cu meniu lateral pe calculator și dialog de navigație pe telefon,
-  închidere prin Escape/buton, revenirea focusului și legătură „Sari la conținut”.
-- Dashboard demonstrativ cu repere de produse, ture active, cereri în așteptare
-  și produse sub prag. Cantitățile cu unități diferite nu sunt însumate.
-- Tabel de stoc cu căutare inclusiv fără diacritice, filtre combinate pe categorie
-  și stare, resetarea filtrelor și legături din alerte către filtrul potrivit.
-- „Tura mea”: alegerea mașinii prin formular, validarea selecției, previzualizare
-  explicită fără rezervare; stări separate pentru lipsa mașinilor, așteptarea fișei
-  și fișa de acceptat. Produsele, loturile și cantitățile fișei nu se pot edita.
-- Selectorul Roșiori/Alexandria schimbă numai exemplele afișate. Alexandria
-  ilustrează lipsa datelor. Schimbarea substației golește selecția mașinii și
-  starea formularului; contextul vizual se păstrează în navigarea din aplicație.
-- Destinațiile Recepții, Distribuire, Închidere, Rapoarte, Personal, Mașini și
-  Setări sunt navigabile. Distribuirea afișează exemple de cereri; operațiile
-  viitoare sunt dezactivate, cu explicații. Istoricul propriu are stare fără date.
-- Componente comune: butoane, legături de acțiune, carduri, badge-uri, titluri,
-  tabel derulabil, stări fără date/încărcare/eroare. Există fallback-uri Next.js
-  pentru încărcare, eroare și adresă necunoscută; Setări permite inspectarea stărilor.
-- Toate exemplele sunt marcate „Date demonstrative”. Nicio acțiune nu pretinde că
-  salvează sau că acordă roluri. Nu există backend temporar sau persistență locală.
+## Verificări M02
 
-Structura interfeței și punctele de integrare sunt în [UI.md](UI.md). Datele sunt
-izolate în `src/modules/demo`. Nu s-au schimbat dependențele sau lockfile-ul.
-Titlurile folosesc Bahnschrift cu fonturi de rezervă, corpul Segoe UI/Arial;
-nu există descărcări de fonturi necesare la build.
+| Verificare                 | Rezultat                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check`            | Prettier, ESLint fără avertismente, TypeScript, Vitest și build trecute                                                   |
+| `npm test`                 | 5 teste unitare ale contractului de acces și redirecturilor                                                               |
+| `npm run test:integration` | 11 grupuri trecute pe PostgreSQL/Supabase real, prin Auth/PostgREST/RPC                                                   |
+| Izolare și drepturi        | Anon refuzat, instituții și substații separate, proprietar propriu, metadate fără privilegii, scrieri directe refuzate    |
+| Tranzacții și concurență   | Rollback integral inclusiv audit; JWT vechi după revocare; 3 runde de revocări reciproce; denumire unică creată concurent |
+| `npm run test:e2e`         | 26 teste trecute, Chromium desktop și Pixel 7; rulare finală completă, cod 0                                              |
+| Fluxuri E2E reale          | Login, reîncărcare, logout, selector, URL falsificat, cont fără rol, creare substație/cont, atribuire și revocare         |
+| Acțiuni server             | Replay anonim redirecționat la login; replay cu rol local refuzat cu 404                                                  |
+| Regresii M01               | 16 teste pentru navigație, filtre, stări, formular, fișă numai citire și lipsa salvărilor simulate                        |
+| Inspecție vizuală          | Capturi login/substație/administrare desktop și mobil, fără depășirea lățimii; padding și aliniere formulare corectate    |
 
-## Verificări M01
+Primele rulări UI au identificat interacțiuni înainte de hidratarea paginii și
+verificarea prea devreme a unei revocări. Meniul este dezactivat până la hidratare,
+iar testele așteaptă rezultatul efectiv. Rularea finală a trecut toate cele 26 de
+teste. Next/Node a emis un avertisment `Gzip MaxListenersExceededWarning` la
+răspunsurile cu multe formulare; fără erori JavaScript sau verificări eșuate.
+Se urmărește comportamentul la pregătirea publicării, fără schimbări de dependențe
+fără legătură cu M02.
 
-Mediu: Node.js **24.19.0**, npm **10.2.0**, versiunile fixate în M00.
-
-| Verificare                           | Rezultat                                                                                                                                                  |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run check`                      | Format, ESLint fără avertismente, TypeScript și build de producție trecute                                                                                |
-| `npm test`, inclus în check          | Vitest pornește, 0 teste unitare; nu există încă logică de domeniu                                                                                        |
-| `npm run test:e2e`                   | **16 teste trecute**, Chromium calculator și Pixel 7; proces încheiat cu cod 0                                                                            |
-| Comportamente E2E                    | Navigație, filtre, selecție și resetare, fișă numai pentru citire, acțiuni inactive, lipsa cererilor de scriere, stări standard, tastatură și meniu mobil |
-| Verificare suplimentară a layoutului | Dashboard, stoc, fișă și distribuire la 1440×1000, 768×1024, 390×844 și 320×740; fără depășirea lățimii paginii și fără erori JavaScript                  |
-| Inspecție vizuală                    | Capturi desktop/mobil pentru dashboard, stoc, formular și fișă; tabelele late se derulează în propriul container                                          |
-| `git diff --check`                   | Fără erori de whitespace                                                                                                                                  |
-
-Pe acest calculator, lansatoarele din `.tools/bin` și Node 24 din runtime sunt
-folosite prin PATH local procesului. Chromium este în `.tools/browsers`, setat
-prin `PLAYWRIGHT_BROWSERS_PATH`. `NEXT_TELEMETRY_DISABLED=1` evită scrierea
-configurației telemetriei în afara proiectului. Aceste setări nu schimbă
-instalarea globală și nu sunt condiții ale aplicației.
-
-Prima încercare a testelor nu găsea browserul în locația implicită. După indicarea
-instalării locale, verificările au identificat doi selectori de test ambigui
-(anunțul de rută Next.js și eticheta categoriei), corectați prin rol și aria
-conținutului. Mediul restricționat întârzia oprirea serverului; rularea finală cu
-permisiunile necesare s-a încheiat normal: 16 teste în 8,6 secunde.
-
-Capturile, logurile și instrumentele locale din `test-results` și `.verification`
-sunt ignorate de Git. Nu conțin date operaționale.
+Mediul verificat este Node.js 24.19.0 și npm 10.2.0. Lansatoarele locale sunt în
+`.tools/bin`; Chromium în `.tools/browsers`. Capturile/logurile și fixturele sunt
+ignorate de Git. Testele de integrare creează instituții separate de demonstrația
+utilizatorului; curățarea lor este limitată prin manifest și verificări de identitate.
 
 ## Limite și continuare
 
-M01 validează **interfața**, nu autentificarea, izolarea datelor reale sau
-corectitudinea stocului. Perspectivele și substațiile sunt demonstrative.
-Nu există încă Supabase, migrări, sesiuni, ture persistente, recepții, dovezi sau
-rapoarte generate. Tranzacțiile, concurența și accesul se vor verifica pe
-PostgreSQL real în modulele care le introduc.
+Curățarea fixturelor M02 a trecut; au rămas numai instituția demo, cele două
+substații și administratorul inițial. Rularea repetată `bootstrap:admin` a
+confirmat că nu creează duplicate. Verificarea build-ului client nu a găsit
+cheia secretă, iar `.env.local` și fișierul administratorului sunt ignorate de Git.
+`git diff --check` nu a raportat erori.
 
-Acceptarea fișei ca moment al predării și pornirii atomice rămâne D33. Fișa din
-M01 doar ilustrează acest contract; acceptarea este dezactivată. Rezervarea
-mașinii și anularea rămân propunerea D35, pentru M06.
+Nu există încă angajați, mașini, stocuri, ture, dovezi sau rapoarte persistente.
+Spațiile autentificate indică explicit pregătirea modulelor. M02 verifică
+contractul proprietarului; izolarea pe fișele/turele reale se verifică în M06,
+iar pe dovezi și rapoarte în M07–M09. Legătura cont–angajat/titular este M03.
 
-Aplicația poate fi pornită local fără configurare Supabase. Nu s-au creat conturi,
-servicii sau publicări. Netlify și adresa publică rămân P01.
+Crearea Auth și a profilului are compensare documentată, nu o tranzacție comună
+între servicii. Recuperarea parolei rămâne administrată în Supabase; nu există
+SMTP/invitații trimise sau resetare automată în aplicație. Nu s-au configurat
+Netlify, domeniu sau publicare. Proiectul folosește date fictive și planul Free.
 
 ## Progres
 
-| Modul                    | Stare            |
-| ------------------------ | ---------------- |
-| M00 — Fundație           | Finalizat        |
-| M01 — Interfață          | Finalizat        |
-| M02 — Acces și substații | Următorul modul  |
-| M03 — Personal și mașini | Neînceput        |
-| M04 — Catalog și loturi  | Neînceput        |
-| M05 — Recepții și stoc   | Neînceput        |
-| M06 — Ture și predare    | Neînceput        |
-| M07 — Dovezi             | Neînceput        |
-| M08 — Închidere          | Neînceput        |
-| M09 — Rapoarte           | Neînceput        |
-| P01 — Publicare demo     | După M09         |
-| M10 — Corecții și audit  | Etapă ulterioară |
-| M11 — Pilot              | Etapă ulterioară |
+| Modul                    | Stare                         |
+| ------------------------ | ----------------------------- |
+| M00 — Fundație           | Finalizat                     |
+| M01 — Interfață          | Finalizat, păstrat la `/demo` |
+| M02 — Acces și substații | Finalizat                     |
+| M03 — Personal și mașini | Următorul modul               |
+| M04 — Catalog și loturi  | Neînceput                     |
+| M05 — Recepții și stoc   | Neînceput                     |
+| M06 — Ture și predare    | Neînceput                     |
+| M07 — Dovezi             | Neînceput                     |
+| M08 — Închidere          | Neînceput                     |
+| M09 — Rapoarte           | Neînceput                     |
+| P01 — Publicare demo     | După M09                      |
+| M10 — Corecții și audit  | Etapă ulterioară              |
+| M11 — Pilot              | Etapă ulterioară              |

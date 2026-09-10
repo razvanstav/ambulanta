@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Icon, type IconName } from "./icon";
 
 export function Badge({
@@ -17,7 +17,7 @@ export function Button({
   variant = "primary",
   className = "",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" }) {
+}: ComponentProps<"button"> & { variant?: "primary" | "secondary" | "ghost" }) {
   return (
     <button type="button" className={`button button-${variant} ${className}`} {...props}>
       {children}

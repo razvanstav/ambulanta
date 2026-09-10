@@ -122,7 +122,7 @@ export function SectionPage({ section }: { section: DemoSection }) {
           {detail.action}
         </UnavailableAction>
         {section === "distribuire" && (
-          <LinkButton href="/tura-mea" variant="secondary">
+          <LinkButton href="/demo/tura-mea" variant="secondary">
             Explorează perspectiva Tura mea
           </LinkButton>
         )}
@@ -197,7 +197,7 @@ export function ShiftHistoryPage() {
           title="Nicio tură în istoric"
           description="Acest ecran nu conține ture salvate. Rapoartele proprii vor fi conectate în modulele de închidere și raportare."
         >
-          <LinkButton href="/tura-mea" variant="secondary">
+          <LinkButton href="/demo/tura-mea" variant="secondary">
             Înapoi la Tura mea
           </LinkButton>
         </StateMessage>

@@ -85,7 +85,7 @@ export function Dashboard() {
       detail: "repere distincte în stoc",
       icon: "box",
       tone: "blue",
-      href: "/stocuri",
+      href: "/demo/stocuri",
     },
     {
       label: "Ture active",
@@ -93,7 +93,7 @@ export function Dashboard() {
       detail: "echipaje cu predarea acceptată",
       icon: "users",
       tone: "blue",
-      href: "/distribuire",
+      href: "/demo/distribuire",
     },
     {
       label: "Cereri în așteptare",
@@ -101,7 +101,7 @@ export function Dashboard() {
       detail: "pentru pregătire sau acceptare",
       icon: "clipboard",
       tone: "amber",
-      href: "/distribuire",
+      href: "/demo/distribuire",
     },
     {
       label: "Sub pragul de stoc",
@@ -109,7 +109,7 @@ export function Dashboard() {
       detail: "produse care necesită atenție",
       icon: "warning",
       tone: "red",
-      href: "/stocuri?stare=sub-prag",
+      href: "/demo/stocuri?stare=sub-prag",
     },
   ];
   return (
@@ -162,7 +162,7 @@ export function Dashboard() {
               cu o fișă clară.
             </h2>
             <p>Consultă cererile echipajelor și fișele pregătite pentru predare.</p>
-            <LinkButton href="/distribuire">Vezi distribuirea</LinkButton>
+            <LinkButton href="/demo/distribuire">Vezi distribuirea</LinkButton>
           </div>
           <div className="action-art" aria-hidden="true">
             <Icon name="clipboard" />
@@ -180,7 +180,7 @@ export function Dashboard() {
               închisă corect.
             </h2>
             <p>Verifică declarațiile de consum și retururile înainte de închidere.</p>
-            <LinkButton href="/inchidere" variant="secondary">
+            <LinkButton href="/demo/inchidere" variant="secondary">
               Vezi închiderea
             </LinkButton>
           </div>
@@ -192,7 +192,7 @@ export function Dashboard() {
           title="Cereri și ture"
           description="Cererile sunt separate de turele efectiv pornite."
           action={
-            <Link className="text-link" href="/distribuire">
+            <Link className="text-link" href="/demo/distribuire">
               Vezi toate
               <Icon name="arrow" />
             </Link>
@@ -212,7 +212,7 @@ export function Dashboard() {
           {hasExamples ? (
             <div className="alert-list">
               {lowStock.map((product) => (
-                <Link href="/stocuri?stare=sub-prag" key={product.id} className="alert-item">
+                <Link href="/demo/stocuri?stare=sub-prag" key={product.id} className="alert-item">
                   <span className="alert-symbol red">
                     <Icon name="warning" />
                   </span>
@@ -226,7 +226,7 @@ export function Dashboard() {
                   <Icon name="chevron" />
                 </Link>
               ))}
-              <Link href="/stocuri?stare=expira" className="alert-item">
+              <Link href="/demo/stocuri?stare=expira" className="alert-item">
                 <span className="alert-symbol amber">
                   <Icon name="clock" />
                 </span>
