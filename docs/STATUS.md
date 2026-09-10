@@ -4,6 +4,12 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
+Actualizare acces: la cererea explicită a beneficiarului a fost creat un
+administrator suplimentar pentru instituția demo, cu profil activ și rol global
+`administrator`. Autentificarea pe Netlify și accesul la `/administrare` au fost
+verificate. Parola nu este inclusă în repository. Reper anterior: `913b482`.
+Această operație nu necesită redeploy.
+
 **Publicat: stoc permanent pe mașină și închidere după finalul turei.**
 Migrarea 007 este aplicată în Supabase, iar Netlify a publicat versiunea nouă
 la 10 septembrie 2026, 23:27 Europe/Bucharest. Reper verificat: `50eae63`,
