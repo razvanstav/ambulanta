@@ -2,7 +2,7 @@
 
 Un modul se consideră terminat când funcționează în aplicație, îndeplinește criteriile de mai jos, are verificările relevante trecute și este salvat în Git. Dimensiunea unei conversații este dată de o funcționalitate coerentă. Dacă un modul devine prea mare, se împarte explicit în subetape, fiecare verificabilă; nu se livrează o jumătate de flux ca și cum ar fi complet.
 
-Starea curentă a implementării este în `STATUS.md`. În acest pachet, toate modulele de aplicație sunt neîncepute.
+Starea curentă a implementării este în `STATUS.md`; verifică și codul și istoricul Git înainte de continuare.
 
 Actualizare pentru scopul confirmat: demonstrația gratuită se livrează prin M00–M09, apoi **P01 — Publicare demo**. M10–M11 rămân documentate pentru o eventuală utilizare operațională și nu sunt condiții pentru prima prezentare. Auditul de bază, drepturile și corectitudinea stocului rămân parte din modulele inițiale.
 

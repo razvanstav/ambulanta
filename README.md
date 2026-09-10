@@ -1,48 +1,92 @@
-# Plan de pornire — Gestiune substații
+# Gestiune substații
 
-Pregătit la 10 septembrie 2026. Acest pachet conține arhitectura și instrucțiunile pentru implementare; aplicația nu este încă construită.
+Aplicație web în română pentru evidența produselor și a turelor substațiilor de ambulanță. Ținta este un MVP de prezentare cu date fictive, pe Netlify Free și Supabase Free. Domeniul propriu este opțional.
 
-## Ideea de bază
+**Stare: M00 — Fundația proiectului.** Pagina inițială funcționează. Autentificarea, gestiunea, dovezile și rapoartele se implementează în modulele următoare. Nu există încă o bază de date sau o aplicație publicată.
 
-O aplicație web în limba română, utilizabilă pe calculator, tabletă și telefon, pentru recepții în depozit, distribuirea produselor către titularii mașinilor, consum și retur la final de tură. Fiecare substație are propriul stoc și propriile drepturi de acces. La închiderea turei se poate atașa un document, o fotografie sau o semnătură desenată pe ecran. Rapoartele sunt disponibile pe ture, zile și săptămâni.
+Repository: [razvanstav/ambulanta](https://github.com/razvanstav/ambulanta).
 
-Recomandarea este o singură aplicație organizată pe module, într-un singur repository Git. Fiecare etapă produce o funcționalitate verificabilă, documentație actualizată și un commit. Următoarea conversație pornește de la acele fișiere și de la codul salvat.
+## Pornire locală
 
-Actualizare după clarificările beneficiarului: ținta este o prezentare cu date fictive, pe Netlify Free + Supabase Free, în limitele planurilor gratuite. Se poate folosi adresa gratuită Netlify. Etapele pentru demonstrație sunt M00–M09, apoi P01 — Publicare demo; corecțiile avansate și pilotul operațional M10–M11 rămân etape ulterioare.
+Cerințe: Git, **Node.js 24.19.0** și **npm 10.2.0**. Versiunea Node este consemnată în `.node-version` și `.nvmrc`, iar managerul în `package.json`. Folosește versiunea Node indicată prin managerul tău de versiuni sau instalatorul oficial. Dacă este necesar, instalează managerul fixat cu `npm install --global npm@10.2.0`.
 
-## Fișiere
+Din PowerShell sau un terminal cu versiunile de mai sus în `PATH`:
 
-| Fișier | Ce conține |
-| --- | --- |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Fluxuri, drepturi, date, stoc, dovezi, rapoarte și structură tehnică |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Module în ordine, limitele lor și criterii de acceptare |
-| [AGENTS.md](AGENTS.md) | Reguli pentru Codex: domeniul modificărilor, verificări, Git și predarea contextului |
-| [docs/STATUS.md](docs/STATUS.md) | Starea reală de la care începe următoarea conversație |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | Decizii inițiale și presupuneri care pot fi schimbate explicit |
-| [docs/PROMPTS.md](docs/PROMPTS.md) | Mesaj de început și mesaj reutilizabil pentru fiecare modul |
-| [docs/reference/dashboard-reference.png](docs/reference/dashboard-reference.png) | Imaginea furnizată de beneficiar, ca reper vizual |
+```powershell
+git clone https://github.com/razvanstav/ambulanta.git
+cd ambulanta
+node --version
+npm --version
+npm ci
+npm run dev
+```
 
-## Cum începi
+Deschide [localhost:3000](http://localhost:3000). Oprește serverul cu `Ctrl+C`. Într-un folder care conține deja proiectul, începe direct cu `npm ci`. Pe Windows, dacă PowerShell blochează `npm.ps1`, folosește `npm.cmd` în loc de `npm`; nu este necesară relaxarea politicii globale de execuție.
 
-1. Dezarhivează pachetul într-un folder dedicat aplicației și deschide acel folder ca proiect în Codex.
-2. Folosește mesajul pentru prima conversație din `docs/PROMPTS.md`.
-3. Construiește M00, verifică rezultatul și salvează-l în Git. Planul nu a inițializat încă un repository și nu a creat unul pe GitHub.
-4. Începe următoarea conversație în același proiect, din versiunea care conține ultimul modul integrat. Folosește mesajul reutilizabil și precizează modulul următor.
+Node.js 21, prezent inițial pe calculatorul de dezvoltare, nu este versiunea proiectului. Verificările M00 folosesc Node.js 24.19.0 disponibil în mediul de lucru, prin ajustarea `PATH` numai în procesele de verificare; instalarea globală rămâne neschimbată. Dacă `npm ci` afișează `EBADENGINE`, verifică versiunile din terminal.
 
-Documentele folosesc Markdown, deci pot fi citite de Codex și urmărite în Git împreună cu aplicația. `AGENTS.md` se așază la rădăcina proiectului; Codex îl poate folosi pentru instrucțiunile proiectului. [Documentația oficială OpenAI](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+M00 pornește fără `.env.local` și fără acces Supabase. `.env.example` documentează valorile publice care vor fi configurate în M02. Copierea este opțională:
 
-## Cum lucrăm între conversații
+```powershell
+Copy-Item .env.example .env.local
+```
 
-Păstrează un singur folder de proiect pentru întreaga aplicație. `AGENTS.md` rămâne la rădăcină, iar celelalte documente în `docs/`, lângă cod. Nu copia folderul pentru fiecare modul. Dacă folosești o versiune de lucru separată, aceasta trebuie să includă ultimul modul finalizat înainte să înceapă următorul.
+Nu introduce parole, chei privilegiate sau date reale în Git. Prefixul `NEXT_PUBLIC_` expune o valoare browserului și nu se folosește pentru secrete.
 
-O conversație nouă începe la o funcționalitate coerentă, de exemplu „Angajați și titulari”. Formularul, validările și micile corecții ale acelei funcționalități se lucrează în aceeași conversație. Dacă trebuie să o întrerupi, se salvează progresul și se continuă același modul într-o conversație nouă, folosind `STATUS.md`.
+## Verificări
 
-La final, Codex verifică rezultatul, actualizează starea și deciziile, salvează în Git și indică modulul următor. Utilizatorul poate verifica rezultatul vizual și apoi deschide următoarea conversație în același proiect. Un commit este un punct de salvare al codului și documentelor; trimiterea în GitHub și publicarea aplicației sunt operații separate.
+```powershell
+npm run check
+npx playwright install chromium
+npm run test:e2e
+```
 
-`AGENTS.md` îi cere lui Codex să citească documentele relevante. Prezența altor fișiere `.md` nu înseamnă că întregul lor conținut este încărcat automat; mesajele din `PROMPTS.md` cer explicit citirea stării și a modulului curent.
+`check` execută verificarea formatării, ESLint, generarea tipurilor de rută și TypeScript, Vitest și compilarea de producție. Browserul Playwright se instalează la prima utilizare. Testele E2E pornesc automat build-ul de producție pe portul 3100, care trebuie să fie liber; rulează `npm run build` dacă ai schimbat codul.
 
-## Ce poate fi decis pe parcurs
+| Comandă                | Scop                                                     |
+| ---------------------- | -------------------------------------------------------- |
+| `npm run dev`          | Dezvoltare locală cu reîncărcare                         |
+| `npm run build`        | Compilare de producție                                   |
+| `npm start`            | Pornirea build-ului de producție, pe portul 3000         |
+| `npm run lint`         | ESLint, fără avertismente acceptate                      |
+| `npm run typecheck`    | Generarea tipurilor Next.js și verificare TypeScript     |
+| `npm run format:check` | Verificarea formatării                                   |
+| `npm run format`       | Formatarea codului și a documentelor noi                 |
+| `npm test`             | Vitest, pregătit pentru testele unitare ale modulelor    |
+| `npm run test:watch`   | Vitest în modul interactiv                               |
+| `npm run test:e2e`     | Pagina inițială în Chromium pentru calculator și telefon |
+| `npm run check`        | Format, lint, tipuri, Vitest și build                    |
 
-Numele aplicației și domeniul nu blochează M00–M01. Găzduirea țintă pentru demonstrație este Netlify Free, cu Supabase Free pentru date, autentificare și fișiere. Înainte de conectarea serviciilor se configurează accesul necesar. Pentru demo folosim date fictive și regulile propuse în plan. Înaintea unei eventuale utilizări reale se confirmă procedurile instituției și cerințele de operare.
+M00 nu conține logică de gestiune sau teste unitare. `npm test` permite explicit lipsa acestora (`--passWithNoTests`); un rezultat fără teste nu validează reguli de stoc sau drepturi. Testul E2E existent verifică răspunsul HTTP, conținutul în română, lipsa erorilor JavaScript și încadrarea pe ecran. În modulele de gestiune vor fi necesare și teste pe PostgreSQL real pentru tranzacții, concurență și acces.
 
-Git păstrează codul și structura bazei de date. Datele operaționale, fotografiile și semnăturile au copii de siguranță separate.
+## Structură
+
+```text
+src/app/          Pagina inițială, layout, stiluri și viitoare rute subțiri
+src/modules/      Limitele modulelor; implementările se adaugă la etapa lor
+src/lib/          Convenții pentru configurări și viitorii clienți de servicii
+tests/e2e/        Verificarea paginii în browser
+docs/             Arhitectură, roadmap, decizii, stare și referința vizuală
+```
+
+Next.js App Router și TypeScript sunt fundația. Tailwind CSS este configurat; componentele comune și shadcn/ui intră în M01, când sunt necesare. Supabase PostgreSQL/Auth/Storage și primele migrări intră în M02. Nu există solduri sau autentificare simulate în M00.
+
+Versiunile directe sunt exacte, iar `package-lock.json` fixează întregul arbore. Folosește `npm ci` pentru instalare; dependențele se modifică intenționat, nu ca parte implicită a unui alt modul. Referințe: [instalare Next.js](https://nextjs.org/docs/app/getting-started/installation) și [Next.js pe Netlify](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/).
+
+## Continuitate și Git
+
+Lucrăm în același proiect, cu o bază comună pe `main`. Fiecare modul validat se salvează în commituri coerente și se trimite în `origin`, repository-ul indicat de beneficiar. Nu se folosesc force push sau resetări destructive. Publicarea aplicației este o etapă separată: **P01**, după M00–M09; un push nu configurează automat Netlify sau Supabase.
+
+Începutul fiecărei conversații: citește `AGENTS.md`, starea, deciziile și modulul cerut, apoi verifică fișierele și istoricul Git. La final actualizează starea și salvează progresul. M10–M11 rămân pentru o eventuală utilizare operațională.
+
+| Document                                                    | Conținut                           |
+| ----------------------------------------------------------- | ---------------------------------- |
+| [STATUS](docs/STATUS.md)                                    | Rezultat real și următorul modul   |
+| [ROADMAP](docs/ROADMAP.md)                                  | Etape și criterii de acceptare     |
+| [ARCHITECTURE](docs/ARCHITECTURE.md)                        | Fluxuri, date și limite de module  |
+| [DECISIONS](docs/DECISIONS.md)                              | Decizii și presupuneri             |
+| [PROMPTS](docs/PROMPTS.md)                                  | Mesaje pentru continuarea lucrului |
+| [AGENTS](AGENTS.md)                                         | Reguli de implementare             |
+| [Referință vizuală](docs/reference/dashboard-reference.png) | Reper pentru M01                   |
+
+Git păstrează codul, documentația și viitoarele migrări. Datele din baza de date, fotografiile, semnăturile și copiile de siguranță se păstrează separat.

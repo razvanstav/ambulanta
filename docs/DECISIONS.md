@@ -29,8 +29,14 @@ Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile urm
 | D23 | Propus | Date fictive și scenariu complet de demonstrație | Roșiori ca exemplu, angajați și produse fictive, două mașini; semnături de test |
 | D24 | Propus | M00–M09, apoi P01 pentru demo; M10–M11 ulterior | Prezentarea include fluxul cerut; pregătirea operațională se face dacă este solicitată |
 | D25 | Confirmat | Următoarea conversație folosește același proiect | Fișierele Markdown și codul rămân împreună; progresul este consemnat în Git |
+| D26 | Confirmat | Repository comun: `https://github.com/razvanstav/ambulanta.git`; progresul lucrat se trimite acolo | Instrucțiunea beneficiarului din 10 septembrie 2026 autorizează commiturile și push-ul; publicarea aplicației rămâne P01 |
+| D27 | Adoptat în M00 | Node.js 24.19.0, npm 10.2.0, Next.js 16.3.4, React 19.3.0, TypeScript 5.9.3 | Versiuni directe exacte și lockfile; Node 21 global nu se folosește la verificări |
+| D28 | Adoptat în M00 | `main` este baza comună; commituri coerente urmate de push în `origin` după verificări | Repository-ul distant a fost verificat gol înainte de inițializare; planul original este primul commit |
+| D29 | Adoptat în M00 | Vitest pentru viitoarele reguli; Playwright verifică pagina pe calculator și telefon | Lipsa testelor unitare este permisă explicit cât nu există logică de domeniu; PostgreSQL real rămâne obligatoriu la modulele relevante |
 
 Clarificări consemnate la 10 septembrie 2026: discuția despre PHP/MySQL a fost exploratorie; nu a schimbat arhitectura propusă. D21–D24 delimitează scopul imediat al prezentării și amână cerințele exclusiv operaționale.
+
+Implementare M00, 10 septembrie 2026: D07–D08 sunt adoptate tehnic pentru fundație (Next.js App Router și structură modulară); serviciile Supabase se configurează în M02. Tailwind CSS este instalat, componentele comune și shadcn/ui se introduc în M01. Alegerea tehnică nu transformă presupunerile de gestiune în cerințe confirmate. D26 înlocuiește instrucțiunea inițială din promptul M00 de a păstra commiturile numai local. Repository-ul indicat este public; în el intră codul, planul și referința vizuală furnizată, fără date operaționale sau secrete.
 
 ## Cum se modifică o decizie
 

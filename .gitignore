@@ -1,0 +1,40 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local configuration and credentials
+.env*
+!.env.example
+*.pem
+*.key
+.npmrc.local
+
+# Local data, private evidence and service state
+uploads/
+private/
+backups/
+*.dump
+*.sql.gz
+*.db
+*.sqlite*
+supabase/.temp/
+supabase/.branches/
+.netlify/
+
+# Test output and local tools
+coverage/
+playwright-report/
+test-results/
+.verification/
+.tools/
+*.log
+
+# Editor and operating system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

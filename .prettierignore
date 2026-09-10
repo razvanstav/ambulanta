@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+.verification/
+.tools/
+next-env.d.ts
+package-lock.json
+# Planul furnizat se păstrează fără reformatare globală.
+AGENTS.md
+docs/ARCHITECTURE.md
+docs/DECISIONS.md
+docs/PROMPTS.md
+docs/ROADMAP.md

@@ -2,6 +2,8 @@
 
 Folosește mesajele de mai jos în proiectul care conține acest pachet. O conversație nouă trebuie să aibă acces la repository și la versiunea care include modulul anterior.
 
+Actualizare 10 septembrie 2026: repository-ul ales de beneficiar este `https://github.com/razvanstav/ambulanta.git`. Progresul validat se salvează pe baza comună `main` și se trimite în `origin`. Publicarea aplicației rămâne separată, la P01. Promptul primei conversații este păstrat ca reper pentru scopul M00.
+
 ## Prima conversație — M00
 
 ```text
@@ -13,7 +15,7 @@ Citește AGENTS.md, docs/STATUS.md, docs/DECISIONS.md, docs/ARCHITECTURE.md și 
 
 Implementează numai M00 — Fundația proiectului. Folosește arhitectura propusă: Next.js, TypeScript și structură modulară pregătită pentru PostgreSQL, Auth și Storage prin Supabase. Fixează versiunile și managerul de pachete. Creează proiectul minim care pornește, configurările de dezvoltare, verificările de bază, .env.example fără secrete și instrucțiunile de pornire. Păstrează documentele și imaginea de referință în repository.
 
-Suntem în folderul dedicat aplicației. Dacă încă nu există Git și folderul nu aparține altui repository, inițializează-l aici. Dacă aparține altui repository, identifică situația și evită să incluzi fișiere străine. Salvează documentația inițială și fundația în commituri locale coerente, fără să publici pe GitHub sau să configurezi găzduire.
+Suntem în folderul dedicat aplicației. Dacă încă nu există Git și folderul nu aparține altui repository, inițializează-l aici. Dacă aparține altui repository, identifică situația și evită să incluzi fișiere străine. Salvează documentația inițială și fundația în commituri coerente și trimite progresul validat în repository-ul GitHub ales de beneficiar, fără să configurezi găzduire.
 
 Nu implementa încă autentificarea reală, gestiunea sau paginile complete ale modulelor viitoare. Rulează verificările M00, actualizează docs/STATUS.md și raportează ce funcționează, verificările efective, branchul, commitul final și următorul modul: M01.
 ```
@@ -31,7 +33,7 @@ Implementează modulul cap-coadă, conform criteriilor sale de acceptare. Modifi
 
 Folosește deciziile deja documentate pentru alegerile obișnuite. Dacă lipsește ceva esențial, avansează cu partea independentă și spune precis ce informație sau acces este necesar.
 
-Rulează verificările relevante, actualizează docs/STATUS.md și orice decizie schimbată, apoi salvează modificările proprii în Git. Respectă fluxul de branch/integrări deja stabilit în proiect. Nu include munca preexistentă a altcuiva în commitul tău.
+Rulează verificările relevante, actualizează docs/STATUS.md și orice decizie schimbată, apoi salvează modificările proprii în Git și trimite progresul validat în origin. Respectă fluxul de branch/integrări deja stabilit în proiect. Nu include munca preexistentă a altcuiva în commitul tău.
 
 La final spune: ce pot folosi acum, ce ai verificat, eventualele limitări, branchul și commitul rezultat, apoi modulul recomandat pentru conversația următoare. Nu începe automat acel modul.
 ```

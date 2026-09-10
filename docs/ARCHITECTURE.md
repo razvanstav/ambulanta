@@ -49,6 +49,8 @@ Un monolit modular: o singură aplicație și o singură bază de date, cu respo
 
 Versiunile exacte și managerul de pachete se fixează în M00 și se păstrează în lockfile. Nu se fac actualizări generale de dependențe în timpul altui modul.
 
+Fundația M00 adoptă Next.js App Router 16.3.4, React 19.3.0, TypeScript 5.9.3, Node.js 24.19.0 și npm 10.2.0; toate versiunile directe sunt exacte în `package.json`, cu `package-lock.json`. Tailwind CSS este configurat; shadcn/ui și componentele comune se introduc în M01. Directorul `src/modules` documentează limitele fără implementări fictive; clienții Supabase, migrările și structura de audit se introduc în M02. Repository-ul comun este `razvanstav/ambulanta`, cu progresul validat pe `main`.
+
 Ținta de publicare pentru demo este Netlify Free + Supabase Free. Netlify construiește aplicația din Git și o servește pe o adresă gratuită `*.netlify.app`; domeniul propriu este opțional. Supabase furnizează datele, conturile și spațiul privat pentru fișiere. Se verifică limitele planurilor la configurare și înaintea prezentării; nu se presupune utilizare nelimitată și nu se activează abonamente plătite pentru demo. [Plan Netlify](https://www.netlify.com/pricing/), [Plan Supabase](https://supabase.com/pricing).
 
 Fluxul de salvare rămâne separat de publicare: commit local → trimitere în repository-ul distant configurat → build/publicare pe ramura aleasă. Modificările bazei de date rămân migrări explicite; nu sunt aplicate automat doar pentru că s-a publicat interfața.
