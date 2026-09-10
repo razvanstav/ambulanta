@@ -107,6 +107,8 @@ test.describe("M04–M07 circuit real", () => {
     await leader
       .getByLabel("Mașina pentru tură")
       .selectOption({ label: `AMB-${account.toUpperCase()} · Mașină fictivă M06` });
+    await leader.getByLabel("Început planificat").fill("2026-09-10T00:00");
+    await leader.getByLabel("Sfârșit planificat").fill("2099-09-10T12:00");
     await leader.getByRole("button", { name: "Solicită fișa și rezervă mașina" }).click();
     await expect(leader.getByText("În așteptarea fișei", { exact: true })).toBeVisible();
     await page.goto(`${base}/ture`);

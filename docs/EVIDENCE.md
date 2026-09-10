@@ -1,5 +1,7 @@
 # M07 — Ciorne, dovezi și semnătură
 
+**Actualizare locală D61–D64:** declarația calculează și păstrează `remaining` (rămas în mașină), separat de returul fizic. Semnăturile validate nu mai pot fi eliminate. Dovezile justifică declarația de consum afișată, iar închiderea este verificată după ora programată în PostgreSQL. Contractul actual, migrarea 007 și limitele verificării găzduite sunt în [VEHICLE-STOCK](VEHICLE-STOCK.md); regulile M07 de mai jos rămân istorice unde diferă.
+
 Migrarea `202609100006_closeout_evidence.sql` este aplicată și înregistrată în
 Supabase demo `roxvzbhsszesglcaadcl`. M07 nu schimbă solduri și nu închide tura.
 

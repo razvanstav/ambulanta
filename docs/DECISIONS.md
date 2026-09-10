@@ -2,6 +2,16 @@
 
 Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile următoare. „Confirmat” înseamnă cerință exprimată de beneficiar; „Propus” înseamnă alegere inițială a planului, care poate fi revizuită.
 
+## Actualizare stoc pe mașină — 10 septembrie 2026
+
+- **D61 — Confirmat:** mașina are stoc permanent vizibil; 10 primite și 7 consumate lasă 3 în mașină pentru următoarea tură. Înlocuiește locația exclusiv pe tură din D09/M06 și formula de închidere din plan. Returul real continuă să încarce magazia, dar nu este implicit.
+- **D62 — Confirmat:** eliminarea semnăturii din ciornă nu mai este oferită. Implementarea interzice eliminarea semnăturii validate inclusiv prin RPC; schimbarea cantităților păstrează originalul și cere o nouă versiune.
+- **D63 — Confirmat:** titularul nu poate închide fișa înainte de finalul stabilit al turei. **Alegere de implementare:** începutul și finalul sunt obligatorii la cerere, fără posibilitatea scurtării ulterior. Turele vechi fără program îl stabilesc o singură dată.
+- **D64 — Adoptat pentru D61/D63:** fără retur fizic, titularul închide direct după final; cu retur, magazia confirmă primirea și închide, fiind distinctă de titular. Modifică D11 numai pentru închiderile fără retur. Consumul, returul, versiunea finală și eliberarea mașinii sunt atomice.
+- **D65 — Stare locală:** migrarea nouă și aplicația au fost verificate local. Configurația Supabase este pe alt calculator, conform beneficiarului. Nu se publică versiunea nouă înainte de aplicarea migrării; commitul folosește `[skip netlify]`.
+
+Contractul curent și verificările: [VEHICLE-STOCK](VEHICLE-STOCK.md). Deciziile istorice de mai jos se citesc cu aceste înlocuiri.
+
 | ID | Stare | Decizie | Motiv / efect |
 | --- | --- | --- | --- |
 | D01 | Confirmat | Mai multe substații, cu stocuri proprii | Roșiori este prima, altele se adaugă din aplicație |

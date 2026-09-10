@@ -1,4 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Private images use the authenticated download route, without shared optimization cache. */
+import { DeclarationFields } from "./declaration-fields";
+import { EndGate } from "@/modules/shifts/end-gate";
+import { submitCloseout, confirmReturn } from "./actions";
 import { randomUUID } from "node:crypto";
 import { ActionForm } from "@/components/ui/action-form";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -94,7 +97,10 @@ export async function EvidenceWorkspace({
     : null;
   if (readinessResult?.error) throw new Error("Starea declarației nu poate fi verificată.");
   const readiness = readinessResult?.data as Readiness | undefined;
-  const canCollect = Boolean(readiness?.current) && (own || canOperateStock(identity, stationId));
+  const canCollect =
+    shift.state === "open" &&
+    Boolean(readiness?.current) &&
+    (own || canOperateStock(identity, stationId));
   const myDraft = own && shift.owner_id === identity.id && shift.state === "open";
   function evidenceList(version: CloseoutVersion, editable: boolean) {
     return files
@@ -134,15 +140,8 @@ export async function EvidenceWorkspace({
               )}
             </>
           )}
-          {editable && (
-            <ActionForm
-              action={removeEvidence}
-              submitLabel={
-                file.kind === "signature"
-                  ? "Elimină semnătura din ciornă"
-                  : "Elimină dovada din ciornă"
-              }
-            >
+          {editable && file.kind === "document" && (
+            <ActionForm action={removeEvidence} submitLabel="Elimină documentul din declarație">
               <input type="hidden" name="station" value={stationId} />
               <input type="hidden" name="evidence" value={file.id} />
             </ActionForm>
@@ -152,17 +151,23 @@ export async function EvidenceWorkspace({
   }
   return (
     <section className="closeout-workspace" aria-label="Declarație de închidere">
-      <h3>Ciornă — declarație de închidere</h3>
+      <h3>
+        {shift.state === "closed"
+          ? "Declarație finală — tură închisă"
+          : shift.state === "pending_close"
+            ? "Retur trimis spre verificare"
+            : "Încheierea turei"}
+      </h3>
       <p className="identity-note">
-        Cantitățile sunt declarate, fără modificarea stocului. Trimiterea spre verificare și
-        închiderea vor fi disponibile în M08.
+        1. Declară consumul. 2. Verifică ce rămâne în mașină și atașează dovada sau semnează. 3.
+        Închide după finalul programat. Returul fizic necesită confirmarea magaziei.
       </p>
       {myDraft && (
         <details open={!current || !readiness?.current} key={current?.id ?? shift.id}>
           <summary>
             {current
               ? "Modifică declarația — creează versiune nouă"
-              : "Completează consumul și returul"}
+              : "1. Completează consumul și stocul rămas"}
           </summary>
           <ActionForm action={saveDraft} submitLabel="Salvează ciorna declarației">
             <input type="hidden" name="station" value={stationId} />
@@ -171,42 +176,17 @@ export async function EvidenceWorkspace({
             <input type="hidden" name="request_key" value={randomUUID()} />
             <p className="identity-note">
               O versiune nouă cere dovezi noi. Semnătura și documentele anterioare rămân numai în
-              istoricul versiunii vechi. La închidere: predat = consumat + returnat.
+              istoricul versiunii vechi. Preluat = consumat + rămas în mașină + retur fizic în
+              magazie.
             </p>
-            {allocations.map((line, index) => {
-              const previous = current?.content.lines.find((l) => l.allocation_id === line.id);
-              return (
-                <div className="closeout-line" key={line.id}>
-                  <strong>
-                    {line.product_name} · {line.lot_code}
-                  </strong>
-                  <p>
-                    Predat: {formatQuantity(line.quantity)} {units[line.base_unit]}
-                  </p>
-                  <input type="hidden" name="allocation_id" value={line.id} />
-                  <div className="form-columns">
-                    <label>
-                      Consumat — alocarea {index + 1}
-                      <input
-                        name="consumed"
-                        inputMode="decimal"
-                        required
-                        defaultValue={previous?.consumed ?? 0}
-                      />
-                    </label>
-                    <label>
-                      Returnat — alocarea {index + 1}
-                      <input
-                        name="returned"
-                        inputMode="decimal"
-                        required
-                        defaultValue={previous?.returned ?? 0}
-                      />
-                    </label>
-                  </div>
-                </div>
-              );
-            })}
+            {allocations.map((line, index) => (
+              <DeclarationFields
+                key={`${current?.id ?? shift.id}-${line.id}`}
+                line={line}
+                index={index}
+                previous={current?.content.lines.find((l) => l.allocation_id === line.id)}
+              />
+            ))}
           </ActionForm>
         </details>
       )}
@@ -218,7 +198,10 @@ export async function EvidenceWorkspace({
       )}
       {current && (
         <>
-          <h4>Ciornă v{current.version} · cantități salvate</h4>
+          <h4>
+            {shift.state === "closed" ? "Declarație finală" : "Declarație"} v{current.version} ·
+            cantități salvate
+          </h4>
           <ul className="holder-list">
             {current.content.lines.map((line) => (
               <li key={line.allocation_id}>
@@ -229,23 +212,31 @@ export async function EvidenceWorkspace({
                   </small>
                 </span>
                 <span>
-                  Predat {formatQuantity(line.issued)}
+                  Preluat {formatQuantity(line.issued)}
                   <small>
-                    Consumat {formatQuantity(line.consumed)} · Returnat{" "}
-                    {formatQuantity(line.returned)}
+                    Consumat {formatQuantity(line.consumed)} · Rămâne în mașină{" "}
+                    {formatQuantity(
+                      line.remaining ??
+                        Number(line.issued) - Number(line.consumed) - Number(line.returned),
+                    )}{" "}
+                    · Retur fizic {formatQuantity(line.returned)}
                   </small>
                 </span>
               </li>
             ))}
           </ul>
           <p className="identity-note">
-            {!readiness?.current
-              ? "Versiune depășită: au apărut alocări noi sau tura nu mai este deschisă. Titularul trebuie să salveze din nou declarația."
-              : !readiness.balanced
-                ? "Ciornă incompletă: consumat + returnat trebuie să egaleze predatul pentru fiecare alocare."
-                : readiness.ready
-                  ? "Ciorna are cantități reconciliate și respectă politica dovezilor. Tura rămâne deschisă."
-                  : "Cantități reconciliate. Mai este necesară cel puțin o dovadă validată."}
+            {shift.state === "closed"
+              ? "Închidere confirmată. Consumul și returul fizic au fost înregistrate; restul a rămas în mașină."
+              : shift.state === "pending_close"
+                ? "Declarația este trimisă și nu mai poate fi editată. Se așteaptă confirmarea returului fizic de către magazie."
+                : !readiness?.current
+                  ? "Versiune depășită: au apărut alocări noi sau tura nu mai este deschisă. Titularul trebuie să salveze din nou declarația."
+                  : !readiness.balanced
+                    ? "Salvează o declarație actualizată: preluat = consumat + rămas în mașină + retur fizic."
+                    : readiness.ready
+                      ? "Declarația și dovezile sunt pregătite. Poți închide după finalul programat."
+                      : "Cantități reconciliate. Mai este necesară cel puțin o dovadă validată."}
           </p>
           {evidenceList(current, canCollect)}
           {canCollect && (
@@ -255,7 +246,14 @@ export async function EvidenceWorkspace({
                   e.version_id === current.id && e.kind === "document" && e.state !== "removed",
               ).length < 5 && (
                 <div>
-                  <h4>Atașează document / fotografie</h4>
+                  <h4>2. Dovada consumului declarat</h4>
+                  <p className="identity-note">
+                    Atașează fișa de consum sau o fotografie lizibilă a documentului care justifică
+                    materialele declarate consumate în această tură. Dovada se leagă de cantitățile
+                    afișate mai sus, pentru mașina {shift.vehicle_identifier}, titular{" "}
+                    {shift.holder_name}, versiunea {current.version}. Poți folosi semnătura în locul
+                    documentului.
+                  </p>
                   <EvidenceUpload
                     key={`${current.id}-document-${files.filter((e) => e.version_id === current.id && e.kind === "document").length}`}
                     versionId={current.id}
@@ -268,7 +266,11 @@ export async function EvidenceWorkspace({
                   e.version_id === current.id && e.kind === "signature" && e.state !== "removed",
               ) && (
                 <div>
-                  <h4>Semnează versiunea v{current.version}</h4>
+                  <h4>Confirmă prin semnătură · v{current.version}</h4>
+                  <p className="identity-note">
+                    Semnătura confirmă consumul, stocul rămas în mașină și eventualul retur din
+                    declarația de mai sus. Odată salvată, se păstrează în istoric.
+                  </p>
                   <EvidenceUpload
                     key={`${current.id}-signature-${files.length}`}
                     versionId={current.id}
@@ -279,6 +281,43 @@ export async function EvidenceWorkspace({
               )}
             </div>
           )}
+          {myDraft && (
+            <EndGate
+              end={shift.planned_end}
+              ready={Boolean(readiness?.ready)}
+              action={submitCloseout}
+              label={
+                current.content.lines.some((l) => Number(l.returned) > 0)
+                  ? "3. Trimite returul spre confirmare"
+                  : "3. Închide tura"
+              }
+            >
+              <input type="hidden" name="station" value={stationId} />
+              <input type="hidden" name="version" value={current.id} />
+              <input type="hidden" name="request_key" value={randomUUID()} />
+              <p className="identity-note">
+                Confirmarea înregistrează consumul. Materialele neconsumate rămân în stocul mașinii
+                pentru următoarea tură.
+              </p>
+            </EndGate>
+          )}
+          {!own &&
+            identity.id !== shift.owner_id &&
+            canOperateStock(identity, stationId) &&
+            shift.state === "pending_close" && (
+              <ActionForm
+                action={confirmReturn}
+                submitLabel="Confirm primirea returului și închid tura"
+              >
+                <input type="hidden" name="station" value={stationId} />
+                <input type="hidden" name="version" value={current.id} />
+                <input type="hidden" name="request_key" value={randomUUID()} />
+                <label className="check-label">
+                  <input type="checkbox" name="confirm" required />
+                  Am primit fizic cantitățile indicate ca retur în magazie.
+                </label>
+              </ActionForm>
+            )}
         </>
       )}
       {versions.length > 1 && (

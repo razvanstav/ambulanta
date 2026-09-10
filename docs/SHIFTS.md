@@ -1,5 +1,7 @@
 # Cereri, fișe și acceptare — M06
 
+**Actualizare locală D61–D64:** intervalul devine obligatoriu, mașina păstrează stocul între ture și permite preluare fără completare din magazie. După finalul programat, titularul închide direct fără retur; cu retur fizic se așteaptă confirmarea magaziei. Pagina separă cererile, turele active și istoricul. Contractul nou și activarea încă necesară în Supabase: [VEHICLE-STOCK](VEHICLE-STOCK.md). Detaliile de mai jos despre interval opțional, locații pe tură și lipsa închiderii descriu versiunea găzduită anterioară.
+
 Migrarea `202609100005_shifts_issues.sql` este aplicată în proiectul demo.
 `/substatia/[id]/ture` este spațiul magaziei; `/tura-mea` identifică titularul
 din sesiune și filtrează explicit proprietarul și când contul are roluri cumulate.

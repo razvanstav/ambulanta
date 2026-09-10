@@ -4,7 +4,11 @@ import { getCatalog } from "@/modules/catalog";
 import { lotStatus } from "@/modules/catalog/rules";
 
 export type Balance = { lot_id: string; product_id: string; location_id: string; quantity: number };
-export type Location = { id: string; kind: "warehouse" | "shift"; shift_id: string | null };
+export type Location = {
+  id: string;
+  kind: "warehouse" | "shift" | "vehicle";
+  shift_id: string | null;
+};
 export type Receipt = {
   id: string;
   document_number: string;

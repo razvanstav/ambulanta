@@ -1,3 +1,5 @@
+import { getVehicleStock, VehicleStockTable } from "@/modules/vehicles/stock";
+import { getVehicles } from "@/modules/vehicles";
 import { randomUUID } from "node:crypto";
 import { Panel, Badge, LinkButton, StateMessage } from "@/components/ui/primitives";
 import type { Identity } from "@/modules/identity/policy";
@@ -14,6 +16,10 @@ export async function InventoryPage({
   identity: Identity;
 }) {
   const inventory = await getInventory(stationId);
+  const [vehicleStock, vehicles] = await Promise.all([
+    getVehicleStock(stationId),
+    getVehicles(stationId),
+  ]);
   return (
     <>
       <Panel
@@ -68,6 +74,17 @@ export async function InventoryPage({
             Catalog și loturi
           </LinkButton>
         </div>
+      </Panel>
+      <Panel
+        title="Stoc pe mașini"
+        description="Materialele neconsumate rămân în mașină între ture. Consumul declarat se scade numai la închiderea confirmată."
+      >
+        {vehicles.map((vehicle) => (
+          <details className="vehicle-stock-section" key={vehicle.id}>
+            <summary>{vehicle.identifier}</summary>
+            <VehicleStockTable rows={vehicleStock.filter((l) => l.vehicle_id === vehicle.id)} />
+          </details>
+        ))}
       </Panel>
       <Panel
         title="Praguri locale"

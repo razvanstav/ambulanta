@@ -16,13 +16,13 @@ export async function verifyEvidenceFlow(
     .filter({ has: leader.getByRole("button", { name: "Salvează ciorna declarației" }) });
   const allocations = await draft.locator(".closeout-line").all();
   for (const allocation of allocations) {
-    const quantity = Number((await allocation.innerText()).match(/Predat: (\d+)/)![1]);
+    const quantity = Number((await allocation.innerText()).match(/Preluat: (\d+)/)![1]);
     await allocation.locator('input[name="consumed"]').fill("1");
-    await allocation.locator('input[name="returned"]').fill(String(quantity - 1));
+    await expect(allocation.locator(".remaining-stock")).toContainText(String(quantity - 1));
   }
   await draft.getByRole("button", { name: "Salvează ciorna declarației" }).click();
   await expect(
-    workspace.getByRole("heading", { name: "Ciornă v1 · cantități salvate" }),
+    workspace.getByRole("heading", { name: "Declarație v1 · cantități salvate" }),
   ).toBeVisible();
   const signature = workspace
     .locator("form")
@@ -164,12 +164,12 @@ export async function verifyEvidenceFlow(
 
   await workspace.getByText("Modifică declarația — creează versiune nouă", { exact: true }).click();
   const first = draft.locator(".closeout-line").first();
-  const issued = Number((await first.innerText()).match(/Predat: (\d+)/)![1]);
+  const issued = Number((await first.innerText()).match(/Preluat: (\d+)/)![1]);
   await first.locator('input[name="consumed"]').fill("2");
-  await first.locator('input[name="returned"]').fill(String(issued - 2));
+  await expect(first.locator(".remaining-stock")).toContainText(String(issued - 2));
   await draft.getByRole("button", { name: "Salvează ciorna declarației" }).click();
   await expect(
-    workspace.getByRole("heading", { name: "Ciornă v2 · cantități salvate" }),
+    workspace.getByRole("heading", { name: "Declarație v2 · cantități salvate" }),
   ).toBeVisible();
   await expect(
     workspace.getByText("Mai este necesară cel puțin o dovadă", { exact: false }),
@@ -211,11 +211,11 @@ export async function verifyEvidenceFlow(
   await expect(
     workspace.getByText("Semnătură: Semnatar fictiv la magazie", { exact: true }),
   ).toBeVisible();
-  await workspace
-    .getByRole("button", { name: "Elimină semnătura din ciornă", exact: true })
-    .click();
   await expect(
-    signature.getByRole("button", { name: "Salvează semnătura", exact: true }),
-  ).toBeVisible();
+    workspace.getByRole("button", { name: "Elimină semnătura din ciornă", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    workspace.getByRole("button", { name: "3. Închide tura", exact: true }),
+  ).toBeDisabled();
   return privateLink;
 }

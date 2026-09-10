@@ -2295,3 +2295,95 @@ td strong {
   border-radius: 0.75rem;
   background: var(--surface);
 }
+/* Shift workflow: current vehicle stock, declaration and final confirmation. */
+.shift-next-step {
+  padding: 14px 18px;
+  background: #122e45;
+  color: var(--foreground);
+  border-left: 3px solid #326987;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+.vehicle-stock-section,
+.shift-sheets,
+.closeout-submit {
+  margin-block: 20px;
+}
+.shift-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+.shift-filters button {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--foreground);
+  cursor: pointer;
+}
+.shift-filters button[aria-pressed="true"] {
+  color: white;
+  background: #244b66;
+  border-color: #244b66;
+}
+.shift-filters span {
+  margin-left: 5px;
+}
+.vehicle-stock-section summary,
+.shift-sheets > summary {
+  padding-block: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.remaining-stock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #12372f;
+  color: #c3f4df;
+}
+.closeout-submit {
+  padding: 16px;
+  border: 1px solid #285347;
+  border-radius: 12px;
+}
+
+.shift-panel > .shift-next-step,
+.shift-panel > .vehicle-stock-section,
+.shift-panel > .shift-sheets,
+.shift-panel > .closeout-workspace {
+  margin-inline: 22px;
+}
+.shift-panel h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.shift-panel h4 {
+  font-size: 15px;
+  margin-block: 16px 10px;
+}
+.shift-panel .closeout-workspace > .holder-list {
+  padding-inline: 0;
+}
+.shift-panel .closeout-line,
+.shift-panel .evidence-record {
+  border-color: var(--border);
+}
+@media (max-width: 600px) {
+  .shift-panel > .shift-next-step,
+  .shift-panel > .vehicle-stock-section,
+  .shift-panel > .shift-sheets,
+  .shift-panel > .closeout-workspace {
+    margin-inline: 14px;
+  }
+  .closeout-workspace .holder-list li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

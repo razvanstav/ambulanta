@@ -1,3 +1,6 @@
+import { getVehicleStock, VehicleStockTable } from "@/modules/vehicles/stock";
+import { setLegacySchedule } from "./actions";
+import { ShiftList } from "./shift-list";
 import { randomUUID } from "node:crypto";
 import { ActionForm } from "@/components/ui/action-form";
 import { Badge, Panel, StateMessage, LinkButton } from "@/components/ui/primitives";
@@ -51,7 +54,8 @@ export async function ShiftsWorkspace({
   own?: boolean;
 }) {
   const { identity } = await requireSubstation(stationId);
-  const { shifts, sheets, lines } = await getShifts(stationId, own);
+  const { shifts, sheets, lines, allocations: stockAllocations } = await getShifts(stationId, own);
+  const vehicleStock = await getVehicleStock(stationId);
   const manage = !own && canOperateStock(identity, stationId);
   const holder = own ? await resolveMyHolder(stationId) : null;
   const active = shifts.find((s) => !["closed", "cancelled"].includes(s.state));
@@ -105,7 +109,7 @@ export async function ShiftsWorkspace({
       {own && holder && !active && (
         <Panel
           title="Start tură"
-          description="Mașinile afișate sunt active, apte și libere. Intervalul planificat este opțional și folosește ora României."
+          description="Mașinile afișate sunt active, apte și libere. Stabilește începutul și finalul turei în ora României. Închiderea este permisă numai după finalul stabilit."
         >
           {vehicles.length ? (
             <>
@@ -139,11 +143,11 @@ export async function ShiftsWorkspace({
                 <div className="form-columns">
                   <label>
                     Început planificat
-                    <input type="datetime-local" name="planned_start" />
+                    <input type="datetime-local" name="planned_start" required />
                   </label>
                   <label>
                     Sfârșit planificat
-                    <input type="datetime-local" name="planned_end" />
+                    <input type="datetime-local" name="planned_end" required />
                   </label>
                 </div>
               </ActionForm>
@@ -184,160 +188,217 @@ export async function ShiftsWorkspace({
           />
         </Panel>
       )}
-      {shifts.map((shift) => {
-        const versions = sheets.filter((s) => s.shift_id === shift.id);
-        const pending = versions.find((s) => ["draft", "sent", "disputed"].includes(s.state));
-        const acceptedIds = new Set(
-          versions.filter((s) => s.state === "accepted").map((s) => s.id),
-        );
-        const allocations = lines.filter((l) => acceptedIds.has(l.sheet_id));
-        return (
-          <Panel
-            key={shift.id}
-            title={`${shift.vehicle_identifier} · ${shift.holder_name}`}
-            description={`Cerere: ${time(shift.requested_at)}${shift.started_at ? ` · Pornită: ${time(shift.started_at)} · Data operațională: ${shift.operational_date}` : " · Tura nu a pornit încă"}`}
-          >
-            <div className="workspace-notice">
-              <Badge tone={shift.state === "open" ? "green" : "amber"}>{states[shift.state]}</Badge>
-              {shift.planned_start && (
-                <p className="identity-note">
-                  Planificat: {time(shift.planned_start)} – {time(shift.planned_end!)}
-                </p>
+      <ShiftList states={shifts.map((shift) => shift.state)}>
+        {shifts.map((shift) => {
+          const versions = sheets.filter((s) => s.shift_id === shift.id);
+          const pending = versions.find((s) => ["draft", "sent", "disputed"].includes(s.state));
+          const allocations = stockAllocations.filter((l) => l.shift_id === shift.id);
+          const currentStock = vehicleStock.filter((l) => l.vehicle_id === shift.vehicle_id);
+          const nextStep =
+            shift.state === "awaiting_issue"
+              ? "Magazia pregătește fișa. Titularul așteaptă."
+              : shift.state === "awaiting_acceptance"
+                ? "Titularul verifică și acceptă fișa pentru a porni tura."
+                : shift.state === "open"
+                  ? "Tura este activă. La final, declară consumul; restul rămâne în mașină."
+                  : shift.state === "pending_close"
+                    ? "Magazia verifică materialele returnate fizic și confirmă închiderea."
+                    : shift.state === "closed"
+                      ? "Tura este închisă. Materialele neconsumate rămân pentru următoarea tură."
+                      : "Cererea a fost anulată.";
+          return (
+            <Panel
+              key={shift.id}
+              className="shift-panel"
+              title={`${shift.vehicle_identifier} · ${shift.holder_name}`}
+              description={`Cerere: ${time(shift.requested_at)}${shift.started_at ? ` · Pornită: ${time(shift.started_at)} · Data operațională: ${shift.operational_date}` : " · Tura nu a pornit încă"}`}
+            >
+              <div className="workspace-notice">
+                <Badge tone={shift.state === "open" ? "green" : "amber"}>
+                  {states[shift.state]}
+                </Badge>
+                {shift.planned_start && (
+                  <p className="identity-note">
+                    Planificat: {time(shift.planned_start)} – {time(shift.planned_end!)}
+                  </p>
+                )}
+              </div>
+              <p className="shift-next-step">{nextStep}</p>
+              {own && !shift.planned_end && !["closed", "cancelled"].includes(shift.state) && (
+                <ActionForm action={setLegacySchedule} submitLabel="Stabilește intervalul turei">
+                  <input type="hidden" name="station" value={stationId} />
+                  <input type="hidden" name="shift" value={shift.id} />
+                  <p className="identity-note">
+                    Această tură a fost creată fără program. Stabilește-l o singură dată; finalul nu
+                    poate fi scurtat ulterior.
+                  </p>
+                  <div className="form-columns">
+                    <label>
+                      Început planificat
+                      <input type="datetime-local" name="planned_start" required />
+                    </label>
+                    <label>
+                      Sfârșit planificat
+                      <input type="datetime-local" name="planned_end" required />
+                    </label>
+                  </div>
+                </ActionForm>
               )}
-            </div>
-            {allocations.length > 0 && (
-              <>
-                <h3 className="catalog-subheading">Produse predate în tură</h3>
-                <ul className="holder-list">
-                  {allocations.map((line) => (
-                    <li key={line.id}>
-                      <span>
-                        {line.product_name}
-                        <small>{line.lot_code}</small>
-                      </span>
-                      <strong>
-                        {formatQuantity(line.quantity)} {units[line.base_unit]}
-                      </strong>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <div className="admin-records">
-              {versions.map((sheet) => (
-                <details key={sheet.id} open={sheet.state === "sent" || sheet.state === "disputed"}>
-                  <summary>
-                    <span>
-                      Fișa v{sheet.version} ·{" "}
-                      {sheet.kind === "initial" ? "Predare inițială" : "Suplimentare"}
-                      <small>{time(sheet.created_at)}</small>
-                    </span>
-                    <Badge tone={sheet.state === "accepted" ? "green" : "blue"}>
-                      {sheetStates[sheet.state]}
-                    </Badge>
-                  </summary>
-                  <ul className="holder-list">
-                    {lines
-                      .filter((l) => l.sheet_id === sheet.id)
-                      .map((line) => (
+              {!["closed", "cancelled"].includes(shift.state) && (
+                <section className="vehicle-stock-section">
+                  <h3>Stoc în mașină · {shift.vehicle_identifier}</h3>
+                  <p className="identity-note">
+                    Sold înregistrat. Consumul din ciornă se scade la închiderea confirmată.
+                  </p>
+                  <VehicleStockTable rows={currentStock} />
+                </section>
+              )}
+              {allocations.length > 0 && (
+                <>
+                  <details>
+                    <summary>Materiale preluate în responsabilitatea turei</summary>
+                    <ul className="holder-list">
+                      {allocations.map((line) => (
                         <li key={line.id}>
                           <span>
                             {line.product_name}
-                            <small>
-                              {line.lot_code} · {line.expires_on ?? "fără expirare"}
-                            </small>
+                            <small>{line.lot_code}</small>
                           </span>
                           <strong>
                             {formatQuantity(line.quantity)} {units[line.base_unit]}
                           </strong>
                         </li>
                       ))}
-                  </ul>
-                  <p className="identity-note">{sheet.note}</p>
-                  {own && sheet.state === "sent" && (
-                    <>
-                      <ActionForm
-                        action={acceptIssueSheet}
-                        submitLabel={
-                          sheet.kind === "initial"
-                            ? "Accept fișa și pornesc tura"
-                            : "Accept suplimentarea"
-                        }
-                      >
-                        <input type="hidden" name="station" value={stationId} />
-                        <input type="hidden" name="sheet" value={sheet.id} />
-                        <input type="hidden" name="request_key" value={randomUUID()} />
-                        <p className="identity-note">
-                          Confirmi primirea cantităților din această versiune. Conținutul fișei este
-                          stabilit de magazie.
-                        </p>
-                      </ActionForm>
-                      <ActionForm action={changeIssueSheet} submitLabel="Semnalează neconcordanță">
-                        <input type="hidden" name="station" value={stationId} />
-                        <input type="hidden" name="sheet" value={sheet.id} />
-                        <input type="hidden" name="operation" value="dispute" />
-                        <Reason />
-                      </ActionForm>
-                    </>
-                  )}
-                  {manage && ["draft", "sent", "disputed"].includes(sheet.state) && (
-                    <ActionForm action={changeIssueSheet} submitLabel="Retrage fișa">
-                      <input type="hidden" name="station" value={stationId} />
-                      <input type="hidden" name="sheet" value={sheet.id} />
-                      <input type="hidden" name="operation" value="withdraw" />
-                      <Reason />
-                    </ActionForm>
-                  )}
-                </details>
-              ))}
-            </div>
-            {shift.started_at && (
-              <EvidenceWorkspace
-                stationId={stationId}
-                shift={shift}
-                allocations={allocations}
-                identity={identity}
-                own={own}
-              />
-            )}
-            {manage &&
-              identity.id !== shift.owner_id &&
-              ["awaiting_issue", "awaiting_acceptance", "open"].includes(shift.state) && (
-                <>
-                  <h3 className="catalog-subheading">
-                    {pending
-                      ? "Înlocuiește fișa curentă"
-                      : shift.started_at
-                        ? "Pregătește suplimentare"
-                        : "Pregătește fișa"}
-                  </h3>
-                  <IssueEditor
-                    key={pending?.id ?? versions[0]?.id ?? shift.id}
-                    stationId={stationId}
-                    shiftId={shift.id}
-                    expectedSheet={pending?.id ?? ""}
-                    requestKey={randomUUID()}
-                    options={options}
-                    initial={
-                      pending
-                        ? lines
-                            .filter((l) => l.sheet_id === pending.id)
-                            .map((l) => ({ lot_id: l.lot_id, quantity: String(l.quantity) }))
-                        : []
-                    }
-                  />
+                    </ul>
+                  </details>
                 </>
               )}
-            {(own || manage) && shift.state.startsWith("awaiting") && (
-              <ActionForm action={cancelShift} submitLabel="Anulează cererea">
-                <input type="hidden" name="station" value={stationId} />
-                <input type="hidden" name="shift" value={shift.id} />
-                <Reason />
-              </ActionForm>
-            )}
-          </Panel>
-        );
-      })}
+              <details className="shift-sheets" open={shift.state.startsWith("awaiting")}>
+                <summary>Fișe de predare și suplimentări ({versions.length})</summary>
+                <div className="admin-records">
+                  {versions.map((sheet) => (
+                    <details
+                      key={sheet.id}
+                      open={sheet.state === "sent" || sheet.state === "disputed"}
+                    >
+                      <summary>
+                        <span>
+                          Fișa v{sheet.version} ·{" "}
+                          {sheet.kind === "initial" ? "Predare inițială" : "Suplimentare"}
+                          <small>{time(sheet.created_at)}</small>
+                        </span>
+                        <Badge tone={sheet.state === "accepted" ? "green" : "blue"}>
+                          {sheetStates[sheet.state]}
+                        </Badge>
+                      </summary>
+                      <ul className="holder-list">
+                        {lines
+                          .filter((l) => l.sheet_id === sheet.id)
+                          .map((line) => (
+                            <li key={line.id}>
+                              <span>
+                                {line.product_name}
+                                <small>
+                                  {line.lot_code} · {line.expires_on ?? "fără expirare"}
+                                </small>
+                              </span>
+                              <strong>
+                                {formatQuantity(line.quantity)} {units[line.base_unit]}
+                              </strong>
+                            </li>
+                          ))}
+                      </ul>
+                      <p className="identity-note">{sheet.note}</p>
+                      {own && sheet.state === "sent" && (
+                        <>
+                          <ActionForm
+                            action={acceptIssueSheet}
+                            submitLabel={
+                              sheet.kind === "initial"
+                                ? "Accept fișa și pornesc tura"
+                                : "Accept suplimentarea"
+                            }
+                          >
+                            <input type="hidden" name="station" value={stationId} />
+                            <input type="hidden" name="sheet" value={sheet.id} />
+                            <input type="hidden" name="request_key" value={randomUUID()} />
+                            <p className="identity-note">
+                              Confirmi primirea cantităților din această versiune. Conținutul fișei
+                              este stabilit de magazie.
+                            </p>
+                          </ActionForm>
+                          <ActionForm
+                            action={changeIssueSheet}
+                            submitLabel="Semnalează neconcordanță"
+                          >
+                            <input type="hidden" name="station" value={stationId} />
+                            <input type="hidden" name="sheet" value={sheet.id} />
+                            <input type="hidden" name="operation" value="dispute" />
+                            <Reason />
+                          </ActionForm>
+                        </>
+                      )}
+                      {manage && ["draft", "sent", "disputed"].includes(sheet.state) && (
+                        <ActionForm action={changeIssueSheet} submitLabel="Retrage fișa">
+                          <input type="hidden" name="station" value={stationId} />
+                          <input type="hidden" name="sheet" value={sheet.id} />
+                          <input type="hidden" name="operation" value="withdraw" />
+                          <Reason />
+                        </ActionForm>
+                      )}
+                    </details>
+                  ))}
+                </div>
+              </details>
+              {shift.started_at && (
+                <EvidenceWorkspace
+                  stationId={stationId}
+                  shift={shift}
+                  allocations={allocations}
+                  identity={identity}
+                  own={own}
+                />
+              )}
+              {manage &&
+                identity.id !== shift.owner_id &&
+                ["awaiting_issue", "awaiting_acceptance", "open"].includes(shift.state) && (
+                  <>
+                    <h3 className="catalog-subheading">
+                      {pending
+                        ? "Înlocuiește fișa curentă"
+                        : shift.started_at
+                          ? "Pregătește suplimentare"
+                          : "Pregătește fișa"}
+                    </h3>
+                    <IssueEditor
+                      key={pending?.id ?? versions[0]?.id ?? shift.id}
+                      stationId={stationId}
+                      shiftId={shift.id}
+                      expectedSheet={pending?.id ?? ""}
+                      requestKey={randomUUID()}
+                      options={options}
+                      allowCarryOnly={!shift.started_at && currentStock.length > 0}
+                      initial={
+                        pending
+                          ? lines
+                              .filter((l) => l.sheet_id === pending.id)
+                              .map((l) => ({ lot_id: l.lot_id, quantity: String(l.quantity) }))
+                          : []
+                      }
+                    />
+                  </>
+                )}
+              {(own || manage) && shift.state.startsWith("awaiting") && (
+                <ActionForm action={cancelShift} submitLabel="Anulează cererea">
+                  <input type="hidden" name="station" value={stationId} />
+                  <input type="hidden" name="shift" value={shift.id} />
+                  <Reason />
+                </ActionForm>
+              )}
+            </Panel>
+          );
+        })}
+      </ShiftList>
       {!own && (
         <div className="station-links">
           <LinkButton href={`/substatia/${stationId}/stocuri`}>

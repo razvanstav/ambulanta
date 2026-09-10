@@ -27,7 +27,9 @@ Aceste reguli sunt pentru implementarea incrementală a aplicației. Livrarea in
 - „Pe minus” înseamnă consumat. Interfața folosește eticheta clară „Consumat”.
 - Doar angajații activi marcați ca titulari în substație primesc predări noi.
 - Predarea scade depozitul. Consumul închide cantitatea aflată în tură. Returul confirmat crește depozitul.
-- La închiderea normală, predat = consumat + returnat, pentru fiecare lot/alocare.
+- Stocul este permanent pe mașină. La închidere, preluat = consumat + rămas în mașină + retur fizic, pentru fiecare lot/alocare. Restul nu se întoarce implicit în magazie; următoarea tură îl preia fără o nouă scădere a depozitului.
+- Intervalul turei este obligatoriu. Închiderea titularului este permisă numai după finalul programat, verificat în PostgreSQL. Returul fizic necesită confirmarea unui gestionar distinct; fără retur titularul închide direct.
+- Semnătura validată nu se elimină din declarație. O corecție produce o versiune nouă și păstrează originalul în istoric. Contractul actual este în `docs/VEHICLE-STOCK.md`.
 - Toate mișcările trec prin motorul unic de stoc, în tranzacții atomice, cu protecție la cereri repetate și concurență. Browserul nu modifică direct soldurile.
 - Datele, rapoartele și dovezile sunt izolate pe substație și prin verificări pe server/baza de date, nu numai prin interfață.
 - Mișcările validate și rapoartele finale nu se suprascriu. Corecțiile au motiv, autor și legătură la original.

@@ -1,5 +1,7 @@
 # Recepții și motorul de stoc — M05
 
+**Actualizare locală D61:** locația permanentă `vehicle` înlocuiește stocul ținut exclusiv pe tură. Consumul scade mașina; restul rămâne pentru următoarea tură. Returul fizic confirmat crește magazia. Migrarea 007 și verificările sunt în [VEHICLE-STOCK](VEHICLE-STOCK.md); nu este încă activată în Supabase găzduit. Descrierea de mai jos documentează baza M05 anterioară schimbării.
+
 Migrarea `202609100004_inventory_receipts.sql` este aplicată în proiectul demo.
 Ruta `/substatia/[id]/stocuri` arată soldurile pe lot, disponibilul, pragurile și
 recepțiile. Administratorul, logistica centrală și gestionarul operează magazia;

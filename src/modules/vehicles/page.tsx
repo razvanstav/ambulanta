@@ -1,3 +1,4 @@
+import { getVehicleStock, VehicleStockTable } from "./stock";
 import { ActionForm } from "@/components/ui/action-form";
 import { Badge, Panel, StateMessage } from "@/components/ui/primitives";
 import { canManageStation, type Identity } from "@/modules/identity/policy";
@@ -63,6 +64,7 @@ export async function VehiclesPage({
   identity: Identity;
 }) {
   const vehicles = await getVehicles(stationId);
+  const stock = await getVehicleStock(stationId);
   const manage = canManageStation(identity, stationId);
   const available = vehicles.filter((vehicle) => vehicle.active && vehicle.operational);
   return (
@@ -102,6 +104,8 @@ export async function VehiclesPage({
                         : "Indisponibilă tehnic"}
                   </Badge>
                 </summary>
+                <h3>Stoc în mașină</h3>
+                <VehicleStockTable rows={stock.filter((l) => l.vehicle_id === vehicle.id)} />
                 {manage ? (
                   <VehicleForm stationId={stationId} vehicle={vehicle} />
                 ) : (

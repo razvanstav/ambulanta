@@ -11,17 +11,20 @@ export function IssueEditor({
   requestKey,
   options,
   initial,
+  allowCarryOnly = false,
 }: {
   stationId: string;
   shiftId: string;
   expectedSheet: string;
   requestKey: string;
   options: LotOption[];
+  allowCarryOnly?: boolean;
   initial: { lot_id: string; quantity: string }[];
 }) {
   const [state, action, pending] = useActionState<ActionResult, FormData>(saveIssueSheet, {
     message: "",
   });
+  const [carryOnly, setCarryOnly] = useState(false);
   const [reason, setReason] = useState("");
   const [send, setSend] = useState("true");
   const [key] = useState(requestKey);
@@ -32,7 +35,19 @@ export function IssueEditor({
         <input type="hidden" name="shift" value={shiftId} />
         <input type="hidden" name="expected_sheet" value={expectedSheet} />
         <input type="hidden" name="request_key" value={key} />
-        <StockLines options={options} initial={initial} />
+        {allowCarryOnly && (
+          <label className="check-label">
+            <input
+              type="checkbox"
+              name="carry_only"
+              value="true"
+              checked={carryOnly}
+              onChange={(event) => setCarryOnly(event.target.checked)}
+            />
+            Preluare stoc existent, fără completare din magazie
+          </label>
+        )}
+        {!carryOnly && <StockLines options={options} initial={initial} />}
         <label>
           Motivul fișei
           <input
@@ -60,7 +75,7 @@ export function IssueEditor({
           {state.message}
         </p>
       )}
-      <Button type="submit" disabled={pending || state.success || !options.length}>
+      <Button type="submit" disabled={pending || state.success || (!options.length && !carryOnly)}>
         Salvează versiunea fișei
       </Button>
     </form>

@@ -83,3 +83,38 @@ export async function setEvidencePolicy(
   });
   return finish(error, "Politica dovezilor a fost salvată pentru această substație.");
 }
+
+async function closeoutAction(form: FormData, confirm: boolean): Promise<ActionResult> {
+  const station = String(form.get("station") ?? "");
+  await requireSubstation(station);
+  const version = String(form.get("version") ?? "");
+  const key = String(form.get("request_key") ?? "");
+  if (!isUuid(version) || !isUuid(key) || (confirm && form.get("confirm") !== "on"))
+    return { message: "Verifică declarația și confirmarea returului." };
+  const client = await createSupabaseServerClient();
+  const { data } = await client
+    .from("closeout_versions")
+    .select("id")
+    .eq("id", version)
+    .eq("substation_id", station)
+    .maybeSingle();
+  if (!data) return { message: "Declarația nu este accesibilă." };
+  const { error } = await client.rpc(
+    confirm ? "confirm_vehicle_return" : "submit_vehicle_closeout",
+    { p_version: version, p_request_key: key },
+  );
+  if (error?.message?.includes("finalul programat"))
+    return { message: "Tura poate fi închisă numai după data și ora finalului programat." };
+  return finish(
+    error,
+    confirm
+      ? "Returul fizic a fost confirmat și tura închisă."
+      : "Declarația a fost confirmată. Dacă ai declarat retur fizic, tura așteaptă confirmarea magaziei; altfel este închisă.",
+  );
+}
+export async function submitCloseout(_previous: ActionResult, form: FormData) {
+  return closeoutAction(form, false);
+}
+export async function confirmReturn(_previous: ActionResult, form: FormData) {
+  return closeoutAction(form, true);
+}

@@ -1,5 +1,7 @@
 # Perspectivele aplicației și fluxul turei
 
+**Flux actual cerut — D61–D64:** fiecare mașină are stoc permanent vizibil. Din 10 primite și 7 consumate rămân 3 în mașină, preluate de următoarea tură. Intervalul turei este obligatoriu; titularul poate închide numai după finalul programat. Numai returul fizic trece prin confirmarea magaziei. Semnătura salvată rămâne în istoric. Pașii actualizați, criteriile și starea activării sunt în [VEHICLE-STOCK](VEHICLE-STOCK.md). Fluxul inițial de mai jos este înlocuit în punctele care prevăd returul tuturor materialelor neconsumate.
+
 Actualizat: 10 septembrie 2026. Circuitul cerere → fișă → acceptare → suplimentare
 este implementat în M06, cu recepții și stoc din M05. Contractele și verificările
 sunt în [SHIFTS](SHIFTS.md) și [INVENTORY](INVENTORY.md). Închiderea, dovezile și

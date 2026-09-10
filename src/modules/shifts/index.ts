@@ -19,6 +19,8 @@ export type Shift = {
   operational_date: string | null;
   planned_start: string | null;
   planned_end: string | null;
+  closed_at: string | null;
+  final_closeout_id: string | null;
 };
 export type Sheet = {
   id: string;
@@ -49,7 +51,7 @@ export async function getShifts(stationId: string, own: boolean) {
   let query = client
     .from("shifts")
     .select(
-      "id,owner_id,employee_id,vehicle_id,holder_name,vehicle_identifier,state,requested_at,started_at,operational_date,planned_start,planned_end",
+      "id,owner_id,employee_id,vehicle_id,holder_name,vehicle_identifier,state,requested_at,started_at,operational_date,planned_start,planned_end,closed_at,final_closeout_id",
     )
     .eq("substation_id", stationId)
     .order("requested_at", { ascending: false });
@@ -57,7 +59,12 @@ export async function getShifts(stationId: string, own: boolean) {
   const shifts = await query;
   if (shifts.error) throw new Error("Turele nu au putut fi încărcate.");
   if (!shifts.data.length)
-    return { shifts: [] as Shift[], sheets: [] as Sheet[], lines: [] as SheetLine[] };
+    return {
+      shifts: [] as Shift[],
+      sheets: [] as Sheet[],
+      lines: [] as SheetLine[],
+      allocations: [] as (SheetLine & { shift_id: string })[],
+    };
   const sheets = await client
     .from("issue_sheet_versions")
     .select("id,shift_id,version,kind,state,author_id,created_at,sent_at,note")
@@ -77,7 +84,16 @@ export async function getShifts(stationId: string, own: boolean) {
         )
     : { data: [], error: null };
   if (lines.error) throw new Error("Liniile fișelor nu au putut fi încărcate.");
+  const allocations = await client
+    .from("shift_stock_allocations")
+    .select("id,shift_id,lot_id,product_name,base_unit,lot_code,expires_on,quantity")
+    .in(
+      "shift_id",
+      shifts.data.map((s) => s.id),
+    );
+  if (allocations.error) throw new Error("Stocul preluat în ture nu poate fi încărcat.");
   return {
+    allocations: allocations.data as (SheetLine & { shift_id: string })[],
     shifts: shifts.data as Shift[],
     sheets: sheets.data as Sheet[],
     lines: lines.data as SheetLine[],

@@ -74,8 +74,8 @@ const requestArgs = (name, extra = {}) => ({
   p_substation: station,
   p_vehicle: d.vehicles[name],
   p_request_key: randomUUID(),
-  p_planned_start: null,
-  p_planned_end: null,
+  p_planned_start: "2026-09-10T00:00",
+  p_planned_end: "2099-09-10T12:00",
   ...extra,
 });
 const request = async (name, extra = {}) => rpc(s[name], "request_shift", requestArgs(name, extra));
@@ -215,7 +215,7 @@ await verify("acceptarea atomică produce 90/10, replay cu altă cheie nu dublea
   assert.ok(current.started_at && current.operational_date);
   d.started = current.started_at;
   assert.equal(
-    (await rows(s.m06a, "stock_balances"))
+    (await rpc(s.m06a, "list_vehicle_stock", { p_substation: station, p_vehicle: d.vehicles.m06a }))
       .filter((b) => b.lot_id === f.m04.lot)
       .reduce((a, b) => a + b.quantity, 0),
     10,

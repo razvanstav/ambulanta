@@ -2,6 +2,8 @@
 
 Versiune de plan: 1.2 · 10 septembrie 2026 · Limbă interfață: română
 
+**Actualizare D61–D64:** stoc permanent pe mașină, preluat între ture; formula curentă este `preluat = consumat + rămas în mașină + retur fizic`. Titularul închide după finalul programat dacă nu există retur; magazia confirmă numai circuitul cu retur fizic. Modelul vechi de mai jos este înlocuit în aceste puncte de [VEHICLE-STOCK](VEHICLE-STOCK.md), inclusiv schema, drepturile și criteriile de acceptare.
+
 Actualizare de scop: beneficiarul dorește deocamdată un MVP funcțional pentru prezentare, cu găzduire gratuită. Păstrăm fluxurile de gestiune și construim M00–M09, apoi P01 pentru publicarea demo-ului. Datele de prezentare sunt fictive. M10–M11 și cerințele exclusiv operaționale din acest document sunt pentru o etapă ulterioară.
 
 ## 1. Scop și cerințe confirmate

@@ -7,6 +7,7 @@ export type DeclarationLine = {
   issued: number;
   consumed: number;
   returned: number;
+  remaining?: number;
 };
 export type CloseoutVersion = {
   id: string;

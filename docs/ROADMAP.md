@@ -102,6 +102,8 @@ Verifică și că un alt șef de tură din aceeași substație nu poate vedea/de
 
 ## M08 — Închiderea și raportul turei
 
+**Actualizare D61–D64:** partea de închidere a fost implementată local cu stoc permanent pe mașină și final programat, conform [VEHICLE-STOCK](VEHICLE-STOCK.md). Scenariul fără retur este 100 în magazie → 10 în mașină → 7 consumate → 90 în magazie și 3 în mașină. Titularul închide fără retur după final; returul fizic necesită gestionarul. Migrarea găzduită, verificările Supabase/Netlify și PDF-ul individual rămân de făcut. Criteriile istorice de mai jos despre retur implicit și interzicerea oricărei închideri de către titular sunt înlocuite de noul contract.
+
 **Include:** trimiterea declarației, verificarea gestionarului, consum, retur, închidere atomică, versiune finală nemodificabilă și PDF individual. Introduce regenerarea PDF independentă de operația de stoc.
 
 **Acceptare:** scenariul 100/10/6/4 se încheie cu 94 în depozit; consumul nu scade încă o dată depozitul; închiderea repetată nu dublează returul; dovezile invalide sau neconcordanța cantităților blochează închiderea. Eșecul PDF nu redeschide tura. Raportul păstrează datele chiar dacă produsul sau angajatul este ulterior redenumit.

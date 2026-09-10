@@ -4,6 +4,36 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
+**Modificare locală: stoc permanent pe mașină și închidere după finalul turei.**
+Codul și migrarea 007 sunt implementate și verificate local; **nu sunt încă
+activate pe Supabase/Netlify**. Configurația privată este pe alt calculator.
+Reperul anterior al acestui increment: `283da32`, branch `main`.
+
+- Magazie 100 → predare 10 → consum 7 → magazie 90, mașină 3. Următoarea
+  tură preia restul fără o nouă scădere a magaziei; stoc vizibil pe mașină.
+- Declarație cu Consumat/Rămâne în mașină și retur fizic separat. Fără retur,
+  titularul închide după finalul programat; returul este confirmat de magazie.
+- Semnătura validată nu mai poate fi eliminată. Dovezile au explicații și
+  contextul declarației; cererile, turele active și istoricul au filtre distincte.
+- `npm run check`: format, lint, tipuri, 16 unitare și build trecute.
+- 13 scenarii PostgreSQL locale trecute, inclusiv migrare cu date existente,
+  10/7/3, preluare, concurență, drepturi, blocare temporală și rollback.
+- Browser Chromium desktop și mobil: stoc, filtre, calcul, salvare, semnătură și
+  blocarea închiderii verificate pe adaptor HTTP local cu PostgreSQL. Acestea nu
+  înlocuiesc testele găzduite Supabase Auth/Storage.
+- Închiderea prin buton după final a fost verificată pe mobil: consum înregistrat,
+  stoc rămas în mașină și afișarea automată a istoricului. Regresia E2E disponibilă
+  local: 18 teste trecute, 16 omise explicit din lipsa fixturelor Supabase reale.
+- Urmează aplicarea migrării 007 din mediul cu acces, verificările reale
+  Supabase/Netlify și continuarea M08 cu PDF individual; M09 rămâne ulterior.
+
+Contract și procedură: [VEHICLE-STOCK](VEHICLE-STOCK.md). Commitul acestui increment
+folosește `[skip netlify]`, deoarece codul nou necesită mai întâi migrarea.
+Progresul este salvat numai local. Revizuirea automată a refuzat push-ul în
+`origin/main`, cerând autorizarea explicită a publicării modificărilor pe GitHub.
+
+## Starea găzduită anterioară — M07
+
 **M00–M07 sunt implementate. M07 este verificat cu PostgreSQL, Storage și browser real.**
 Incrementul M07 este publicat și verificat pe Netlify la cererea beneficiarului.
 

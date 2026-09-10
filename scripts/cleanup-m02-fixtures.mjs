@@ -52,9 +52,17 @@ for (const id of fixture.institutions) {
         .remove(evidence.slice(i, i + 100).map((e) => e.object_path)),
       "Curățare fișiere fictive M07",
     );
+  checked(
+    await admin
+      .from("shifts")
+      .update({ final_closeout_id: null, submitted_closeout_id: null })
+      .eq("institution_id", id),
+    "Decuplare declarații finale numai în instituția fictivă verificată",
+  );
   for (const table of [
     "evidence_files",
     "closeout_versions",
+    "shift_stock_allocations",
     "issue_sheet_acceptances",
     "issue_sheet_lines",
     "issue_sheet_versions",

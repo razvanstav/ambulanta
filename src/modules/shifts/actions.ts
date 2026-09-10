@@ -43,14 +43,15 @@ export async function requestShift(_previous: ActionResult, form: FormData): Pro
   if (
     !isUuid(vehicle) ||
     !isUuid(key) ||
-    Boolean(start) !== Boolean(end) ||
+    !start ||
+    !end ||
     (start &&
       (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(start) ||
         !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(end) ||
         end <= start))
   )
     return {
-      message: "Selectează mașina și, opțional, un interval planificat valid în ora României.",
+      message: "Selectează mașina și stabilește un interval valid în ora României.",
     };
   const { error } = await client.rpc("request_shift", {
     p_substation: station,
@@ -70,7 +71,7 @@ export async function saveIssueSheet(
   const expected = value(form, "expected_sheet");
   const key = value(form, "request_key");
   const reason = value(form, "reason");
-  const lines = readStockLines(form);
+  const lines = value(form, "carry_only") === "true" ? [] : readStockLines(form);
   if (
     !isUuid(shift) ||
     (expected && !isUuid(expected)) ||
@@ -180,4 +181,34 @@ export async function cancelShift(_previous: ActionResult, form: FormData): Prom
   if (!data) notFound();
   const { error } = await client.rpc("cancel_shift", { p_shift: shift, p_reason: reason });
   return finish(error, "Cererea a fost anulată și mașina eliberată.");
+}
+
+export async function setLegacySchedule(
+  _previous: ActionResult,
+  form: FormData,
+): Promise<ActionResult> {
+  const { station, client } = await context(form);
+  const shift = value(form, "shift");
+  const start = value(form, "planned_start");
+  const end = value(form, "planned_end");
+  if (
+    !isUuid(shift) ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(start) ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(end) ||
+    end <= start
+  )
+    return { message: "Completează intervalul turei." };
+  const { data } = await client
+    .from("shifts")
+    .select("id")
+    .eq("id", shift)
+    .eq("substation_id", station)
+    .maybeSingle();
+  if (!data) notFound();
+  const { error } = await client.rpc("set_legacy_shift_schedule", {
+    p_shift: shift,
+    p_start: start,
+    p_end: end,
+  });
+  return finish(error, "Intervalul a fost stabilit. Închiderea se permite după finalul programat.");
 }
