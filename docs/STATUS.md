@@ -19,6 +19,12 @@ culori, tipografie și atmosferă vizuală; funcțiile provin din plan și WORKF
 - Următorul modul: **M02 — Conturi, substații și roluri**. Necesită serviciul
   Supabase real, autentificare și verificarea accesului pe server/PostgreSQL.
 
+Implementarea M01 este salvată local în **`fcb85eb`**. Push-ul către `origin/main`
+a fost blocat de verificarea automată de aprobare: autorizarea din documentație
+nu a fost acceptată pentru exportul către repository-ul extern. Nu s-a efectuat
+sincronizarea; este necesară confirmarea explicită a beneficiarului. Acest lucru
+nu blochează verificarea sau folosirea locală a interfeței.
+
 ## Ce funcționează în M01
 
 - Layout comun cu meniu lateral pe calculator și dialog de navigație pe telefon,
