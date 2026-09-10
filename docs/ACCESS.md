@@ -29,6 +29,10 @@ operaționale. M02 configurează accesul; stocurile și turele apar ulterior.
    fișierul privat. În `/administrare`, creează conturile individuale, apoi
    atribuie rolurile. Nu utiliza parole comune sau date reale în demonstrație.
 
+M03 adaugă migrarea `202609100002_people_vehicles.sql`, deja aplicată și
+înregistrată în proiectul actual. Configurarea personalului și popularea cu
+10 angajați, 3 titulari și 5 mașini sunt descrise în [PERSONNEL](PERSONNEL.md).
+
 Cheia `SUPABASE_SECRET_KEY` este utilizată în aplicație numai de clientul
 `server-only` pentru crearea/compensarea conturilor Supabase Auth. Citirile și
 scrierile datelor aplicației folosesc sesiunea utilizatorului, inclusiv la
@@ -99,14 +103,16 @@ accesul. Acțiunile server reverifică administratorul și RPC-ul reverifică î
 - `/administrare`: creare cont, substații, roluri și dezactivare, numai administrator.
 - `/cont`: identitate și drepturi; stare explicită dacă nu există substație atribuită.
 - `/substatia/[id]`: selector cu substațiile autorizate și perspectivele permise.
-- `/substatia/[id]/logistica`, `/substatia/[id]/tura-mea`: limite de acces reale,
-  conținut operațional încă în pregătire, fără indicatori fictivi prezentați ca reali.
+- `/substatia/[id]/logistica`, `/substatia/[id]/tura-mea`: personal și flotă reale
+  din M03, cu eligibilitate și identitate proprie; turele se implementează în M06.
+- `/substatia/[id]/personal`, `/substatia/[id]/masini`: consultare după domeniu,
+  modificări numai pentru administrator și șeful local, verificate și în DB.
 - `/demo`: interfața M01 integrală, marcată demonstrativ, fără salvări.
 
 Contractele server și tipurile sunt în `src/modules/identity`; `policy.ts`
 este intrarea utilizabilă și de componente client, iar `actions.ts` expune numai
 acțiuni server. `src/modules/substations` conține administrarea. Legătura cont–
-angajat/titular urmează în M03. Auditul de bază există în DB; ecranul de audit
+angajat/titular este în `src/modules/employees`, implementată în M03. Auditul de bază există în DB; ecranul de audit
 și corecțiile sunt M10.
 
 ## Reproducerea verificărilor
@@ -122,11 +128,13 @@ npm run test:integration:cleanup
 ```
 
 `test:integration` verifică referința explicită a proiectului, creează două
-instituții fictive și conturi cu parole aleatorii, apoi execută 11 grupuri de
+instituții fictive și conturi cu parole aleatorii, apoi execută 19 grupuri de
 teste asupra PostgreSQL real prin Auth/PostgREST/RPC. Acoperă RLS, izolarea
 instituțională/locală, proprietarul, escaladarea privilegiilor, metadatele
 declarate, scrieri directe, rollback inclusiv audit, revocare cu JWT existent,
-audit și concurență. Revocările reciproce rulează în trei runde.
+audit și concurență. Revocările reciproce rulează în trei runde. Sunt 11 grupuri
+M02 și 8 M03; acestea din urmă verifică personalul, eligibilitatea, flota,
+asocierea unică a contului și auditul local.
 
 Fixturea privată `.verification/m02-fixtures.json` permite E2E autentificate.
 Testele UI folosesc același serviciu real, conturi fictive și două configurații
@@ -136,7 +144,8 @@ hidratarea înainte să devină activ.
 
 Curățarea verifică URL-ul, instituțiile din manifest și apartenența conturilor
 de test înaintea ștergerilor. Elimină doar fixturele generate, inclusiv conturile
-E2E din instituțiile de test. Instituția demo și administratorul inițial rămân.
+E2E, personalul și mașinile din instituțiile de test. Instituția demo,
+administratorul inițial, cei 10 angajați, 3 conturi de titular și 5 mașini rămân.
 Nu folosi acest script ca procedură de ștergere a datelor operaționale. După o
 rulare întreruptă, verifică manifestul privat înainte de reluare; o fixture
 existentă blochează crearea alteia.

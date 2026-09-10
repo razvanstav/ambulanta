@@ -19,9 +19,10 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:integration": "node --env-file=.env.local tests/integration/access.mjs",
+    "test:integration": "node --env-file=.env.local tests/integration/access.mjs && node --env-file=.env.local tests/integration/people-vehicles.mjs",
     "test:integration:cleanup": "node --env-file=.env.local scripts/cleanup-m02-fixtures.mjs",
     "bootstrap:admin": "node --env-file=.env.local scripts/bootstrap-admin.mjs",
+    "seed:m03": "node --env-file=.env.local scripts/seed-m03-demo.mjs",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build"
   },
   "dependencies": {

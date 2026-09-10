@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   canAccessOwnedRecord,
   canViewLogistics,
+  canManageStation,
   isAdmin,
   safeNextPath,
   type Identity,
@@ -16,6 +17,27 @@ const leader: Identity = {
   substations: [station],
 };
 describe("contractul de acces M02", () => {
+  it("personalul și flota sunt administrate de șeful local sau administrator, nu de logistică", () => {
+    expect(canManageStation(leader, station.id)).toBe(false);
+    expect(
+      canManageStation({ roles: [{ role: "logistics", substation_id: null }] }, station.id),
+    ).toBe(false);
+    expect(
+      canManageStation(
+        { roles: [{ role: "station_manager", substation_id: station.id }] },
+        station.id,
+      ),
+    ).toBe(true);
+    expect(
+      canManageStation(
+        { roles: [{ role: "station_manager", substation_id: station.id }] },
+        "other",
+      ),
+    ).toBe(false);
+    expect(
+      canManageStation({ roles: [{ role: "administrator", substation_id: null }] }, station.id),
+    ).toBe(true);
+  });
   it("șeful de tură vede numai proprietarul propriu în substația atribuită", () => {
     expect(canAccessOwnedRecord(leader, station.id, leader.id)).toBe(true);
     expect(canAccessOwnedRecord(leader, station.id, "leader-2")).toBe(false);

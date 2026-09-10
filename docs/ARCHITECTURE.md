@@ -168,8 +168,8 @@ Schema de mai jos descrie entitățile necesare, fără a crea de pe acum toate 
 | `profiles` | Contul autentificat, nume afișat, legătură opțională la angajat |
 | `institutions` | Instituția și starea activă; limita de izolare pentru toate substațiile și profilurile M02 |
 | `role_assignments` | Implementat M02: rol, utilizator, instituție, substație opțională; administrator/logistică sunt globale, celelalte roluri obligatoriu locale, impus prin constrângeri |
-| `employees` | Identitate internă, nume, stare activă; fără date despre pacienți |
-| `employee_assignments` | Angajat, substație, activ, `is_titular`; unic pe apartenență |
+| `employees` | Identitate instituțională, cod unic, nume, cont opțional unic; fără date despre pacienți |
+| `employee_assignments` | Angajat, substație, funcție, activ, `is_titular`; unic pe apartenență; starea activă este locală |
 | `vehicles` | Substație, număr de înmatriculare/indicativ, stare activă și aptă de utilizare; ocuparea derivă din cereri/ture |
 | `products` | Cod, denumire, categorie, unitate de bază, precizie, urmărire lot/expirare |
 | `station_product_settings` | Produs, substație, prag minim, activ local |

@@ -3,8 +3,9 @@
 Aplicație în română pentru evidența produselor și a turelor substațiilor de
 ambulanță. Ținta este un MVP cu date fictive, Supabase Free și Netlify Free.
 
-**Stare: M02 — Conturi, substații și roluri.** Autentificarea și administrarea
-folosesc Supabase real. Interfața demonstrativă M01 rămâne la `/demo`. Stocurile,
+**Stare: M03 — Personal, titulari și mașini.** Autentificarea, administrarea,
+personalul și flota folosesc Supabase real: 10 angajați, dintre care 3 titulari,
+și 5 mașini fictive în Roșiori. Interfața demonstrativă M01 rămâne la `/demo`. Stocurile,
 turele, dovezile și rapoartele se implementează în modulele următoare. Aplicația
 nu este încă publicată.
 
@@ -24,8 +25,9 @@ Copy-Item .env.example .env.local
 ```
 
 Completează local conexiunea Supabase și urmează [configurarea M02](docs/ACCESS.md)
-pentru migrare și administrator. În proiectul Supabase actual migrarea este deja
-aplicată; nu o rerula. Nu suprascrie o configurație locală existentă.
+pentru administrator și [M03](docs/PERSONNEL.md) pentru personal/flotă. În proiectul
+Supabase actual migrările M02 și M03 sunt deja aplicate; nu le rerula.
+Nu suprascrie o configurație locală existentă.
 
 ```powershell
 npm run dev
@@ -53,6 +55,11 @@ fictiv cu parolă aleatorie în `private/initial-admin.json`. Acest fișier și
 `.env.local` sunt ignorate de Git. Cheia `SUPABASE_SECRET_KEY` nu primește prefix
 `NEXT_PUBLIC_` și nu ajunge în codul client.
 
+Șeful substației/adminul gestionează personalul și mașinile. Asocierea unui cont
+este administrativă; „Tura mea” identifică titularul din contul autentificat.
+`npm run seed:m03` completează datele fictive fără duplicate sau suprascrieri.
+Accesul celor trei titulari este numai în `private/m03-demo-accounts.json`.
+
 Fluxul de gestiune rămâne cel din [WORKFLOWS](docs/WORKFLOWS.md): șeful de tură
 cere pornirea, magazia pregătește fișa, iar acceptarea confirmă predarea și
 pornește tura atomic. M01 îl ilustrează; operațiile reale urmează în M06.
@@ -79,7 +86,7 @@ npm run test:e2e
 npm run test:integration:cleanup
 ```
 
-Sunt 5 teste unitare, 11 grupuri de teste PostgreSQL și 26 de cazuri E2E cu
+Sunt 6 teste unitare, 19 grupuri de teste PostgreSQL și 32 de cazuri E2E cu
 fixturea Supabase. Fără fixture, testele de acces real sunt explicit omise.
 Nu confunda o rulare omisă cu validarea drepturilor. Toate parolele și fișierele
 de test sunt locale, ignorate de Git. Datele operaționale nu sunt permise în teste.
@@ -95,6 +102,7 @@ de test sunt locale, ignorate de Git. Datele operaționale nu sunt permise în t
 | `npm run test:e2e`                       | Browser desktop și Pixel 7                               |
 | `npm run test:integration:cleanup`       | Eliminarea numai a fixturelor de test verificate         |
 | `npm run bootstrap:admin`                | Inițializarea administratorului fictiv                   |
+| `npm run seed:m03`                       | Populare demo: 10 angajați, 3 titulari și 5 mașini       |
 | `npm run check`                          | Format, lint, tipuri, unitare și build                   |
 
 ## Structură și continuitate
@@ -105,6 +113,8 @@ src/components/         Componente vizuale și shell-uri demo/autentificat
 src/modules/demo/       Previzualizare M01, fără salvări
 src/modules/identity/   Sesiune, roluri, autorizare și acțiuni server
 src/modules/substations/ Administrarea M02
+src/modules/employees/  Personal, eligibilitate și identitate titular
+src/modules/vehicles/   Flotă și disponibilitate tehnică
 src/lib/supabase/       Configurație și clienți server
 supabase/migrations/    Migrări versionate
 scripts/                Inițializare și fixture fictive

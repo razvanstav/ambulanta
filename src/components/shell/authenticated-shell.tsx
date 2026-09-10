@@ -38,7 +38,11 @@ export function AuthenticatedShell({
     ? [{ href: base, label: "Spațiul substației", icon: "grid" }]
     : [];
   if (station && canViewLogistics(identity, station.id))
-    navigation.push({ href: `${base}/logistica`, label: "Logistică / Magazie", icon: "box" });
+    navigation.push(
+      { href: `${base}/logistica`, label: "Logistică / Magazie", icon: "box" },
+      { href: `${base}/personal`, label: "Personal", icon: "users" },
+      { href: `${base}/masini`, label: "Mașini", icon: "ambulance" },
+    );
   if (station && canUseMyShift(identity, station.id))
     navigation.push({ href: `${base}/tura-mea`, label: "Tura mea", icon: "pulse" });
   if (isAdmin(identity))

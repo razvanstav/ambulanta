@@ -1,5 +1,93 @@
 @import "tailwindcss";
 
+.people-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.people-stats > div,
+.people-stats > a {
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: linear-gradient(130deg, #102b45, var(--surface));
+}
+.people-stats span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.people-stats strong {
+  font-family: var(--heading-font);
+  font-size: 34px;
+  line-height: 1;
+}
+.people-stats small {
+  color: var(--blue);
+}
+.form-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-columns > * {
+  min-width: 0;
+}
+.field-hint {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--subtle);
+}
+.record-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+.holder-list {
+  padding: 0 22px 22px;
+  list-style: none;
+  margin: 0;
+}
+.holder-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.holder-list small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+.workspace-notice {
+  padding: 0 22px 22px;
+}
+.identity-form select {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .people-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .people-stats > div,
+  .people-stats > a {
+    padding: 16px;
+  }
+  .form-columns {
+    grid-template-columns: 1fr;
+  }
+  .record-badges {
+    max-width: 100px;
+  }
+}
+
 /* Identity and administrative forms share the existing visual tokens. */
 .login-page {
   min-height: 100dvh;

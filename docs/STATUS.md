@@ -4,90 +4,89 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
-**M02 — Conturi, substații și roluri este implementat și verificat pe Supabase real.**
-Aplicația folosește proiectul Free existent **ambulanta**, ales de beneficiar,
-`roxvzbhsszesglcaadcl`. Autentificarea, selectorul de substație, crearea conturilor,
-rolurile, dezactivarea și auditul folosesc serviciul real.
+**M03 — Angajați, titulari și mașini este implementat și verificat pe Supabase real.**
+În instituția „SAJ — Demonstrație”, substația **Roșiori**, sunt **10 angajați
+fictivi în total, dintre care 3 titulari eligibili, și 5 mașini active/apte**.
+Aplicația folosește proiectul Free existent **ambulanta**, `roxvzbhsszesglcaadcl`.
 
 - Branch comun: `main`, remote `origin`, repository `razvanstav/ambulanta`.
-- Reper anterior verificat: **`80a5e08`**, M01 sincronizat, director de lucru curat
-  la începutul M02. Hashul nou se raportează după commit; nu se include în sine.
+- Reper anterior verificat: **`2b4c86c`**, M02 sincronizat; directorul de lucru
+  era curat la începutul M03. Hashul nou se raportează după commit.
 - Commiturile și push-ul progresului sunt autorizate explicit (D26).
-- Cheia secretă a proiectului a fost autorizată explicit pentru utilizare locală.
-  Rămâne în `.env.local`, ignorat de Git, fără afișare sau includere în repository.
+- Cheia secretă este autorizată pentru utilizare locală și rămâne în
+  `.env.local`, ignorat de Git, fără afișare sau includere în repository.
 - Țintă: MVP fictiv, Netlify Free + Supabase Free; M00–M09 și apoi P01.
-- Următorul modul: **M03 — Angajați, titulari și mașini**.
+- Următorul modul: **M04 — Catalog, unități, loturi și praguri**.
 
 ## Ce funcționează
 
-- Autentificare e-mail/parolă, sesiune SSR verificată cu Supabase Auth, refresh
-  cookie-uri și deconectare. Înscrierea publică și autentificarea anonimă sunt
-  oprite în Supabase. Conturile se creează numai administrativ.
-- Administratorul creează/redenumește/dezactivează substații, creează conturi
-  individuale și atribuie explicit roluri globale sau locale, cu motiv.
-- Logistica centrală vede toate substațiile instituției fără administrarea
-  conturilor. Gestionarul și șeful de substație sunt locali; șeful de tură are
-  perspectiva proprie. Sunt permise roluri multiple atribuite explicit.
-- Ruta `/substatia/[id]` și operațiile verifică accesul pe server și în DB.
-  Schimbarea manuală a identificatorului nu permite acces la altă substație.
-  Conturile fără roluri și conturile dezactivate au comportamente distincte.
-- Migrarea `202609100001_identity.sql` este aplicată și înregistrată în istoricul
-  Supabase. Cinci tabele cu RLS: instituții, profiluri, substații, roluri și audit.
-  Scrierile directe sunt interzise și administratorilor aplicației.
-- Mutațiile de drepturi sunt atomice, inclusiv auditul. Blocarea instituției și
-  reverificarea după blocare protejează împotriva revocărilor concurente.
-  Administratorul nu își poate modifica propriul acces.
-- Există instituția fictivă „SAJ — Demonstrație”, Roșiori și Alexandria, plus
-  administratorul inițial cu parolă aleatorie. Datele de conectare sunt exclusiv
-  în `private/initial-admin.json`; procedura se găsește în [ACCESS](ACCESS.md).
-- Prezentarea M01 se păstrează integral la `/demo`, cu culorile și tipografia
-  inspirate din referință. Zona autentificată nu folosește exemple ca fallback.
+- M02: autentificare e-mail/parolă, sesiune SSR, refresh și logout; conturi,
+  substații, roluri globale/locale, dezactivare și audit. Înscrierea publică și
+  autentificarea anonimă sunt oprite. Conturile se creează administrativ.
+- Personal: adăugare și editare, cod intern, funcție, activ/inactiv în substație,
+  bifă Titular și cont individual opțional. Șeful local/adminul gestionează;
+  asocierea contului este rezervată administratorului inclusiv în DB.
+- Mașini: indicativ unic în instituție, descriere, activ/inactiv și aptă de
+  utilizare. Gestionarul/logistica consultă în domeniul autorizat.
+- Logistică: numere reale de angajați, titulari eligibili și mașini disponibile
+  tehnic; lista titularilor și legături către Personal/Mașini.
+- Tura mea: identitatea este rezolvată pe server/DB din contul autentificat,
+  fără alegerea altei persoane; mașinile inactive/inapte sunt excluse.
+  Eligibilitatea cere apartenență activă, titular, cont activ și rol local.
+- Cele 3 tabele M03 au RLS; scrierile directe sunt interzise. RPC-urile verifică
+  substația și instituția, blochează instituția și reverifică drepturile.
+  Identitatea/apartenența și auditul se salvează atomic.
+- Migrările `202609100001_identity.sql` și `202609100002_people_vehicles.sql`
+  sunt aplicate și înregistrate în istoricul Supabase. Nu se rerulează.
+- Popularea `seed:m03` este repetabilă fără duplicate sau suprascrierea
+  modificărilor utilizatorului. Cei 3 titulari au conturi individuale locale.
+  Administrator: `private/initial-admin.json`; titulari:
+  `private/m03-demo-accounts.json`. Parolele aleatorii sunt exclusiv locale.
+- M01 rămâne la `/demo`, cu aspectul inspirat din referință. Zona autentificată
+  nu folosește exemple drept fallback. Personalul/flota sunt persistente.
 
-## Verificări M02
+Procedurile și contractele sunt în [ACCESS](ACCESS.md) și [PERSONNEL](PERSONNEL.md).
 
-| Verificare                 | Rezultat                                                                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `npm run check`            | Prettier, ESLint fără avertismente, TypeScript, Vitest și build trecute                                                   |
-| `npm test`                 | 5 teste unitare ale contractului de acces și redirecturilor                                                               |
-| `npm run test:integration` | 11 grupuri trecute pe PostgreSQL/Supabase real, prin Auth/PostgREST/RPC                                                   |
-| Izolare și drepturi        | Anon refuzat, instituții și substații separate, proprietar propriu, metadate fără privilegii, scrieri directe refuzate    |
-| Tranzacții și concurență   | Rollback integral inclusiv audit; JWT vechi după revocare; 3 runde de revocări reciproce; denumire unică creată concurent |
-| `npm run test:e2e`         | 26 teste trecute, Chromium desktop și Pixel 7; rulare finală completă, cod 0                                              |
-| Fluxuri E2E reale          | Login, reîncărcare, logout, selector, URL falsificat, cont fără rol, creare substație/cont, atribuire și revocare         |
-| Acțiuni server             | Replay anonim redirecționat la login; replay cu rol local refuzat cu 404                                                  |
-| Regresii M01               | 16 teste pentru navigație, filtre, stări, formular, fișă numai citire și lipsa salvărilor simulate                        |
-| Inspecție vizuală          | Capturi login/substație/administrare desktop și mobil, fără depășirea lățimii; padding și aliniere formulare corectate    |
+## Verificări M03 și regresii
 
-Primele rulări UI au identificat interacțiuni înainte de hidratarea paginii și
-verificarea prea devreme a unei revocări. Meniul este dezactivat până la hidratare,
-iar testele așteaptă rezultatul efectiv. Rularea finală a trecut toate cele 26 de
-teste. Next/Node a emis un avertisment `Gzip MaxListenersExceededWarning` la
-răspunsurile cu multe formulare; fără erori JavaScript sau verificări eșuate.
-Se urmărește comportamentul la pregătirea publicării, fără schimbări de dependențe
-fără legătură cu M02.
+| Verificare                    | Rezultat                                                                                                                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check`               | Prettier, ESLint fără avertismente, TypeScript, Vitest și build trecute                                                     |
+| `npm test`                    | 6 teste unitare pentru acces și permisiunea de administrare locală                                                          |
+| `npm run test:integration`    | 19 grupuri trecute pe PostgreSQL/Supabase real: 11 M02 și 8 M03                                                             |
+| Izolare și drepturi M03       | Substații/instituții, titular propriu, anon și scrieri directe refuzate, asociere cont numai admin                          |
+| Eligibilitate și flotă        | Debifare titular, inactivitate, cont inactiv, rol revocat cu JWT existent, vehicule inactive/inapte                         |
+| Tranzacții și concurență      | Rollback identitate/apartenență/audit; două asocieri concurente la același cont și două indicative identice permit câte una |
+| `npm run test:e2e`            | 32 teste trecute în rularea finală: Chromium desktop și Pixel 7, cod 0                                                      |
+| Fluxuri UI M03                | Adăugare/editare/dezactivare, titular fără cont neeligibil, mașină retrasă din lista proprie, titular identificat din cont  |
+| Acțiuni server                | Replay real cu rol gestionar refuzat cu 404, inclusiv pentru personal; URL din altă substație refuzat                       |
+| Inspecție vizuală             | Capturi Personal, Mașini și Tura mea pe desktop/mobil, fără depășirea lățimii                                               |
+| Curățare și populare repetată | Fixturele eliminate; demonstrația păstrează 10/3/5; repetarea seed adaugă 0 angajați și 0 mașini                            |
+
+Prima rulare E2E M03 a cerut corectarea a două presupuneri ale testelor:
+motivul se completează pentru fiecare salvare, iar indicativele se normalizează
+la majuscule. Rularea finală a trecut toate cele 32 de cazuri. Next a raportat
+sporadic `The destination stream closed early` în logul serverului de test,
+fără verificări eșuate în rularea finală; cauza nu este stabilită. Comportamentul
+se urmărește la pregătirea publicării. Avertismentul Gzip observat în M02 este
+consemnat în commitul anterior.
 
 Mediul verificat este Node.js 24.19.0 și npm 10.2.0. Lansatoarele locale sunt în
 `.tools/bin`; Chromium în `.tools/browsers`. Capturile/logurile și fixturele sunt
-ignorate de Git. Testele de integrare creează instituții separate de demonstrația
-utilizatorului; curățarea lor este limitată prin manifest și verificări de identitate.
+ignorate de Git. Testele folosesc instituții separate de demonstrația utilizatorului.
 
 ## Limite și continuare
 
-Curățarea fixturelor M02 a trecut; au rămas numai instituția demo, cele două
-substații și administratorul inițial. Rularea repetată `bootstrap:admin` a
-confirmat că nu creează duplicate. Verificarea build-ului client nu a găsit
-cheia secretă, iar `.env.local` și fișierul administratorului sunt ignorate de Git.
-`git diff --check` nu a raportat erori.
+Nu există încă stocuri, ture, dovezi sau rapoarte persistente. Disponibilitatea
+mașinilor este tehnică; rezervarea/ocuparea efectivă se implementează în M06.
+M06 trebuie să reverifice eligibilitatea în tranzacția predării. Contractul
+istoricului propriu rămâne accesibil după debifarea titularului; verificarea pe
+fișele reale urmează în M06. Nu există interfață de transfer între substații.
 
-Nu există încă angajați, mașini, stocuri, ture, dovezi sau rapoarte persistente.
-Spațiile autentificate indică explicit pregătirea modulelor. M02 verifică
-contractul proprietarului; izolarea pe fișele/turele reale se verifică în M06,
-iar pe dovezi și rapoarte în M07–M09. Legătura cont–angajat/titular este M03.
-
-Crearea Auth și a profilului are compensare documentată, nu o tranzacție comună
+Crearea Auth și a profilului are compensare documentată, fără tranzacție comună
 între servicii. Recuperarea parolei rămâne administrată în Supabase; nu există
-SMTP/invitații trimise sau resetare automată în aplicație. Nu s-au configurat
-Netlify, domeniu sau publicare. Proiectul folosește date fictive și planul Free.
+SMTP/invitații sau resetare automată în aplicație. Nu s-au configurat Netlify,
+domeniu sau publicare. Datele sunt fictive, pe planul Free.
 
 ## Progres
 
@@ -96,8 +95,8 @@ Netlify, domeniu sau publicare. Proiectul folosește date fictive și planul Fre
 | M00 — Fundație           | Finalizat                     |
 | M01 — Interfață          | Finalizat, păstrat la `/demo` |
 | M02 — Acces și substații | Finalizat                     |
-| M03 — Personal și mașini | Următorul modul               |
-| M04 — Catalog și loturi  | Neînceput                     |
+| M03 — Personal și mașini | Finalizat                     |
+| M04 — Catalog și loturi  | Următorul modul               |
 | M05 — Recepții și stoc   | Neînceput                     |
 | M06 — Ture și predare    | Neînceput                     |
 | M07 — Dovezi             | Neînceput                     |

@@ -33,6 +33,11 @@ export function canViewLogistics(identity: Pick<Identity, "roles">, stationId: s
 export function canUseMyShift(identity: Pick<Identity, "roles">, stationId: string) {
   return stationRoles(identity, stationId).includes("shift_leader");
 }
+export function canManageStation(identity: Pick<Identity, "roles">, stationId: string) {
+  return stationRoles(identity, stationId).some(
+    (role) => role === "administrator" || role === "station_manager",
+  );
+}
 export function canAccessOwnedRecord(identity: Identity, stationId: string, ownerUserId: string) {
   if (!identity.substations.some((station) => station.id === stationId && station.active))
     return false;
