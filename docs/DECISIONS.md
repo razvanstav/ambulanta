@@ -40,6 +40,9 @@ Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile urm
 | D34 | Adoptat în plan | În fluxul principal, șeful de tură este titularul responsabil și are cont individual legat de angajat | D02 rămâne valabilă; D10 permite evidența angajaților fără cont, dar operarea „Tura mea” cere cont și titular activ |
 | D35 | Propus | Cererea de pornire rezervă mașina; stocul se reverifică la acceptare, fără rezervare la trimiterea fișei | Două cereri concurente nu pot reține aceeași mașină; anularea înainte de predare eliberează mașina |
 | D36 | Adoptat în plan | Un singur proiect cu două zone după drepturi; logistica centrală are acces instituțional atribuit explicit | Vederea de ansamblu acoperă toate substațiile instituției, fără drept implicit de administrare a conturilor; accesul local rămâne limitat |
+| D37 | Confirmat | Imaginea furnizată este exclusiv inspirație pentru culori, fonturi și aspect | Clarificarea beneficiarului la începutul M01: funcționalitățile nu se deduc din imagine; rămân cele din ROADMAP și WORKFLOWS |
+| D38 | Adoptat în M01 | Componente React comune, controale HTML native și fonturi de sistem, fără dependențe noi | Select, radio și dialog acoperă nevoile curente; shadcn/ui rămâne opțional când un control mai complex îl justifică. Bahnschrift/Segoe UI au fonturi de rezervă și nu cer rețea la build |
+| D39 | Adoptat în M01 | Exemplele vizuale sunt izolate în `src/modules/demo`, fără backend sau persistență | Selectorul de substație și perspectiva schimbă doar prezentarea; datele autentificate vor înlocui exemplele în modulele următoare. Indicatorii numără repere/ture/cereri, fără sume între unități incompatibile |
 
 Clarificări consemnate la 10 septembrie 2026: discuția despre PHP/MySQL a fost exploratorie; nu a schimbat arhitectura propusă. D21–D24 delimitează scopul imediat al prezentării și amână cerințele exclusiv operaționale.
 

@@ -1,7 +1,8 @@
 # Perspectivele aplicației și fluxul turei
 
 Actualizat: 10 septembrie 2026. Acest document descrie cerințele și propunerile
-pentru modulele următoare. În cod este implementată numai fundația M00.
+pentru modulele următoare. În cod sunt implementate fundația M00 și interfața
+demonstrativă M01; operațiile de mai jos nu sunt încă implementate pe server.
 
 ## Două perspective, aceeași aplicație
 

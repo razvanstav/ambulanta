@@ -18,7 +18,7 @@ Aplicația urmărește medicamente, consumabile și accesorii în una sau mai mu
 - Returul confirmat încarcă înapoi depozitul; consumul nu mai scade încă o dată depozitul.
 - Închiderea turei permite document, fotografie și/sau semnătură cu degetul pe ecran.
 - Rapoartele au filtre pe tură, zi, săptămână, substație, titular, mașină și produs.
-- Dashboardul folosește imaginea furnizată drept reper de aspect.
+- Dashboardul folosește imaginea furnizată drept reper de culori, fonturi și aspect, fără a prelua funcționalități din ea (D37, confirmat în M01).
 - Implementarea se face incremental, în conversații separate, cu salvări în Git.
 
 ## 2. Decizii de pornire propuse

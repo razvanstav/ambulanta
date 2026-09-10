@@ -40,6 +40,8 @@ Actualizare de flux, 10 septembrie 2026: aplicația are perspectivele **„Logis
 
 **Include:** bară laterală, antet, selector vizual de substație, navigație, carduri, tabel cu filtre, formulare și stări standard. Folosește `reference/dashboard-reference.png` pentru culori, spațiere și densitate. Interfață în română, cu adaptare la telefon.
 
+Clarificare confirmată la începutul M01: imaginea este numai inspirație pentru culori, fonturi și aspect, nu sursă de funcționalități. Fluxurile rămân cele stabilite în plan și WORKFLOWS (D37).
+
 Pregătește două perspective vizuale: vederea de ansamblu „Logistică / Magazie” și „Tura mea”, cu „Start tură”, alegerea mașinii și previzualizarea fișei primite. Include stările „Nicio mașină disponibilă”, „În așteptarea fișei” și „Fișă de acceptat”. Paginile de prezentare nu acordă roluri reale; accesul efectiv se implementează în M02, iar operațiile în M06.
 
 **Acceptare:** pagini navigabile, aspect verificat pe calculator și telefon, etichete și controale accesibile, stări fără date/încărcare/eroare. Orice exemplu este marcat „Date demonstrative”; butoanele pentru funcții încă neimplementate nu pretind că salvează.

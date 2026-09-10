@@ -4,56 +4,100 @@ Actualizat: 10 septembrie 2026
 
 ## Punctul actual
 
-**M00 — Fundația proiectului este finalizat și verificat.** Aplicația Next.js pornește local și afișează pagina inițială în română, adaptată pentru calculator și telefon. Sunt configurate TypeScript strict, Tailwind CSS, ESLint, Prettier, Vitest și Playwright. Dependențele directe au versiuni exacte și există `package-lock.json`.
-
-Planul și imaginea de referință sunt păstrate în Git. `README.md` descrie instalarea, pornirea și scripturile reale. `.env.example` nu conține secrete, iar configurațiile locale, instrumentele, build-urile și fișierele private sunt excluse din Git.
+**M01 — Interfața comună este finalizat și verificat.** Aplicația are navigație
+în română, antet, selector vizual de substație și cele două perspective:
+**Logistică / Magazie** și **Tura mea**. Referința furnizată este folosită pentru
+culori, tipografie și atmosferă vizuală; funcțiile provin din plan și WORKFLOWS.
 
 - Branch comun: `main`.
-- Repository: `https://github.com/razvanstav/ambulanta.git`, configurat ca `origin`; beneficiarul a autorizat trimiterea progresului acolo.
-- Reper verificat la începutul clarificării de flux: **`697def3`** — fundația M00, pe `main`, cu directorul de lucru curat și `origin/main` la același reper local. Planul original este păstrat în `bfefbb4`. Commitul documentației actualizate se raportează în răspunsul de predare.
-- Ținta rămâne MVP cu date fictive, Netlify Free + Supabase Free; parcurs M00–M09, apoi P01. Domeniul propriu este opțional.
-- Următoarea lucrare: **M01 — Interfața comună**, cu perspectivele „Logistică / Magazie” și „Tura mea”, folosind `docs/reference/dashboard-reference.png` și `docs/WORKFLOWS.md`.
+- Repository: `https://github.com/razvanstav/ambulanta.git`, remote `origin`;
+  commiturile și push-ul sunt autorizate prin D26.
+- Reper verificat la începutul M01: **`e8b0afe`**, pe `main`, director de lucru
+  curat și `origin/main` la același reper local. Fundația M00 este în `697def3`,
+  planul inițial în `bfefbb4`. Commitul M01 se raportează în răspunsul de predare.
+- Țintă: MVP cu date fictive, Netlify Free + Supabase Free; M00–M09, apoi P01.
+- Următorul modul: **M02 — Conturi, substații și roluri**. Necesită serviciul
+  Supabase real, autentificare și verificarea accesului pe server/PostgreSQL.
 
-## Ultima lucrare — clarificarea logicii aplicației
+## Ce funcționează în M01
 
-Beneficiarul a confirmat cele două perspective: logistica distribuie și vede ansamblul activității, iar șeful de tură vede numai propriile fișe și ture. Șeful de tură inițiază „Start tură”, selectează mașina disponibilă și acceptă fișa magaziei fără să editeze cantitățile. A confirmat explicit că **acceptarea fișei scade magazia și pornește efectiv tura, atomic**. Fără fișă, cererea rămâne în așteptare.
+- Layout comun cu meniu lateral pe calculator și dialog de navigație pe telefon,
+  închidere prin Escape/buton, revenirea focusului și legătură „Sari la conținut”.
+- Dashboard demonstrativ cu repere de produse, ture active, cereri în așteptare
+  și produse sub prag. Cantitățile cu unități diferite nu sunt însumate.
+- Tabel de stoc cu căutare inclusiv fără diacritice, filtre combinate pe categorie
+  și stare, resetarea filtrelor și legături din alerte către filtrul potrivit.
+- „Tura mea”: alegerea mașinii prin formular, validarea selecției, previzualizare
+  explicită fără rezervare; stări separate pentru lipsa mașinilor, așteptarea fișei
+  și fișa de acceptat. Produsele, loturile și cantitățile fișei nu se pot edita.
+- Selectorul Roșiori/Alexandria schimbă numai exemplele afișate. Alexandria
+  ilustrează lipsa datelor. Schimbarea substației golește selecția mașinii și
+  starea formularului; contextul vizual se păstrează în navigarea din aplicație.
+- Destinațiile Recepții, Distribuire, Închidere, Rapoarte, Personal, Mașini și
+  Setări sunt navigabile. Distribuirea afișează exemple de cereri; operațiile
+  viitoare sunt dezactivate, cu explicații. Istoricul propriu are stare fără date.
+- Componente comune: butoane, legături de acțiune, carduri, badge-uri, titluri,
+  tabel derulabil, stări fără date/încărcare/eroare. Există fallback-uri Next.js
+  pentru încărcare, eroare și adresă necunoscută; Setări permite inspectarea stărilor.
+- Toate exemplele sunt marcate „Date demonstrative”. Nicio acțiune nu pretinde că
+  salvează sau că acordă roluri. Nu există backend temporar sau persistență locală.
 
-Deciziile D30–D36 și `WORKFLOWS.md` consemnează fluxul, accesul, versiunile fișelor și distincția dintre cerințe confirmate și propunerea de rezervare/anulare a mașinii. Arhitectura, criteriile modulelor relevante, README și instrucțiunile proiectului au fost aliniate. Au fost revizuite coerența fluxului și diferențele Git și au fost rulate verificarea formatării și `git diff --check`. Modificările sunt numai de documentație; nu au fost reluate testele aplicației și nu s-au implementat roluri, ture, migrări sau logică de stoc.
+Structura interfeței și punctele de integrare sunt în [UI.md](UI.md). Datele sunt
+izolate în `src/modules/demo`. Nu s-au schimbat dependențele sau lockfile-ul.
+Titlurile folosesc Bahnschrift cu fonturi de rezervă, corpul Segoe UI/Arial;
+nu există descărcări de fonturi necesare la build.
 
-## Verificări M00 — reperul `697def3`
+## Verificări M01
 
-Cu Node.js **24.19.0** și npm **10.2.0**:
+Mediu: Node.js **24.19.0**, npm **10.2.0**, versiunile fixate în M00.
 
-| Verificare                                                                 | Rezultat                                                                                                    |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `npm install`                                                              | Dependențe instalate și lockfile generat                                                                    |
-| `npm ci` într-un folder temporar curat, copiat din fișierele destinate Git | Instalat fără `node_modules`, `.next` sau `.env.local` preexistente; audit npm: 0 vulnerabilități raportate |
-| `npm run check`, inclusiv în copia curată                                  | Format, lint fără avertismente, tipuri și build de producție: trecute                                       |
-| `npm test` (inclus în `check`)                                             | Vitest pornește; 0 teste unitare, permis explicit în M00 deoarece nu există logică de domeniu               |
-| `npx playwright install chromium` și `npm run test:e2e`                    | 2 teste trecute: Chromium pentru calculator și telefon; ultima rulare curată s-a încheiat cu cod 0          |
-| `npm run dev -- --hostname 127.0.0.1 --port 3000`                          | Pornit; pagina răspunde HTTP 200 fără configurare Supabase                                                  |
-| Inspecție vizuală în browser                                               | Capturi la 1440×1000 și profil Pixel 7; text lizibil, layout încadrat                                       |
-| `git diff --check`, lista fișierelor și scanarea tiparelor uzuale de chei  | Fără erori de whitespace sau configurații/secrete detectate în fișierele destinate Git                      |
+| Verificare                           | Rezultat                                                                                                                                                  |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check`                      | Format, ESLint fără avertismente, TypeScript și build de producție trecute                                                                                |
+| `npm test`, inclus în check          | Vitest pornește, 0 teste unitare; nu există încă logică de domeniu                                                                                        |
+| `npm run test:e2e`                   | **16 teste trecute**, Chromium calculator și Pixel 7; proces încheiat cu cod 0                                                                            |
+| Comportamente E2E                    | Navigație, filtre, selecție și resetare, fișă numai pentru citire, acțiuni inactive, lipsa cererilor de scriere, stări standard, tastatură și meniu mobil |
+| Verificare suplimentară a layoutului | Dashboard, stoc, fișă și distribuire la 1440×1000, 768×1024, 390×844 și 320×740; fără depășirea lățimii paginii și fără erori JavaScript                  |
+| Inspecție vizuală                    | Capturi desktop/mobil pentru dashboard, stoc, formular și fișă; tabelele late se derulează în propriul container                                          |
+| `git diff --check`                   | Fără erori de whitespace                                                                                                                                  |
 
-Probleme rezolvate în timpul verificării: selecția Node 21 de către lansatorul npm de pe Windows, două reguli lint și avertismentul de încărcare a configurației Vitest. Pentru acest calculator, lansatoare locale în `.tools/bin` (ignorate de Git) folosesc explicit Node 24 disponibil în mediul de lucru; instalarea globală nu a fost schimbată. Un pas offline de regenerare a lockfile-ului a necesitat reluare online pentru pachetele opționale lipsă din cache, apoi a reușit.
+Pe acest calculator, lansatoarele din `.tools/bin` și Node 24 din runtime sunt
+folosite prin PATH local procesului. Chromium este în `.tools/browsers`, setat
+prin `PLAYWRIGHT_BROWSERS_PATH`. `NEXT_TELEMETRY_DISABLED=1` evită scrierea
+configurației telemetriei în afara proiectului. Aceste setări nu schimbă
+instalarea globală și nu sunt condiții ale aplicației.
 
-Prima rulare Playwright în mediul restricționat a trecut testele, dar a întârziat la oprirea serverului. Configurația lansează acum Next direct, iar rularea finală cu permisiunile necesare în copia curată s-a încheiat automat: 2 teste în 1,4 secunde. Instalarea afișează notificarea upstream de retragere a ESLint 9; acesta este păstrat la 9.39.5 deoarece `eslint-plugin-react` încă declară compatibilitate până la seria 9. Lint-ul trece, iar auditul npm nu raportează vulnerabilități.
+Prima încercare a testelor nu găsea browserul în locația implicită. După indicarea
+instalării locale, verificările au identificat doi selectori de test ambigui
+(anunțul de rută Next.js și eticheta categoriei), corectați prin rol și aria
+conținutului. Mediul restricționat întârzia oprirea serverului; rularea finală cu
+permisiunile necesare s-a încheiat normal: 16 teste în 8,6 secunde.
 
-## Contracte, limite și continuare
+Capturile, logurile și instrumentele locale din `test-results` și `.verification`
+sunt ignorate de Git. Nu conțin date operaționale.
 
-- Nu au fost introduse migrări, tabele, contracte de stoc sau clienți Supabase. `src/modules` și `src/lib` documentează responsabilitățile; implementările se adaugă la etapa lor.
-- Nu există autentificare, stoc, ture, dovezi sau rapoarte funcționale. Testele M00 nu validează aceste funcții; modulele relevante vor introduce teste comportamentale și verificări pe PostgreSQL real.
-- Generarea automată Next.js de instrucțiuni pentru agenți este dezactivată prin `agentRules: false`; `AGENTS.md` se actualizează explicit cu regulile beneficiarului.
-- M01 introduce navigația, antetul, selectorul vizual de substație și componentele comune, inclusiv shadcn/ui când este necesar. Nu are dependențe externe care să blocheze pornirea.
-- Supabase și autentificarea reală se configurează în M02. Netlify și publicarea demo-ului rămân P01; în M00 nu s-au creat conturi, servicii sau publicări.
+## Limite și continuare
+
+M01 validează **interfața**, nu autentificarea, izolarea datelor reale sau
+corectitudinea stocului. Perspectivele și substațiile sunt demonstrative.
+Nu există încă Supabase, migrări, sesiuni, ture persistente, recepții, dovezi sau
+rapoarte generate. Tranzacțiile, concurența și accesul se vor verifica pe
+PostgreSQL real în modulele care le introduc.
+
+Acceptarea fișei ca moment al predării și pornirii atomice rămâne D33. Fișa din
+M01 doar ilustrează acest contract; acceptarea este dezactivată. Rezervarea
+mașinii și anularea rămân propunerea D35, pentru M06.
+
+Aplicația poate fi pornită local fără configurare Supabase. Nu s-au creat conturi,
+servicii sau publicări. Netlify și adresa publică rămân P01.
 
 ## Progres
 
 | Modul                    | Stare            |
 | ------------------------ | ---------------- |
 | M00 — Fundație           | Finalizat        |
-| M01 — Interfață          | Următorul modul  |
-| M02 — Acces și substații | Neînceput        |
+| M01 — Interfață          | Finalizat        |
+| M02 — Acces și substații | Următorul modul  |
 | M03 — Personal și mașini | Neînceput        |
 | M04 — Catalog și loturi  | Neînceput        |
 | M05 — Recepții și stoc   | Neînceput        |
