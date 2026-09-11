@@ -48,7 +48,8 @@ export async function EvidenceWorkspace({
       {canClose && (
         <>
           <p className="closeout-instruction">
-            Scrie doar cât s-a consumat. Diferența rămâne automat în mașină.
+            La final, completează cantitatea totală consumată și apasă „Închide tura”. Poți modifica
+            valorile până la confirmare; stocul se actualizează numai atunci.
           </p>
           <EndGate
             end={shift.planned_end}

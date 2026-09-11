@@ -15,6 +15,16 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
+**Corecție D70 verificată, în publicare:** blocarea până la finalul programat se aplică numai
+butonului de închidere. Câmpurile de consum sunt editabile, inclusiv pentru ciorne
+istorice. Tura raportată este `open`, fără declarație finală sau trimitere;
+nu a fost necesară modificarea datelor. Formatul, lint, tipurile, 20 de unitare
+și buildul au trecut (build cu `NEXT_TELEMETRY_DISABLED=1` pentru sandbox).
+Nu se schimbă SQL sau regulile tranzacționale. Reper anterior: `4233c0e`.
+Au trecut și 11 grupuri de acces Supabase și ambele circuite E2E desktop/Pixel 7:
+editare repetată înainte de final, Enter fără închidere prematură, confirmare
+după final și consum 7/rest 8. Datele de test vor fi curățate după verificare.
+
 **Publicat: gestiune numai pe cantități (D69).** Pragurile și selecția
 loturilor/expirării au fost scoase din aplicația funcțională. Stocul și consumul
 sunt agregate per produs, inclusiv după suplimentări. Migrarea 009 a fost aplicată

@@ -31,7 +31,7 @@ export function EndGate({
             : "Stabilește intervalul turei înainte de închidere."}
         </p>
       )}
-      <ActionForm action={action} submitLabel={label} disabled={!elapsed || !ready}>
+      <ActionForm action={action} submitLabel={label} disabled={!ready} submitDisabled={!elapsed}>
         {children}
       </ActionForm>
     </div>

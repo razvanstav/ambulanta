@@ -15,6 +15,9 @@ expirare, loturi comerciale sau stări de lot în fluxul curent.
 - La închidere, titularul declară un singur consum per produs, inclusiv când
   au existat suplimentări. Diferența rămâne în mașină pentru următoarea tură.
 - Limita temporală, proprietarul turei și tranzacțiile atomice rămân în vigoare.
+- D70: câmpurile de consum rămân editabile până la confirmare. Numai butonul de
+  închidere este blocat înainte de ora programată; simpla completare nu salvează
+  consum și nu modifică stocul. Ciornele istorice se precompletează fără blocare.
 
 ## Compatibilitate și migrare
 

@@ -1,5 +1,14 @@
 # Decizii și presupuneri
 
+## D70 — Confirmat, 11 septembrie 2026
+
+Consumul este confirmat numai la final, prin „Închide tura”. Până la confirmare,
+cantitățile sunt editabile, inclusiv cele provenite din ciorne vechi. Ora programată
+restricționează numai trimiterea finală, nu editarea formularului. Completarea sau
+apăsarea Enter înainte de final nu salvează consum și nu modifică stocul. Nu se
+introduce o etapă separată de trimitere/blocare a declarației. D63 și tranzacția
+atomică D67 rămân în vigoare.
+
 ## D69 — Confirmat, 11 septembrie 2026
 
 Beneficiarul cere gestiune numai pe produs și cantitate: ieșire din magazie, intrare în mașină, consum și rest păstrat în mașină. Pragurile, loturile și expirarea sunt eliminate din fluxul curent, inclusiv ca restricții la distribuție. Înlocuiește D48–D49 și părțile M04–M07 referitoare la urmărirea comercială; metadatele vechi și mișcările rămân în istoric. Unitățile, precizia, accesul și stocul atomic se păstrează. Contractul curent: [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md).

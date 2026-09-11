@@ -11,15 +11,24 @@ export function ActionForm({
   children,
   submitLabel,
   disabled = false,
+  submitDisabled = false,
 }: {
   action: FormAction;
   children: ReactNode;
   submitLabel: string;
   disabled?: boolean;
+  submitDisabled?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(action, { message: "" });
   return (
-    <form action={formAction} className="identity-form" aria-busy={pending}>
+    <form
+      action={formAction}
+      className="identity-form"
+      aria-busy={pending}
+      onSubmit={(event) => {
+        if (disabled || submitDisabled || pending) event.preventDefault();
+      }}
+    >
       <fieldset disabled={disabled || pending}>{children}</fieldset>
       {state.message && (
         <p
@@ -29,7 +38,7 @@ export function ActionForm({
           {state.message}
         </p>
       )}
-      <Button type="submit" disabled={disabled || pending}>
+      <Button type="submit" disabled={disabled || submitDisabled || pending}>
         {pending ? "Se procesează…" : submitLabel}
       </Button>
     </form>

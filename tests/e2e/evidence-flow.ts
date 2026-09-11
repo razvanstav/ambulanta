@@ -8,16 +8,19 @@ export async function verifySimpleCloseout(
 ) {
   const workspace = leader.getByRole("region", { name: "Încheierea turei" });
   await expect(workspace.getByRole("heading", { name: "Închide tura" })).toBeVisible();
-  await expect(workspace).toContainText(
-    "Scrie doar cât s-a consumat. Diferența rămâne automat în mașină.",
-  );
+  await expect(workspace).toContainText("stocul se actualizează numai atunci.");
 
   const allocations = await workspace.locator(".closeout-line").all();
   expect(allocations.length).toBe(1); // Initial handover + supplement, one product.
-  // Wait for the real scheduled end; PostgreSQL enforces the same clock gate.
-  await expect(workspace.locator('input[name="consumed"]').first()).toBeEnabled({
-    timeout: 150_000,
-  });
+  const consumption = workspace.locator('input[name="consumed"]').first();
+  const close = workspace.getByRole("button", { name: "Închide tura și actualizează stocul" });
+  await expect(consumption).toBeEnabled();
+  await expect(close).toBeDisabled();
+  await consumption.fill("4");
+  await consumption.fill("6");
+  await consumption.press("Enter");
+  await expect(consumption).toHaveValue("6");
+  await expect(leader.getByText("Tură pornită", { exact: true })).toBeVisible();
   for (const allocation of allocations) {
     const quantity = Number((await allocation.innerText()).match(/Preluat: (\d+)/)![1]);
     await allocation.locator('input[name="consumed"]').fill("7");
@@ -29,7 +32,7 @@ export async function verifySimpleCloseout(
   await expect(workspace.getByText("Dovada consumului", { exact: false })).toHaveCount(0);
   await expect(
     workspace.getByRole("button", { name: "Închide tura și actualizează stocul" }),
-  ).toBeEnabled();
+  ).toBeEnabled({ timeout: 150_000 });
   expect(await leader.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
     true,
   );
