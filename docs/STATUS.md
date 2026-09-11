@@ -15,7 +15,7 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
-**D73 în verificare/publicare:** buton separat „Închide tura înainte”, cu motiv,
+**D73 publicat:** buton separat „Închide tura înainte”, cu motiv,
 confirmare și posibilitate de renunțare fără pierderea cantităților introduse.
 Migrarea 010 este aplicată și înregistrată în Supabase. Nu modifică date sau
 solduri existente. 23 scenarii PostgreSQL au trecut: proprietar, refuz acces
@@ -24,7 +24,12 @@ planificat neschimbat, mașină eliberată și reconciliere. Format/lint/tipuri,
 20 unitare și build trecute. Au trecut 11 grupuri de acces Supabase și cele două
 circuite browser: închidere normală desktop, anticipată cu motiv/confirmare pe
 Pixel 7, consum 7 din 15 și rest 8. Interfața mobilă a fost inspectată vizual.
-Reper anterior: `4737d9b`. Publicarea aplicației este în curs.
+Commitul `ffdfe08` este publicat pe `main` prin Netlify
+`6aa3af555f89a8000878a932`. Verificarea live în contul existent a confirmat
+butonul, motivul/confirmarea și renunțarea fără pierderea cantităților. Tura
+existentă nu a fost închisă. Datele temporare aprobate au fost curățate;
+10 solduri și 10 mișcări rămase, reconciliere cu 0 diferențe.
+Reper anterior verificat: `ffdfe08`. Următorul modul rămâne PDF individual M08.
 
 **Ajustare „Tura mea” — 11 septembrie:** nota internă a fișei (exemplu:
 „Incarcare materiale”) nu mai este afișată titularului. Rămâne în istoricul
