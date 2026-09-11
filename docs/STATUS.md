@@ -18,7 +18,10 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 **Ajustare „Tura mea” — 11 septembrie:** nota internă a fișei (exemplu:
 „Incarcare materiale”) nu mai este afișată titularului. Rămâne în istoricul
 fișei și în perspectiva logistică. Modificare exclusiv de afișare, fără mutații
-de stoc. Reper anterior: `6ec4b2e`. Publicarea este în curs.
+de stoc. Reper anterior: `6ec4b2e`. Commitul `dfa12da` este publicat și verificat
+în browser pe live, cu fișa extinsă: nota este absentă, produsele și închiderea
+rămân prezente. Format, lint, tipuri, 20 unitare și build trecute. Următorul
+modul rămâne PDF individual M08.
 
 **Optimizare citiri publicată — 11 septembrie:** măsurarea live a paginii
 „Tura mea” a dat 2811 / 4523 / 5018 / 2929 ms pentru patru încărcări complete
