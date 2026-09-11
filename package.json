@@ -27,7 +27,9 @@
     "seed:m05": "node --env-file=.env.local scripts/seed-m05-demo.mjs",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
     "test:quantity:setup": "node --env-file=.env.local tests/integration/access.mjs && node --env-file=.env.local tests/integration/quantity-fixture.mjs",
-    "test:postgres": "node tests/postgres/vehicle-stock.mjs"
+    "test:postgres": "node tests/postgres/vehicle-stock.mjs",
+    "test:reports:live": "node --env-file=.env.local tests/integration/reports-live.mjs",
+    "export:demo": "node --env-file=.env.local scripts/export-demo.mjs"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "1.1.1",

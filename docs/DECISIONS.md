@@ -16,8 +16,9 @@ proprie impune proprietarul inclusiv pentru exporturi și conturi cu roluri mult
 
 PDF/CSV sunt private, regenerate la cerere, cu filtre și momentul generării;
 nu sunt rapoarte finale noi și nu modifică stocul. Migrarea 011 trebuie aplicată
-înainte de publicare. Incrementul este verificat local și sincronizat cu
-`[skip netlify]`; activarea găzduită rămâne în continuarea M09/P01.
+înainte de publicare. Incrementul inițial a fost verificat local și sincronizat cu
+`[skip netlify]`. Continuarea autorizată din 11 septembrie a aplicat migrarea și
+a publicat/verificat M09 pe Supabase și Netlify Free; dovezile sunt în STATUS.
 Contract: [REPORTING](REPORTING.md).
 
 ## D74 — M08, 11 septembrie 2026

@@ -71,10 +71,11 @@ cu mai multe roluri. Alegerea identificatorului altei ture nu ocolește propriet
 
 Migrarea nouă: `202609110011_reporting.sql`. Adaugă numai funcția de citire și
 dreptul de apel pentru `authenticated`; nu schimbă solduri, mișcări sau RLS.
-La acest increment este verificată în PostgreSQL local, nu aplicată în Supabase.
-Se aplică și se înregistrează înainte de deployul aplicației M09. Commitul folosește
-`[skip netlify]` pentru a evita un deploy automat înaintea migrării. Nu modifica
-și nu rerula migrările 001–010 existente pe mediul găzduit.
+Aplicată și înregistrată în Supabase pe 11 septembrie 2026, înainte de deployul
+Netlify `6aa3f77037fe3a28a88ada8e`, din `a980b0f`. Verificarea găzduită a trecut:
+reconciliere, șapte grupări, proprietar, substație, instituție și cele zece
+exporturi CSV/PDF. Nu rerula migrările 001–011 existente pe mediul găzduit.
+Procedura de demonstrație și refacere este în [DEMO](DEMO.md).
 
 ## Verificări reproductibile
 

@@ -128,6 +128,13 @@ Filtrele și exporturile șefului de tură verifică și proprietarul, nu doar s
 
 ## P01 — Publicare demo
 
+Livrat la 11 septembrie 2026 pentru fluxul curent D67/D69/D73: recepție →
+fișă → acceptare → consum și rest în mașină → PDF individual și rapoarte agregate.
+Semnătura/dovezile nu sunt obligatorii în închiderea simplificată; mecanismul
+istoric rămâne privat. [DEMO](DEMO.md) descrie prezentarea, refacerea fixturelor,
+exportul local și limitele gratuite. Paragrafele de mai jos păstrează planul inițial;
+în privința loturilor, returului implicit și dovezilor prevalează deciziile curente.
+
 Actualizare 10 septembrie 2026: beneficiarul a cerut publicarea anticipată a
 incrementului M06. Aceasta nu înseamnă finalizarea P01: scenariul complet cu
 dovezi, închidere și rapoarte rămâne dependent de M07–M09. Starea găzduirii este

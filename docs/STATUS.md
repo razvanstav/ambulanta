@@ -2,6 +2,62 @@
 
 Actualizat: 11 septembrie 2026
 
+## M09 + P01 — Publicate și verificate, 11 septembrie 2026
+
+**Modulele MVP M00–M09 sunt publicate și verificările P01 au trecut**, în scopul curent
+D67/D69/D73/D75. [Aplicația live](https://ambulanta.netlify.app/autentificare)
+include dashboardul, rapoarte agregate și proprii, CSV/PDF și PDF individual.
+M10–M11 rămân pentru corecții controlate și pregătirea utilizării operaționale.
+
+Migrarea `202609110011_reporting.sql` este aplicată și înregistrată în Supabase.
+Corpul funcției corespunde fișierului Git; verificate `STABLE`, `SECURITY INVOKER`,
+accesul autentificat și refuzul anonim. Netlify a publicat `a980b0f` prin deployul
+`6aa3f77037fe3a28a88ada8e`; build, TypeScript și scanarea secretelor au trecut.
+
+Verificări găzduite: 11 grupuri de acces/concurență Supabase; circuit cu recepție
+100, predare 15, consum 7 apoi 3 în două ture, magazie 85 și mașină 5. Verificată
+preluarea restului fără debit nou, cererile repetate fără dublare, șapte grupări,
+proprietarul, izolarea pe substație și instituție. Toate cele zece exporturi
+CSV/PDF au răspuns corect cu cache privat; verificat exportul propriu și accesul
+PDF individual pentru titular/logistică, refuz pentru anonim/alt titular/altă
+instituție. PDF-urile live de consum și magazie au fost inspectate vizual.
+
+Browser live: administratorul solicitat se autentifică, rapoartele din Roșiori
+arată stocurile existente, filtrul săptămânal și toate substațiile funcționează.
+Desktop și telefon 412 px inspectate, fără depășire orizontală a paginii.
+O pagină veche de autentificare deschisă înaintea deployului a cerut reîncărcare;
+autentificarea din pagina nouă a trecut. Testele API nu sunt declarate teste UI.
+
+Verificarea locală a livrării: format, ESLint, TypeScript și 30 teste unitare
+trecute. Buildul a trecut la reluare cu `NEXT_TELEMETRY_DISABLED=1`, după ce
+sandboxul a refuzat scrierea configurației de telemetrie Next în AppData.
+Nu s-au modificat regulile de stoc; cele 29 scenarii PostgreSQL M09 rămân
+verificate în commitul de implementare și nu au fost rerulate în această publicare.
+
+Copie locală în `backups/demo-2026-09-11T12-52-20-054Z/`, ignorată de Git:
+tabele și o dovadă privată; 10 solduri, 10 mișcări, zero diferențe la reconciliere.
+Tura existentă și conturile beneficiarului sunt păstrate. Procedura de refacere
+folosește instituții temporare distincte, fără resetarea demonstrației existente.
+Ghid, script de verificare și export: [DEMO](DEMO.md).
+
+Încheiere administrativă P01 rămasă: curățarea fixturei temporare, două instituții,
+trei substații, 12 conturi fictive și două ture de test. Manifestul rămâne în
+`.verification/m02-fixtures.json`. Verificarea automată de aprobare a respins
+ștergerea remote pentru lipsa autorizării explicite; nicio ștergere nu s-a executat.
+Se cere acordul beneficiarului înainte de `test:integration:cleanup`. Nu afectează
+funcționarea aplicației; datele sunt izolate de instituția demonstrativă.
+
+Bugete verificate în dashboard: Netlify Free 102,6/300 credite rămase, fără card
+sau servicii plătite; Supabase Free în limite, 0,031/0,5 GB bază de date,
+0,031/5 GB egress, 238/50.000 MAU. Valorile au întârziere de actualizare.
+Exportul local nu este backup tranzacțional/restaurare operațională; aceasta
+rămâne M11. Limita dovezilor istorice pe Netlify rămâne 4 MB.
+
+Reper anterior: `a980b0f`, branch `main`. Următorul modul posibil: M10,
+numai la cererea beneficiarului; nu este necesar pentru prezentarea MVP.
+
+Secțiunile următoare sunt istorice; starea curentă este cea de mai sus.
+
 ## Administrator suplimentar live — 11 septembrie 2026
 
 La cererea explicită a beneficiarului a fost creat încă un administrator în

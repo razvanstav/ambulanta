@@ -86,27 +86,34 @@ gratuită, fără domeniu plătit. Bugetul și starea verificării sunt în [STA
 
 ## Verificarea și accesul demonstrativ
 
-Verificarea de publicare folosește date de test izolate de instituția demonstrativă:
+M09 este publicat din `a980b0f`, deploy Netlify `6aa3f77037fe3a28a88ada8e`,
+11 septembrie 2026. Migrarea 011 a fost aplicată și înregistrată înainte de deploy;
+corpul funcției a fost comparat cu fișierul din Git, iar `STABLE`, `SECURITY INVOKER`
+și refuzul apelului anonim au fost verificate în PostgreSQL găzduit.
+
+Verificarea curentă folosește date izolate de instituția demonstrativă:
 
 ```powershell
 $env:M02_TEST_PROJECT_REF = "roxvzbhsszesglcaadcl"
-npm run test:integration
+npm run test:quantity:setup
 $env:E2E_BASE_URL = "https://ambulanta.netlify.app"
-$env:NEXT_PUBLIC_EVIDENCE_MAX_MB = "4"
-npm run test:e2e -- tests/e2e/stock-shifts.spec.ts
+npm run test:reports:live
 npm run test:integration:cleanup
+npm run export:demo
 ```
 
-Configurația E2E nu pornește server local când `E2E_BASE_URL` este setată.
-Testul verifică desktop și telefon, autentificare, catalog, stoc, predare,
-ciornă, semnătură, PDF cu paginare, foto, refuzul fișierelor prea mari,
-replay fără dublare și izolarea dovezilor. Rezultatele efective sunt în STATUS.
+Testul verifică Auth/PostgREST găzduit, două ture, stocul permanent pe mașină,
+consumul final, replay fără dublare, izolarea și exporturile HTTP de pe Netlify.
+Interfața se inspectează separat în browser, pe desktop și telefon. Testele
+istorice `test:integration` includ fluxurile M02–M07; nu sunt procedura curentă
+de refacere a demonstrației cantitative. Ghidul complet este în [DEMO](DEMO.md).
 
 Administratorul este în `private/initial-admin.json`, titularii în
 `private/m03-demo-accounts.json`. Fișierele sunt numai locale. Nu transmite
 parole în mesaje publice, repository sau URL-uri. `/demo` este previzualizarea
 vizuală M01; aplicația persistentă începe la `/autentificare`.
 
-La M07, turele acceptate rămân deschise, cu ciorne și dovezi. M08 va adăuga
-consumul/returul confirmat și închiderea. Publicarea acestui increment nu declară
-P01 integral sau utilizare operațională.
+Verificările P01 au trecut pentru MVP-ul M00–M09, conform D67/D69/D73/D75;
+curățarea fixturei temporare așteaptă autorizarea explicită consemnată în STATUS.
+Închiderea curentă declară consumul și păstrează restul în mașină; rapoartele sunt
+private. M10–M11, corecțiile și pregătirea operațională, rămân etape ulterioare.
