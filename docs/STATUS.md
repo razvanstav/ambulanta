@@ -15,7 +15,7 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
-**Optimizare citiri în publicare — 11 septembrie:** măsurarea live a paginii
+**Optimizare citiri publicată — 11 septembrie:** măsurarea live a paginii
 „Tura mea” a dat 2811 / 4523 / 5018 / 2929 ms pentru patru încărcări complete
 autentificate (aproximativ 7,8 KB HTML transferat). Citirile independente pentru
 ture, stocul mașinii, titular și inventar rulează acum simultan; alocările pornesc
@@ -25,6 +25,13 @@ Format/lint/tipuri, 20 unitare și build trecute; verificare browser numai prin
 citire: tura proprie, stocuri/ture pentru administrator și refuzul accesului
 logistic titularului. Buildul local a răspuns în 493–598 ms; nu se compară direct
 cu Netlify. Fără migrări, mutații sau date temporare noi. Reper: `b1dc452`.
+Commitul `cdbe027` este publicat prin deployul `6aa3a7eb538f1c00080586b7`.
+După publicare, aceleași patru încărcări live au durat 2008 / 1484 / 1704 / 1473 ms:
+media a scăzut de la 3820 la 1667 ms (aproximativ 56%). Eșantion mic, după
+autentificare; nu reprezintă un SLA sau măsurarea pornirii după inactivitate.
+Au trecut și verificările live pentru tura proprie, stocuri/ture administrator
+și acces logistic refuzat titularului. Reper anterior verificat: `cdbe027`.
+Următorul modul rămâne PDF individual M08.
 
 **Corecție D70 publicată:** blocarea până la finalul programat se aplică numai
 butonului de închidere. Câmpurile de consum sunt editabile, inclusiv pentru ciorne
