@@ -15,6 +15,11 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
+**Ajustare „Tura mea” — 11 septembrie:** nota internă a fișei (exemplu:
+„Incarcare materiale”) nu mai este afișată titularului. Rămâne în istoricul
+fișei și în perspectiva logistică. Modificare exclusiv de afișare, fără mutații
+de stoc. Reper anterior: `6ec4b2e`. Publicarea este în curs.
+
 **Optimizare citiri publicată — 11 septembrie:** măsurarea live a paginii
 „Tura mea” a dat 2811 / 4523 / 5018 / 2929 ms pentru patru încărcări complete
 autentificate (aproximativ 7,8 KB HTML transferat). Citirile independente pentru

@@ -294,7 +294,7 @@ export async function ShiftsWorkspace({
                           ),
                         )}
                       </ul>
-                      <p className="identity-note">{sheet.note}</p>
+                      {!own && <p className="identity-note">{sheet.note}</p>}
                       {own && sheet.state === "sent" && (
                         <>
                           <ActionForm

@@ -1,5 +1,10 @@
 # Decizii și presupuneri
 
+## D72 — Confirmat, 11 septembrie 2026
+
+Nota internă a fișei nu se afișează ca text liber în „Tura mea”. Datele istorice
+se păstrează, iar logistica poate consulta nota în continuare.
+
 ## D71 — Optimizare tehnică, 11 septembrie 2026
 
 Citirile independente rulează simultan în aceeași cerere pentru a reduce
