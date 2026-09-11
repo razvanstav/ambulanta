@@ -533,6 +533,25 @@ try {
   const mismatch = await db.query(`select b.id from public.stock_balances b where b.quantity <>
     coalesce((select sum(case when m.destination_id=b.location_id then m.quantity else -m.quantity end) from public.inventory_movements m where m.lot_id=b.lot_id and (m.source_id=b.location_id or m.destination_id=b.location_id)),0)`);
   assert.equal(mismatch.rowCount, 0);
+  const reportQuery = `select v.content,v.content_hash from public.shifts s join public.closeout_versions v on v.id=s.final_closeout_id and v.shift_id=s.id where s.id=$1 and s.state='closed'`;
+  const original = (await holder.query(reportQuery, [third])).rows;
+  assert.equal(original.length, 1);
+  assert.deepEqual((await warehouse.query(reportQuery, [third])).rows, original);
+  assert.equal((await next.query(reportQuery, [third])).rowCount, 0);
+  assert.equal((await outsider.query(reportQuery, [third])).rowCount, 0);
+  await db.query("update public.products set name='Denumire ulterioară' where id=$1", [id.product]);
+  await db.query("update public.employees set display_name='Titular redenumit' where id=$1", [
+    id.employee,
+  ]);
+  assert.deepEqual((await holder.query(reportQuery, [third])).rows, original);
+  await denied(
+    () =>
+      holder.query("update public.closeout_versions set content='{}' where shift_id=$1", [third]),
+    /permission denied/,
+  );
+  check(
+    "final report snapshot survives catalogue rename; owner and logistics only; immutable to holder",
+  );
   check("all warehouse, legacy and vehicle balances reconcile with immutable journal");
   console.log(`${passed} PostgreSQL scenarios passed. Isolated database: ${database}`);
 } finally {

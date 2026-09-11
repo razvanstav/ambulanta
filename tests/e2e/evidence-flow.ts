@@ -7,6 +7,9 @@ export async function verifySimpleCloseout(
   info: TestInfo,
 ) {
   const workspace = leader.getByRole("region", { name: "Încheierea turei" });
+  const shiftId = await workspace.locator('input[name="shift"]').inputValue();
+  const reportUrl = `/api/reports/shifts/${shiftId}`;
+  expect((await leader.request.get(reportUrl)).status()).toBe(404);
   await expect(workspace.getByRole("heading", { name: "Închide tura" })).toBeVisible();
   await expect(workspace).toContainText("stocul se actualizează numai atunci.");
 
@@ -76,4 +79,19 @@ export async function verifySimpleCloseout(
   await expect(leader.getByRole("region", { name: "Încheierea turei" })).toContainText(
     "Rămas în mașină 8 bucată",
   );
+  await expect(leader.getByRole("link", { name: "Descarcă raportul PDF" })).toHaveAttribute(
+    "href",
+    reportUrl,
+  );
+  const response = await leader.request.get(reportUrl);
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toBe("application/pdf");
+  expect(response.headers()["cache-control"]).toContain("private, no-store");
+  expect((await response.body()).subarray(0, 5).toString()).toBe("%PDF-");
+  const again = await leader.request.get(reportUrl);
+  expect(await again.body()).toEqual(await response.body());
+  expect((await operator.request.get(reportUrl)).status()).toBe(200);
+  await leader.reload();
+  await leader.getByRole("button", { name: /Istoric/ }).click();
+  await expect(leader.getByRole("heading", { name: "Tura este închisă" })).toBeVisible();
 }

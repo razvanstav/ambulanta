@@ -104,13 +104,13 @@ Verifică și că un alt șef de tură din aceeași substație nu poate vedea/de
 
 ## M08 — Închiderea și raportul turei
 
-**Actualizare D61–D64:** partea de închidere a fost implementată local cu stoc permanent pe mașină și final programat, conform [VEHICLE-STOCK](VEHICLE-STOCK.md). Scenariul fără retur este 100 în magazie → 10 în mașină → 7 consumate → 90 în magazie și 3 în mașină. Titularul închide fără retur după final; returul fizic necesită gestionarul. Migrarea găzduită, verificările Supabase/Netlify și PDF-ul individual rămân de făcut. Criteriile istorice de mai jos despre retur implicit și interzicerea oricărei închideri de către titular sunt înlocuite de noul contract.
+**Contract curent D69–D74:** titularul declară consumul la închidere; restul rămâne în mașină. Poate închide la termen sau anticipat cu motiv și confirmare. Migrările 001–010 sunt aplicate pe Supabase; raportul individual folosește declarația finală existentă, fără migrare nouă. Starea verificărilor și publicării este în `STATUS.md`.
 
-**Include:** trimiterea declarației, verificarea gestionarului, consum, retur, închidere atomică, versiune finală nemodificabilă și PDF individual. Introduce regenerarea PDF independentă de operația de stoc.
+**Include:** consum și închidere atomică, versiune finală nemodificabilă, PDF individual privat și regenerare independentă de stoc. Circuitul vechi cu retur confirmat de magazie este păstrat pentru compatibilitate.
 
-**Acceptare:** scenariul 100/10/6/4 se încheie cu 94 în depozit; consumul nu scade încă o dată depozitul; închiderea repetată nu dublează returul; dovezile invalide sau neconcordanța cantităților blochează închiderea. Eșecul PDF nu redeschide tura. Raportul păstrează datele chiar dacă produsul sau angajatul este ulterior redenumit.
+**Acceptare:** 100 în magazie → 10 în mașină → 7 consumate lasă 90 în magazie și 3 în mașină. Reluările concurente nu dublează consumul, iar mașina se eliberează la închidere. Eșecul PDF nu redeschide tura. Raportul păstrează datele chiar dacă produsul sau angajatul este ulterior redenumit; diacriticele, cantitățile fracționare și listele lungi se redau fără tăiere.
 
-Șeful de tură completează și trimite numai declarația proprie; magazia confirmă returul și finalizează închiderea. Testează refuzul închiderii definitive de către titular și accesul între doi titulari ai aceleiași substații. Mașina se eliberează la închiderea confirmată, conform regulii inițiale D17/D35.
+Titularul citește numai rapoartele proprii; logistica citește rapoartele din aria autorizată. Accesul anonim, între titulari și între instituții este refuzat. Turele deschise nu au PDF final.
 
 **Limite:** `shifts`, contractele tranzacționale din `inventory`, verificarea din `evidence` și raportul individual din `reports`. Aceste modificări între module sunt necesare integrării, nu o rescriere a lor.
 

@@ -185,6 +185,18 @@ test.describe("M04–M07 circuit real", () => {
     );
     await leader.screenshot({ path: info.outputPath("tura.png"), fullPage: true });
     await verifySimpleCloseout(leader, page, `AMB-${account.toUpperCase()} · ${account}`, info);
+    const reportUrl = await leader
+      .getByRole("link", { name: "Descarcă raportul PDF" })
+      .getAttribute("href");
+    const stranger = await browser.newContext({ baseURL: new URL(page.url()).origin });
+    expect((await stranger.request.get(reportUrl!)).status()).toBe(404);
+    const strangerPage = await stranger.newPage();
+    await login(
+      strangerPage,
+      f.accounts[info.project.name.startsWith("desktop") ? "leaderA" : "foreignAdmin"],
+    );
+    expect((await stranger.request.get(reportUrl!)).status()).toBe(404);
+    await stranger.close();
     await leader.goto(`${base}/catalog`);
     await expect(leader.getByRole("heading", { name: "Pagina nu a fost găsită" })).toBeVisible();
     await context.close();

@@ -15,6 +15,20 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
+**M08 — PDF individual verificat local, publicare în curs:**
+istoricul turei închise oferă „Descarcă raportul PDF” titularului și logisticii.
+PDF-ul folosește versiunea finală fixată, cu preluat/consumat/rămas, datele turei,
+marcaj anticipat și versiune/hash. Fără loturi, expirări sau praguri. Generarea
+este numai citire, privată și repetabilă; nu schimbă stocul. Nu necesită migrare.
+24 scenarii PostgreSQL trecute, inclusiv acces propriu/logistic și refuz între
+titulari/substații, păstrarea raportului după redenumirea produsului/angajatului.
+Format/lint/tipuri, 25 teste unitare și build trecute. PDF de patru pagini
+inspectat vizual, cu diacritice, denumire lungă și 65 de produse. Cele două
+circuite E2E desktop/Pixel 7 au trecut la rerulare: descărcare repetată identică,
+logistică autorizată, anonim/alt titular/altă instituție refuzați. Prima rulare
+s-a oprit numai la o aserțiune prea strictă pentru antetul de cache, corectată.
+Reper anterior verificat: `39984bb`. Următorul modul după livrare este M09.
+
 **D73 publicat:** buton separat „Închide tura înainte”, cu motiv,
 confirmare și posibilitate de renunțare fără pierderea cantităților introduse.
 Migrarea 010 este aplicată și înregistrată în Supabase. Nu modifică date sau

@@ -31,7 +31,10 @@ export async function EvidenceWorkspace({
     .eq("shift_id", shift.id)
     .order("version", { ascending: false });
   if (error) throw new Error("Declarația de consum nu poate fi încărcată.");
-  const current = (data as CloseoutVersion[])[0];
+  const current =
+    shift.state === "closed"
+      ? (data as CloseoutVersion[]).find((version) => version.id === shift.final_closeout_id)
+      : (data as CloseoutVersion[])[0];
   const isOwner = own && shift.owner_id === identity.id;
   const canClose = isOwner && shift.state === "open";
 
@@ -44,6 +47,12 @@ export async function EvidenceWorkspace({
         </div>
         {shift.state === "closed" && <span className="closeout-done">Finalizată</span>}
       </div>
+
+      {shift.state === "closed" && current && (
+        <a className="button button-secondary" href={`/api/reports/shifts/${shift.id}`}>
+          Descarcă raportul PDF
+        </a>
+      )}
 
       {canClose && (
         <>

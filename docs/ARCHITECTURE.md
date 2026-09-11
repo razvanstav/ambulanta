@@ -1,5 +1,13 @@
 # Arhitectură — Gestiune substații
 
+M08/D74: `GET /api/reports/shifts/[id]` verifică Auth și citește prin RLS tura
+închisă și versiunea indicată de `final_closeout_id`. Modulul `reports` grupează
+instantaneele istorice și generează PDF în Node cu pdf-lib/fontkit și fonturile
+Liberation incluse în pdfjs-dist (licența fonturilor este păstrată în dependență).
+Fonturile sunt incluse explicit în trasarea fișierelor server pentru Netlify.
+Descărcarea este privată, fără cache; nu există RPC de scriere sau modificare de
+stoc la generare. Erorile PDF sunt independente de tranzacția deja încheiată.
+
 D73: închiderea anticipată este o comandă explicită a titularului, cu motiv și
 confirmare; păstrează intervalul planificat și postează atomic același consum.
 Migrarea 010 păstrează comanda normală restricționată la finalul programat.

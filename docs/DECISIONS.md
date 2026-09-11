@@ -1,5 +1,24 @@
 # Decizii și presupuneri
 
+## D74 — M08, 11 septembrie 2026
+
+Raportul PDF individual se descarcă din istoricul turei închise. Ruta server
+citește numai `final_closeout_id` și conținutul declarației finale prin clientul
+autentificat și RLS existent, fără cheie privilegiată. Denumirile titularului,
+mașinii și produselor provin din instantaneele istorice, nu din catalogul curent.
+Produsele sunt grupate după codul, denumirea și unitatea din declarație; nu se
+afișează loturi, expirări sau praguri. Cantitățile sunt preluat/consumat/rămas;
+returul apare numai în rapoartele istorice cu retur fizic confirmat.
+
+PDF-ul se regenerează la cerere, cu font Unicode inclus, paginare și identificarea
+versiunii/hashului declarației. Nu creează operații de stoc, fișiere publice sau
+cache partajat. O eroare de generare permite reîncercarea, fără redeschiderea turei.
+Închiderea anticipată se indică din ora efectivă comparată cu finalul planificat;
+motivul rămâne în jurnalul operației. Nu sunt necesare migrări noi pentru M08.
+
+Acesta este raportul de gestiune al MVP-ului, nu un formular instituțional aprobat
+sau o semnătură electronică. Rapoartele agregate rămân în M09.
+
 ## D73 — Confirmat, 11 septembrie 2026
 
 Titularul poate folosi „Închide tura înainte”, separat de închiderea la termen.
