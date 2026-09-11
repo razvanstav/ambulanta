@@ -4,16 +4,20 @@ Publicat pe 11 septembrie 2026: [aplicația](https://ambulanta.netlify.app/auten
 M00–M09 sunt disponibile în scopul demo actual D67/D69/D73/D75.
 M10–M11 sunt etape ulterioare pentru corecții și utilizare operațională.
 
+Actualizare: după resetarea cerută, Roșiori are 19 produse cu stoc, 10 angajați,
+5 mașini și zero ture. Catalogul și personalul au denumiri uzuale, conform D76.
+Substațiile vechi sunt arhivate/inactive; nu le reactiva pentru o probă nouă.
+
 ## Prezentare în Roșiori
 
-Folosește contul administrativ local din `private/razvan-admin.json` sau
-`private/initial-admin.json`, iar pentru titulari conturile individuale din
-`private/m03-demo-accounts.json`. Parolele se transmit individual; nu se includ
+Folosește contul administrativ din `private/razvan-admin.json` și titularul din
+`private/cosmin-account.json`. Numai aceste două conturi sunt active după resetare.
+Parolele se transmit individual; nu se includ
 în documentație, URL-uri sau capturi publice. Contul administrativ gestionează
 drepturile existente pe live; crearea conturilor noi se face din mediul local.
 
 1. Intră în aplicație și selectează Roșiori. Arată „Logistică / Magazie”,
-   produsele, personalul, cele două mașini și „Stocuri și recepții”.
+   produsele, personalul, cele cinci mașini și „Stocuri și recepții”.
 2. Înregistrează un produs fictiv separat și o recepție de 100 bucăți, cu un
    număr de document unic. Nu reutiliza documentele unui test anterior.
 3. Titularul intră în „Tura mea”, selectează o mașină disponibilă și intervalul.
@@ -27,14 +31,14 @@ drepturile existente pe live; crearea conturilor noi se face din mediul local.
 6. Din istoric descarcă PDF-ul individual. În „Rapoarte” arată consumul final,
    mișcările magaziei, stocul, turele închise și cererile neînchise. Schimbă
    gruparea în săptămâni, titulari sau mașini și descarcă CSV/PDF.
-7. Al doilea titular cere aceeași mașină după eliberare. Magazia poate trimite
+7. Cosmin cere din nou aceeași mașină după eliberare. Magazia poate trimite
    o fișă fără completare; acceptarea preia cele 8 bucăți fără un nou debit al
    magaziei. Consum 3 → rest 5 în mașină; consum agregat 10, magazie 85.
 8. Fiecare titular vede numai propriile ture și „Rapoartele mele”. Administratorul
    poate selecta toate substațiile autorizate; un rol local rămâne limitat.
 
-La verificarea publicării exista deja o tură deschisă pe DEMO-AMB-02.
-Aceasta a fost păstrată; alege o mașină disponibilă, fără a închide tura altcuiva.
+Tura veche a fost închisă cu consum zero și păstrată în substația arhivată.
+Toate cele cinci mașini noi sunt disponibile la finalul pregătirii.
 Valorile de mai sus sunt pentru produsul nou, separat de stocurile existente.
 
 ## Refacerea verificării fără afectarea demonstrației existente
@@ -59,9 +63,9 @@ nu pretinde că automatizează interfața. Pentru o nouă zi pornește o fixture
 
 După inspecție:
 
-Curățarea este definitivă. La publicarea din 11 septembrie, verificarea automată
-a cerut autorizare explicită pentru cele două instituții temporare și 12 conturi;
-fixturea a fost păstrată în așteptarea acordului. Rulează curățarea după autorizare.
+Curățarea este definitivă și cere autorizare. Fixturea publicării din 11 septembrie
+a fost eliminată după acordul beneficiarului; nu mai există manifestul acelei rulări.
+Pentru alte rulări se folosește un manifest nou, cu țintele verificate de script.
 
 ```powershell
 npm run test:integration:cleanup

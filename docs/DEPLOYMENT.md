@@ -114,6 +114,6 @@ parole în mesaje publice, repository sau URL-uri. `/demo` este previzualizarea
 vizuală M01; aplicația persistentă începe la `/autentificare`.
 
 Verificările P01 au trecut pentru MVP-ul M00–M09, conform D67/D69/D73/D75;
-curățarea fixturei temporare așteaptă autorizarea explicită consemnată în STATUS.
+fixturea temporară a fost curățată după autorizare. D76 descrie noul spațiu de probă.
 Închiderea curentă declară consumul și păstrează restul în mașină; rapoartele sunt
 private. M10–M11, corecțiile și pregătirea operațională, rămân etape ulterioare.

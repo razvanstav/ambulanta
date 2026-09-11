@@ -2,6 +2,42 @@
 
 Actualizat: 11 septembrie 2026
 
+## Spațiu curat de probă — 11 septembrie 2026
+
+Beneficiarul a cerut resetarea live, numai Cosmin și Razvan activi și date de
+prezentare cu denumiri uzuale. Cele două instituții temporare și cele 12 conturi
+de test P01 au fost șterse după această autorizare explicită; manifestul temporar
+a fost eliminat de scriptul de curățare.
+
+Resetarea definitivă a datelor instituției a fost respinsă de verificarea automată
+din cauza volumului ștergerilor și a lipsei restaurării tranzacționale. S-a aplicat
+alternativa fără ștergeri: substațiile vechi sunt inactive, cu prefix „Arhivă 11.09”,
+iar Roșiori și Alexandria au fost recreate cu identificatori noi. Datele, auditul,
+fișierele și identitățile vechi rămân păstrate. Tura Cosmin a fost închisă prin
+motorul normal, cu consum zero și motivul arhivării; restul rămâne în mașina veche.
+Nu există ture în spațiul nou și arhiva nu intră în rapoartele curente.
+
+Numai profilurile Cosmin și Razvan solicitate sunt active; celelalte cinci
+profiluri ale instituției sunt inactive, cu acces refuzat prin RLS. Parolele și
+identificatorii Auth ai celor două conturi păstrate nu au fost modificați.
+Cosmin este titular eligibil în noua substație Roșiori.
+
+Roșiori are 19 produse (12 medicamente, 5 consumabile, 2 accesorii), 10 angajați
+și 5 ambulanțe disponibile. Denumirile și codurile nu au prefix „fictiv”/„DEMO”.
+Numele personalului sunt exemple plauzibile, nu un registru real al instituției;
+catalogul nu reprezintă un protocol clinic. Setul este în
+`scripts/presentation-data.mjs`. Șase produse existente au fost redenumite,
+păstrând unitățile și precizia; celelalte sunt noi. Stocul de probă a fost primit
+prin motorul unic, document `STOC-INITIAL-001`. Alexandria este pregătită fără stoc.
+
+Verificat live: exact două profiluri active, acces refuzat contului vechi,
+arhiva inaccesibilă în rapoarte, 19 solduri conforme recepției inițiale, zero ture
+curente/închise în aria activă și Cosmin eligibil. Configurația privată actualizată
+este în `private/presentation-state.json` și `private/cosmin-account.json`.
+Copie înainte de intervenție: `backups/demo-2026-09-11T13-04-26-456Z/`.
+Nu este necesar deploy; codul aplicației și schema nu au fost modificate.
+Reper anterior: `4c2f9b4`, branch `main`. M10–M11 rămân pentru o etapă ulterioară.
+
 ## M09 + P01 — Publicate și verificate, 11 septembrie 2026
 
 **Modulele MVP M00–M09 sunt publicate și verificările P01 au trecut**, în scopul curent

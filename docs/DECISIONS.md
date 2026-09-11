@@ -1,5 +1,19 @@
 # Decizii și presupuneri
 
+## D76 — Date de probă cu denumiri uzuale, 11 septembrie 2026
+
+Beneficiarul solicită un spațiu live curat pentru probă, cu numai Cosmin și Razvan
+activi și fără etichete „fictiv” în denumirile medicamentelor, mașinilor sau
+angajaților. Folosim denumiri uzuale și nume plauzibile, fără a pretinde că sunt
+date ale personalului real. Cantitățile sunt exemple de gestiune, fără indicații
+clinice. Marcajul general al mediului de prezentare rămâne valabil.
+
+Curățarea fixturelor P01 a fost autorizată și executată. Ștergerea masivă a
+instituției a fost respinsă de verificarea automată; alternativa aplicată păstrează
+istoricul în substații inactive și oferă substații noi, fără ture, pentru probă.
+Conturile suplimentare sunt dezactivate, nu șterse. Datele și schema de producție
+nu au fost trunchiate. Detaliile și limitele sunt în STATUS.
+
 ## D75 — M09, 11 septembrie 2026
 
 Rapoartele și dashboardul citesc printr-un RPC `STABLE SECURITY INVOKER`, cu RLS și
