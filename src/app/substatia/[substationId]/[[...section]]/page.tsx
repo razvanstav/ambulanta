@@ -5,7 +5,7 @@ import { EmployeesPage } from "@/modules/employees/page";
 import { VehiclesPage } from "@/modules/vehicles/page";
 import { CatalogPage } from "@/modules/catalog/page";
 import { InventoryPage } from "@/modules/inventory/page";
-import { LogisticsWorkspace } from "@/modules/employees/workspace";
+import { ReportsPage } from "@/modules/reports/page";
 import { ShiftsWorkspace } from "@/modules/shifts/page";
 import { requireSubstation } from "@/modules/identity/server";
 import {
@@ -17,24 +17,35 @@ import {
 
 export default async function SubstationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ substationId: string; section?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { substationId, section } = await params;
   const { identity, substation } = await requireSubstation(substationId);
   const page = section?.join("/") ?? "";
   if (
-    !["", "logistica", "tura-mea", "personal", "masini", "catalog", "stocuri", "ture"].includes(
-      page,
-    )
+    ![
+      "",
+      "logistica",
+      "tura-mea",
+      "personal",
+      "masini",
+      "catalog",
+      "stocuri",
+      "ture",
+      "rapoarte",
+      "rapoarte-proprii",
+    ].includes(page)
   )
     notFound();
   const logistics = canViewLogistics(identity, substationId);
   const myShift = canUseMyShift(identity, substationId);
   if (
-    (["logistica", "personal", "masini", "catalog", "stocuri", "ture"].includes(page) &&
+    (["logistica", "personal", "masini", "catalog", "stocuri", "ture", "rapoarte"].includes(page) &&
       !logistics) ||
-    (page === "tura-mea" && !myShift)
+    (["tura-mea", "rapoarte-proprii"].includes(page) && !myShift)
   )
     notFound();
   return (
@@ -42,21 +53,25 @@ export default async function SubstationPage({
       <PageHeading
         eyebrow={`SUBSTAȚIA ${substation.name.toLocaleUpperCase("ro-RO")}`}
         title={
-          page === "ture"
-            ? "Cereri și ture"
-            : page === "stocuri"
-              ? "Stocuri și recepții"
-              : page === "catalog"
-                ? "Produse"
-                : page === "tura-mea"
-                  ? "Tura mea"
-                  : page === "personal"
-                    ? "Personal"
-                    : page === "masini"
-                      ? "Mașini"
-                      : page === "logistica"
-                        ? "Logistică / Magazie"
-                        : "Spațiul substației"
+          page === "rapoarte"
+            ? "Rapoarte"
+            : page === "rapoarte-proprii"
+              ? "Rapoartele mele"
+              : page === "ture"
+                ? "Cereri și ture"
+                : page === "stocuri"
+                  ? "Stocuri și recepții"
+                  : page === "catalog"
+                    ? "Produse"
+                    : page === "tura-mea"
+                      ? "Tura mea"
+                      : page === "personal"
+                        ? "Personal"
+                        : page === "masini"
+                          ? "Mașini"
+                          : page === "logistica"
+                            ? "Logistică / Magazie"
+                            : "Spațiul substației"
         }
         description={`Bine ai venit, ${identity.displayName}. ${stationRoles(identity, substationId)
           .map((role) => roleLabels[role])
@@ -90,8 +105,14 @@ export default async function SubstationPage({
         <EmployeesPage stationId={substationId} identity={identity} />
       ) : page === "masini" ? (
         <VehiclesPage stationId={substationId} identity={identity} />
-      ) : page === "logistica" ? (
-        <LogisticsWorkspace stationId={substationId} />
+      ) : ["logistica", "rapoarte", "rapoarte-proprii"].includes(page) ? (
+        <ReportsPage
+          stationId={substationId}
+          identity={identity}
+          params={await searchParams}
+          own={page === "rapoarte-proprii"}
+          dashboard={page === "logistica"}
+        />
       ) : (
         <ShiftsWorkspace stationId={substationId} own />
       )}

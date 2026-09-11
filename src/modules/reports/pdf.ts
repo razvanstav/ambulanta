@@ -19,7 +19,7 @@ const date = (value?: string | null) =>
 const quantity = (value: number) =>
   new Intl.NumberFormat("ro-RO", { maximumFractionDigits: 3 }).format(value);
 
-function wrap(value: string, font: PDFFont, size: number, width: number) {
+export function wrap(value: string, font: PDFFont, size: number, width: number) {
   const lines: string[] = [];
   let line = "";
   for (const word of value.replace(/[\u0000-\u001f\u007f]/g, " ").split(/\s+/)) {

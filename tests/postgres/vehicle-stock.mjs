@@ -1,4 +1,5 @@
 import { testQuantityOnly } from "./quantity-only.mjs";
+import { testReports } from "./reports.mjs";
 // Real PostgreSQL, isolated database. Auth identity and Storage metadata are test scaffolding;
 // this does not substitute for hosted Supabase Auth/Storage HTTP tests.
 import assert from "node:assert/strict";
@@ -553,6 +554,7 @@ try {
     "final report snapshot survives catalogue rename; owner and logistics only; immutable to holder",
   );
   check("all warehouse, legacy and vehicle balances reconcile with immutable journal");
+  await testReports({ db, id, rpc, actor, warehouse, holder, next, outsider, denied, check });
   console.log(`${passed} PostgreSQL scenarios passed. Isolated database: ${database}`);
 } finally {
   await Promise.all(connections.map((c) => c.end()));

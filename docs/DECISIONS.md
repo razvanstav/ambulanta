@@ -1,5 +1,25 @@
 # Decizii și presupuneri
 
+## D75 — M09, 11 septembrie 2026
+
+Rapoartele și dashboardul citesc printr-un RPC `STABLE SECURITY INVOKER`, cu RLS și
+o singură imagine coerentă a bazei. Sumele `numeric` sunt transportate ca text.
+Consumul folosește numai versiunea finală și data operațională; denumirile istorice
+nu sunt înlocuite prin citirea catalogului curent. Mișcările magaziei folosesc ora
+înregistrării și direcția mișcării, inclusiv returul din închiderile istorice.
+
+Intervalul este început inclus/final exclus, maximum 366 zile, în Europe/Bucharest.
+Săptămâna începe luni. Situația neînchisă și stocul sunt curente, explicit etichetate.
+Filtrele de titular/mașină/tură restrâng consumul și turele, nu soldurile magaziei
+sau stocul curent. Aria substațiilor se aplică tuturor rapoartelor. Perspectiva
+proprie impune proprietarul inclusiv pentru exporturi și conturi cu roluri multiple.
+
+PDF/CSV sunt private, regenerate la cerere, cu filtre și momentul generării;
+nu sunt rapoarte finale noi și nu modifică stocul. Migrarea 011 trebuie aplicată
+înainte de publicare. Incrementul este verificat local și sincronizat cu
+`[skip netlify]`; activarea găzduită rămâne în continuarea M09/P01.
+Contract: [REPORTING](REPORTING.md).
+
 ## D74 — M08, 11 septembrie 2026
 
 Raportul PDF individual se descarcă din istoricul turei închise. Ruta server

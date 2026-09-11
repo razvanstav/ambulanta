@@ -258,6 +258,13 @@ Generarea PDF se face după salvarea tranzacției de închidere, din conținutul
 
 ## 9. Rapoarte și dashboard
 
+Implementarea curentă M09 este descrisă în [REPORTING](REPORTING.md), cu D69/D75:
+numai produse și cantități, stoc permanent pe mașină, fără praguri sau expirări.
+Dashboardul numără ture pornite, cereri fără fișă, fișe de acceptat și ture închise.
+Raportarea este exclusiv citire, prin RPC `STABLE SECURITY INVOKER`, cu RLS;
+consumul folosește versiunea finală istorică și magazia folosește jurnalul.
+Propunerile istorice de mai jos privind pragurile/expirarea sunt înlocuite de D69.
+
 Rapoarte inițiale:
 
 - Raport de tură: substație, mașină, titular, interval, predat, consumat, returnat, persoana care a închis și dovezile asociate.

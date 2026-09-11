@@ -43,11 +43,15 @@ export function AuthenticatedShell({
       { href: `${base}/catalog`, label: "Produse", icon: "box" },
       { href: `${base}/stocuri`, label: "Stocuri și recepții", icon: "box" },
       { href: `${base}/ture`, label: "Cereri și ture", icon: "pulse" },
+      { href: `${base}/rapoarte`, label: "Rapoarte", icon: "chart" },
       { href: `${base}/personal`, label: "Personal", icon: "users" },
       { href: `${base}/masini`, label: "Mașini", icon: "ambulance" },
     );
   if (station && canUseMyShift(identity, station.id))
-    navigation.push({ href: `${base}/tura-mea`, label: "Tura mea", icon: "pulse" });
+    navigation.push(
+      { href: `${base}/tura-mea`, label: "Tura mea", icon: "pulse" },
+      { href: `${base}/rapoarte-proprii`, label: "Rapoartele mele", icon: "chart" },
+    );
   if (isAdmin(identity))
     navigation.push({ href: "/administrare", label: "Administrare", icon: "settings" });
   navigation.push({ href: "/cont", label: "Contul meu", icon: "users" });

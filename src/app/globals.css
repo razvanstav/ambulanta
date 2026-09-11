@@ -2591,3 +2591,129 @@ tbody tr:hover {
     text-align: left;
   }
 }
+/* M09 reporting: tables scroll within the panel on small screens. */
+.reports-workspace {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.report-summary {
+  padding: 0 20px 16px;
+  color: #385564;
+  font-size: 13px;
+}
+.report-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  padding: 20px;
+}
+.report-filters label {
+  display: grid;
+  gap: 6px;
+  min-width: 150px;
+  flex: 1 1 170px;
+  font-size: 13px;
+}
+.report-filters input,
+.report-filters select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #bdcdd5;
+  border-radius: 8px;
+  color: #153445;
+  background: white;
+}
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.report-stats > div {
+  background: white;
+  border: 1px solid #d5e1e6;
+  border-radius: 14px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+.report-stats strong {
+  font-size: 30px;
+  color: #155d68;
+}
+.report-stats span {
+  font-size: 13px;
+  color: #385564;
+}
+.report-exports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.report-table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.report-table th,
+.report-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e0e8eb;
+  vertical-align: top;
+  min-width: 95px;
+  overflow-wrap: anywhere;
+}
+.report-table th {
+  background: #f1f7f8;
+  color: #234956;
+}
+.report-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+  padding: 20px;
+}
+.report-charts figure {
+  margin: 0;
+  min-width: 0;
+}
+.report-charts figcaption {
+  margin-bottom: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.report-bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 70px;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.report-bar {
+  height: 12px;
+  background: #edf3f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.report-bar i {
+  display: block;
+  height: 100%;
+  background: #167f8b;
+}
+@media (max-width: 700px) {
+  .report-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .report-exports .button {
+    font-size: 12px;
+    padding: 8px;
+  }
+}

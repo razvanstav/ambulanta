@@ -2,6 +2,34 @@
 
 Actualizat: 11 septembrie 2026
 
+## M09 — Implementat și verificat local, 11 septembrie 2026
+
+Rapoarte de consum final, mișcări magazie și stoc curent, filtre pe perioadă,
+zi/săptămână/tură/titular/mașină/substație/produs, CSV/PDF și dashboard real.
+Titularul are „Rapoartele mele”, limitate la propriile ture. Cererile fără fișă,
+fișele de acceptat și turele pornite sunt distincte. D69 rămâne regula curentă.
+
+Migrarea 011 introduce numai RPC-ul de citire `STABLE SECURITY INVOKER`, cu RLS.
+Consumul folosește declarația finală și data operațională; magazia folosește
+jurnalul și ora înregistrării. Retururile din operațiile istorice de închidere
+sunt incluse. Nu sunt modificate formulele sau operațiile motorului de stoc.
+
+Verificări: `npm run check` (format/lint/tipuri, 30 unitare și build), 29 scenarii
+PostgreSQL locale, 10 exporturi CSV/PDF prin HTTP cu verificarea accesului și
+cache-ului privat. Interfața a fost verificată în browser pe desktop și la 412 px:
+filtru săptămânal, meniu mobil, rapoarte proprii și descărcare PDF. PDF de 5 pagini
+cu 80 produse inspectat vizual, inclusiv denumire lungă și diacritice.
+
+Limite: UI/HTTP folosesc un adaptor Auth local peste PostgreSQL real, nu Supabase
+Auth/PostgREST găzduit. Migrarea 011 NU este aplicată în Supabase, M09 NU este
+publicat pe Netlify. Configurația privată și datele găzduite nu sunt modificate.
+Commitul folosește `[skip netlify]`; activarea serviciului și verificarea găzduită
+rămân înaintea publicării M09/P01. Detalii și comenzi: [REPORTING](REPORTING.md).
+Reper anterior verificat: `0b46fb1`, branch `main`. Următoarea etapă: activare M09
+și **P01 — Publicare demo**, fără a declara P01 încheiat.
+
+Înregistrările de mai jos sunt istorice; secțiunea M09 de mai sus este reperul curent.
+
 ## Sincronizare pe PC-ul inițial — 11 septembrie 2026
 
 Au fost preluate cele 7 commituri noi de pe `origin/main`, prin fast-forward
