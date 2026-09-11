@@ -64,6 +64,10 @@ export async function completeSimpleCloseout(
   _previous: ActionResult,
   form: FormData,
 ): Promise<ActionResult> {
+  const early = form.get("close_mode") === "early";
+  const reason = String(form.get("early_reason") ?? "").trim();
+  if (early && (form.get("early_confirm") !== "on" || reason.length < 5 || reason.length > 500))
+    return { message: "Completează motivul și confirmă închiderea anticipată." };
   const station = String(form.get("station") ?? "");
   await requireSubstation(station);
   const shift = String(form.get("shift") ?? "");
@@ -106,11 +110,12 @@ export async function completeSimpleCloseout(
   } catch (error) {
     return { message: error instanceof Error ? error.message : "Cantități nevalide." };
   }
-  const { error } = await client.rpc("close_shift_simple", {
+  const { error } = await client.rpc(early ? "close_shift_early" : "close_shift_simple", {
     p_shift: shift,
     p_expected_version: version || null,
     p_request_key: key,
     p_lines: lines,
+    ...(early ? { p_reason: reason } : {}),
   });
   if (error?.message?.includes("finalul programat"))
     return { message: "Tura poate fi închisă numai după data și ora finalului programat." };

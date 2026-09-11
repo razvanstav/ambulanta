@@ -15,6 +15,10 @@ expirare, loturi comerciale sau stări de lot în fluxul curent.
 - La închidere, titularul declară un singur consum per produs, inclusiv când
   au existat suplimentări. Diferența rămâne în mașină pentru următoarea tură.
 - Limita temporală, proprietarul turei și tranzacțiile atomice rămân în vigoare.
+- D73 adaugă excepția explicită „Închide tura înainte”: confirmare și motiv,
+  consum atomic, rest în mașină, mașină eliberată și ora planificată păstrată.
+  Migrarea 010 adaugă `close_shift_early`, exclusiv titularului propriu; helperul
+  de postare nu poate fi executat direct de browser. Nu modifică solduri la migrare.
 - D70: câmpurile de consum rămân editabile până la confirmare. Numai butonul de
   închidere este blocat înainte de ora programată; simpla completare nu salvează
   consum și nu modifică stocul. Ciornele istorice se precompletează fără blocare.

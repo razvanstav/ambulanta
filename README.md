@@ -3,7 +3,8 @@
 **Increment curent:** gestiune pe produs și cantitate, fără praguri, loturi
 comerciale sau expirare. Predarea scade magazia și încarcă mașina; titularul
 declară consumul, iar restul rămâne în mașină pentru următoarea tură.
-Migrările 001–009 sunt aplicate. Vezi [starea curentă](docs/STATUS.md) și
+Închiderea anticipată este disponibilă cu motiv și confirmare. Migrările 001–010
+sunt aplicate. Vezi [starea curentă](docs/STATUS.md) și
 [contractul cantitativ](docs/QUANTITY-INVENTORY.md).
 
 Aplicație în română pentru evidența produselor și a turelor substațiilor de

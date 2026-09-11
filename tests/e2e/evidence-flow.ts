@@ -30,9 +30,25 @@ export async function verifySimpleCloseout(
   await expect(workspace.locator('input[name="returned"]')).toHaveCount(allocations.length);
   await expect(workspace.getByText("Retur fizic", { exact: false })).toHaveCount(0);
   await expect(workspace.getByText("Dovada consumului", { exact: false })).toHaveCount(0);
-  await expect(
-    workspace.getByRole("button", { name: "Închide tura și actualizează stocul" }),
-  ).toBeEnabled({ timeout: 150_000 });
+  const early = info.project.name.startsWith("mobile");
+  if (early) {
+    await workspace.getByRole("button", { name: "Închide tura înainte", exact: true }).click();
+    await workspace.getByRole("button", { name: "Renunță", exact: true }).click();
+    await expect(consumption).toHaveValue("7");
+    await workspace.getByRole("button", { name: "Închide tura înainte", exact: true }).click();
+    await workspace
+      .getByRole("button", { name: "Confirm închiderea anticipată", exact: true })
+      .click();
+    await expect(leader.getByText("Tură pornită", { exact: true })).toBeVisible();
+    await workspace
+      .getByLabel("Motivul închiderii anticipate")
+      .fill("Închidere anticipată de test");
+    await workspace.getByLabel("Am verificat consumul și confirm închiderea turei acum.").check();
+    await expect(close).toBeDisabled();
+  } else
+    await expect(
+      workspace.getByRole("button", { name: "Închide tura și actualizează stocul" }),
+    ).toBeEnabled({ timeout: 150_000 });
   expect(await leader.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
     true,
   );
@@ -49,7 +65,12 @@ export async function verifySimpleCloseout(
   await expect(
     operatorShift.getByRole("button", { name: "Închide tura și actualizează stocul" }),
   ).toHaveCount(0);
-  await workspace.getByRole("button", { name: "Închide tura și actualizează stocul" }).click();
+  await workspace
+    .getByRole("button", {
+      name: early ? "Confirm închiderea anticipată" : "Închide tura și actualizează stocul",
+      exact: true,
+    })
+    .click();
   await leader.getByRole("button", { name: /Istoric/ }).click();
   await expect(leader.getByRole("heading", { name: "Tura este închisă" })).toBeVisible();
   await expect(leader.getByRole("region", { name: "Încheierea turei" })).toContainText(

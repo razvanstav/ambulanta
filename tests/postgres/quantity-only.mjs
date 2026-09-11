@@ -295,4 +295,96 @@ export async function testQuantityOnly({
   check(
     "insufficient aggregate stock refused; independent sessions preserve idempotence under concurrency",
   );
+  await db.query(
+    await readFile(
+      new URL("../../supabase/migrations/202609110010_early_closeout.sql", import.meta.url),
+      "utf8",
+    ),
+  );
+  const plannedBefore = (
+    await db.query("select planned_end from public.shifts where id=$1", [nextShift])
+  ).rows[0].planned_end;
+  const nextAllocations = (
+    await db.query(
+      "select id,product_id,quantity from public.shift_stock_allocations where shift_id=$1 order by id",
+      [nextShift],
+    )
+  ).rows;
+  let remainingConsume = 2;
+  const earlyLines = nextAllocations.map((a) => {
+    const consumed = a.product_id === product ? Math.min(remainingConsume, Number(a.quantity)) : 0;
+    remainingConsume -= consumed;
+    return { allocation_id: a.id, consumed: String(consumed), returned: "0" };
+  });
+  const earlyArgs = [
+    nextShift,
+    null,
+    randomUUID(),
+    JSON.stringify(earlyLines),
+    "Închidere anticipată pentru test",
+  ];
+  await denied(() => rpc(next, "close_shift_simple", earlyArgs.slice(0, 4)), /finalul programat/);
+  await denied(() => rpc(warehouse, "close_shift_early", earlyArgs), /titular/);
+  await denied(() => rpc(outsider, "close_shift_early", earlyArgs));
+  await denied(() => rpc(next, "close_shift_early", [...earlyArgs.slice(0, 4), "x"]), /motivul/);
+  await denied(() =>
+    next.query("select app_private.finalize_vehicle_closeout($1,$2,true)", [
+      randomUUID(),
+      randomUUID(),
+    ]),
+  );
+  const invalid = earlyLines.map((l, i) => (i ? l : { ...l, consumed: "999999" }));
+  await denied(() =>
+    rpc(next, "close_shift_early", [
+      nextShift,
+      null,
+      randomUUID(),
+      JSON.stringify(invalid),
+      earlyArgs[4],
+    ]),
+  );
+  assert.equal(
+    (
+      await db.query("select count(*)::int n from public.closeout_versions where shift_id=$1", [
+        nextShift,
+      ])
+    ).rows[0].n,
+    0,
+  );
+  assert.equal(await qty("vehicle"), 5);
+  check(
+    "early close requires owner and reason; standard close stays time-gated; failed requests roll back",
+  );
+  const nextSession = await actor(id.next);
+  const replay = await Promise.all([
+    rpc(next, "close_shift_early", earlyArgs),
+    rpc(nextSession, "close_shift_early", earlyArgs),
+  ]);
+  assert.equal(replay[0], nextShift);
+  assert.equal(replay[1], nextShift);
+  assert.equal(await qty("vehicle"), 3);
+  assert.equal(await qty("warehouse"), 5);
+  const final = (
+    await db.query("select state,planned_end,closed_at from public.shifts where id=$1", [nextShift])
+  ).rows[0];
+  assert.equal(final.state, "closed");
+  assert.equal(final.planned_end.toISOString(), plannedBefore.toISOString());
+  assert.ok(final.closed_at < final.planned_end);
+  const operation = (
+    await db.query("select request_payload from public.inventory_operations where request_key=$1", [
+      earlyArgs[2],
+    ])
+  ).rows;
+  assert.equal(operation.length, 1);
+  assert.equal(operation[0].request_payload.early, true);
+  assert.equal(operation[0].request_payload.reason, earlyArgs[4]);
+  await denied(
+    () =>
+      rpc(next, "close_shift_early", [...earlyArgs.slice(0, 4), "Alt motiv pentru aceeași cheie"]),
+    /reutilizată/,
+  );
+  await rpc(holder, "request_shift", [id.station, id.vehicle, randomUUID(), start, end]);
+  check(
+    "concurrent early close consumes once, preserves planned end and audit reason, and releases the vehicle",
+  );
 }

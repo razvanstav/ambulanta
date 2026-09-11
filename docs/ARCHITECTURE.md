@@ -1,5 +1,9 @@
 # Arhitectură — Gestiune substații
 
+D73: închiderea anticipată este o comandă explicită a titularului, cu motiv și
+confirmare; păstrează intervalul planificat și postează atomic același consum.
+Migrarea 010 păstrează comanda normală restricționată la finalul programat.
+
 Actualizare D69: operațiile curente folosesc numai produs + cantitate, fără praguri, loturi comerciale sau expirare. Identificatorii vechi rămân suport intern al jurnalului. [Contractul curent](QUANTITY-INVENTORY.md).
 
 Versiune de plan: 1.2 · 10 septembrie 2026 · Limbă interfață: română

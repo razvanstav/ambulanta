@@ -1,5 +1,15 @@
 # Decizii și presupuneri
 
+## D73 — Confirmat, 11 septembrie 2026
+
+Titularul poate folosi „Închide tura înainte”, separat de închiderea la termen.
+Confirmarea explicită și un motiv de 5–500 caractere finalizează consumul din
+formular, lasă restul în mașină și eliberează mașina atomic. Ora planificată nu
+se scurtează; `closed_at` reține ora efectivă. Operația păstrează autorul, motivul
+și marcajul `early` în jurnal. Excepție explicită de la D63/D70: numai comanda
+anticipată ocolește ora de final; comanda normală rămâne restricționată temporal.
+Istoricul închis rămâne nemodificabil, iar reluarea cererii nu dublează consumul.
+
 ## D72 — Confirmat, 11 septembrie 2026
 
 Nota internă a fișei nu se afișează ca text liber în „Tura mea”. Datele istorice
