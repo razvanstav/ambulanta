@@ -15,7 +15,7 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
-**Corecție D70 verificată, în publicare:** blocarea până la finalul programat se aplică numai
+**Corecție D70 publicată:** blocarea până la finalul programat se aplică numai
 butonului de închidere. Câmpurile de consum sunt editabile, inclusiv pentru ciorne
 istorice. Tura raportată este `open`, fără declarație finală sau trimitere;
 nu a fost necesară modificarea datelor. Formatul, lint, tipurile, 20 de unitare
@@ -23,7 +23,13 @@ nu a fost necesară modificarea datelor. Formatul, lint, tipurile, 20 de unitare
 Nu se schimbă SQL sau regulile tranzacționale. Reper anterior: `4233c0e`.
 Au trecut și 11 grupuri de acces Supabase și ambele circuite E2E desktop/Pixel 7:
 editare repetată înainte de final, Enter fără închidere prematură, confirmare
-după final și consum 7/rest 8. Datele de test vor fi curățate după verificare.
+după final și consum 7/rest 8. Datele temporare au fost curățate; cele 10 solduri
+și 10 mișcări existente se reconciliază fără diferențe.
+Commitul `c4ebb09` este publicat prin deployul `6aa3a2a405c6e00008d9d90d`,
+finalizat la 09:42:25 Europe/Bucharest. Verificarea publică în sesiunea titularului
+a confirmat câmpuri editabile cu valorile ciornei păstrate și buton blocat până la
+ora programată. Tura și ciorna existente nu au fost modificate. Reper pentru
+continuare: `c4ebb09`; următorul modul rămâne PDF individual M08.
 
 **Publicat: gestiune numai pe cantități (D69).** Pragurile și selecția
 loturilor/expirării au fost scoase din aplicația funcțională. Stocul și consumul
