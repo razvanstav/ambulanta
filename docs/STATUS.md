@@ -2,6 +2,16 @@
 
 Actualizat: 11 septembrie 2026
 
+## Administrator suplimentar live — 11 septembrie 2026
+
+La cererea explicită a beneficiarului a fost creat încă un administrator în
+instituția demo, cu profil activ și rol global `administrator`. Autentificarea
+Supabase și accesul la pagina `/administrare` de pe Netlify au fost verificate;
+ambele substații sunt accesibile. Datele de acces sunt numai în fișierul local
+ignorat `private/razvan-admin.json`, fără parolă în Git. Conturile existente,
+stocurile și configurația de găzduire nu au fost modificate. Nu este necesar deploy.
+Reper anterior: `346d9b3`, branch `main`. Activarea M09/P01 rămâne următorul pas.
+
 ## M09 — Implementat și verificat local, 11 septembrie 2026
 
 Rapoarte de consum final, mișcări magazie și stoc curent, filtre pe perioadă,
