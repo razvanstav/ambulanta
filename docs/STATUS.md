@@ -15,7 +15,7 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
-**În curs de publicare: gestiune numai pe cantități (D69).** Pragurile și selecția
+**Publicat: gestiune numai pe cantități (D69).** Pragurile și selecția
 loturilor/expirării au fost scoase din aplicația funcțională. Stocul și consumul
 sunt agregate per produs, inclusiv după suplimentări. Migrarea 009 a fost aplicată
 în Supabase cu soldurile neschimbate. Au trecut 21 scenarii PostgreSQL locale,
@@ -24,8 +24,18 @@ sunt agregate per produs, inclusiv după suplimentări. Migrarea 009 a fost apli
 suplimentare 3, magazie 85, consum 7 și rest 8 în mașină după închiderea efectivă
 la ora programată. Formatul, lint, tipurile și buildul au trecut. Au fost
 inspectate vizual produsele, stocul și închiderea. Filtrul de ture se actualizează
-și după prima cerere. Datele temporare aprobate vor fi curățate după verificarea publicării.
-Reper anterior: `7dc60d0`. Contract: [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md).
+și după prima cerere. Instituțiile, conturile și mișcările temporare aprobate au
+fost eliminate; cele 10 solduri și 10 mișcări rămase se reconciliază fără diferențe.
+
+Commitul `8312e21` de pe `main` este publicat prin Netlify
+`6aa39f3e0da8f60008f881f1`, finalizat la 09:27:52 Europe/Bucharest.
+Pe adresa publică au fost verificate autentificarea reală, pagina de produse
+fără praguri/expirare și cantitățile 85 în magazie / 8 în mașină, înaintea curățării
+fixturei. Migrarea nu a schimbat soldurile existente. Configurația privată a rămas
+neschimbată. Previzualizarea statică `/demo` rămâne prototipul istoric M01.
+M08 (PDF individual) și M09 (rapoarte) rămân pentru continuare; acest increment
+nu le declară finalizate. Reper anterior verificat: `8312e21`.
+Contract: [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md).
 
 Stările de mai jos sunt istorice și se citesc cu D69.
 

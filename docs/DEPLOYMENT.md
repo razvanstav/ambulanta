@@ -8,6 +8,12 @@ se rerulează. Contractul curent este în [QUANTITY-INVENTORY](QUANTITY-INVENTOR
 verificările și publicarea acestui increment sunt consemnate în [STATUS](STATUS.md).
 Configurația privată Netlify existentă este păstrată.
 
+Commitul `8312e21` de pe `main` a fost publicat automat prin deployul
+`6aa39f3e0da8f60008f881f1`, finalizat la 09:27:52 Europe/Bucharest.
+Verificarea pe adresa publică a confirmat autentificarea și interfața cantitativă,
+inclusiv restul de 8 bucăți după închiderea turei de test. Fixturele aprobate au
+fost curățate; reconcilierea finală Supabase are 0 diferențe.
+
 ## Actualizare publicată — stoc permanent pe mașină
 
 La 10 septembrie 2026, după autentificarea beneficiarului, migrarea
