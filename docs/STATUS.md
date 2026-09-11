@@ -1,6 +1,17 @@
 # Starea proiectului
 
-Actualizat: 10 septembrie 2026
+Actualizat: 11 septembrie 2026
+
+## Sincronizare pe PC-ul inițial — 11 septembrie 2026
+
+Au fost preluate cele 7 commituri noi de pe `origin/main`, prin fast-forward
+de la `283da32` la `97fe7d0`, fără conflicte sau modificări locale preexistente.
+Configurația `.env.local` și fișierele private existente au fost păstrate.
+Fișierele private create exclusiv pe celălalt PC nu sunt transportate prin Git.
+`npm run check` a trecut aici: format, lint, TypeScript, 16 teste unitare și build.
+În această sincronizare nu s-au rerulat migrări, teste PostgreSQL/E2E sau deployuri.
+Reper anterior verificat: `97fe7d0`. Continuarea consemnată este PDF-ul individual
+din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
