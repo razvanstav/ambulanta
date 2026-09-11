@@ -1,5 +1,13 @@
 # Publicare demo anticipată după M07
 
+## Actualizare cantitativă — 11 septembrie 2026
+
+Migrarea 009 este aplicată și înregistrată în Supabase, cu soldurile neschimbate.
+Aplicația nouă folosește RPC-urile de produs și cantitate. Migrările 001–009 nu
+se rerulează. Contractul curent este în [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md);
+verificările și publicarea acestui increment sunt consemnate în [STATUS](STATUS.md).
+Configurația privată Netlify existentă este păstrată.
+
 ## Actualizare publicată — stoc permanent pe mașină
 
 La 10 septembrie 2026, după autentificarea beneficiarului, migrarea

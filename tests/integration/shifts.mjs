@@ -265,89 +265,34 @@ await verify("fișa veche, neconcordanța și retragerea nu pot fi acceptate", a
   );
   await cancel(shift);
 });
-await verify(
-  "acceptarea reverifică eligibilitatea, mașina, expirarea și blocarea lotului",
-  async () => {
-    const shift = await request("m06b");
-    const pending = await sheet(shift);
-    await rpc(s.admin, "save_employee", { ...d.people.m06b, p_active: false });
-    denied(
-      await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }),
-    );
-    await rpc(s.admin, "save_employee", d.people.m06b);
-    await rpc(s.admin, "save_vehicle", {
-      p_substation: station,
-      p_vehicle: d.vehicles.m06b,
-      p_identifier: "AMB-M06B",
-      p_description: "Mașină fictivă M06",
-      p_active: true,
-      p_operational: false,
-      p_reason: "Test indisponibilitate M06",
-    });
-    denied(
-      await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }),
-    );
-    await rpc(s.admin, "save_vehicle", {
-      p_substation: station,
-      p_vehicle: d.vehicles.m06b,
-      p_identifier: "AMB-M06B",
-      p_description: "Mașină fictivă M06",
-      p_active: true,
-      p_operational: true,
-      p_reason: "Restaurare disponibilitate M06",
-    });
-    await rpc(s.warehouse, "set_stock_lot_blocked", {
-      p_substation: station,
-      p_lot: f.m04.lot,
-      p_blocked: true,
-      p_reason: "Blocare pentru test M06",
-    });
-    denied(
-      await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }),
-    );
-    await rpc(s.warehouse, "set_stock_lot_blocked", {
-      p_substation: station,
-      p_lot: f.m04.lot,
-      p_blocked: false,
-      p_reason: "Restaurare pentru test M06",
-    });
-    const expired = await rpc(s.warehouse, "create_stock_lot", {
-      ...f.m04.lotArgs,
-      p_lot_code: "M06-EXPIRED",
-      p_expires_on: "2020-01-01",
-    });
-    denied(
-      await s.warehouse.rpc(
-        "save_issue_sheet",
-        sheetArgs(shift, "1", {
-          p_expected_sheet: pending,
-          p_lines: [{ lot_id: expired, quantity: "1" }],
-        }),
-      ),
-    );
-    // Only the privileged fixture simulates a previously sent sheet whose lot is
-    // now expired. Application roles cannot edit these lines.
-    checked(
-      await privileged
-        .from("issue_sheet_lines")
-        .update({ lot_id: expired, expires_on: "2020-01-01" })
-        .eq("sheet_id", pending),
-      "Fixture lot expirat la acceptare",
-    );
-    denied(
-      await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }),
-    );
-    checked(
-      await privileged
-        .from("issue_sheet_lines")
-        .update({ lot_id: f.m04.lot, expires_on: f.m04.lotArgs.p_expires_on })
-        .eq("sheet_id", pending),
-      "Restaurare fixture lot",
-    );
-    assert.deepEqual(await balances(), { warehouse: 85, inShifts: 15 });
-    await cancel(shift);
-  },
-);
+await verify("acceptarea reverifică eligibilitatea și disponibilitatea mașinii", async () => {
+  const shift = await request("m06b");
+  const pending = await sheet(shift);
+  await rpc(s.admin, "save_employee", { ...d.people.m06b, p_active: false });
+  denied(await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }));
+  await rpc(s.admin, "save_employee", d.people.m06b);
+  await rpc(s.admin, "save_vehicle", {
+    p_substation: station,
+    p_vehicle: d.vehicles.m06b,
+    p_identifier: "AMB-M06B",
+    p_description: "Mașină fictivă M06",
+    p_active: true,
+    p_operational: false,
+    p_reason: "Test indisponibilitate M06",
+  });
+  denied(await s.m06b.rpc("accept_issue_sheet", { p_sheet: pending, p_request_key: randomUUID() }));
+  await rpc(s.admin, "save_vehicle", {
+    p_substation: station,
+    p_vehicle: d.vehicles.m06b,
+    p_identifier: "AMB-M06B",
+    p_description: "Mașină fictivă M06",
+    p_active: true,
+    p_operational: true,
+    p_reason: "Restaurare disponibilitate M06",
+  });
+  assert.deepEqual(await balances(), { warehouse: 85, inShifts: 15 });
+  await cancel(shift);
+});
 await verify(
   "două acceptări distincte nu consumă același disponibil; rollback complet",
   async () => {

@@ -21,6 +21,8 @@ Aceste reguli sunt pentru implementarea incrementală a aplicației. Livrarea in
 
 ## Reguli de gestiune
 
+- Regula curentă D69: numai produse și cantități, fără praguri, loturi comerciale sau expirare în interfață ori în condițiile distribuției. Identificatorii istorici rămân interni motorului de stoc. Recepția, predarea și consumul se completează per produs. Vezi `docs/QUANTITY-INVENTORY.md`.
+
 - Aplicația are două perspective: „Logistică / Magazie”, pentru distribuție și vedere de ansamblu, și „Tura mea”, pentru șeful de tură autentificat, limitat la propriile fișe și ture. Șeful de tură nu este același rol cu șeful de substație.
 - Șeful de tură inițiază „Start tură” și selectează o mașină disponibilă. Magazia stabilește produsele, loturile și cantitățile fișei; șeful de tură acceptă versiunea primită, fără să o editeze. Fluxul și presupunerile sunt în `docs/WORKFLOWS.md`.
 - Acceptarea fișei confirmă predarea, scade magazia și pornește efectiv tura, atomic. Pregătirea sau trimiterea fișei nu modifică soldurile.

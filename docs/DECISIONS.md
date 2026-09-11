@@ -1,5 +1,9 @@
 # Decizii și presupuneri
 
+## D69 — Confirmat, 11 septembrie 2026
+
+Beneficiarul cere gestiune numai pe produs și cantitate: ieșire din magazie, intrare în mașină, consum și rest păstrat în mașină. Pragurile, loturile și expirarea sunt eliminate din fluxul curent, inclusiv ca restricții la distribuție. Înlocuiește D48–D49 și părțile M04–M07 referitoare la urmărirea comercială; metadatele vechi și mișcările rămân în istoric. Unitățile, precizia, accesul și stocul atomic se păstrează. Contractul curent: [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md).
+
 Acest fișier păstrează deciziile care trebuie cunoscute de conversațiile următoare. „Confirmat” înseamnă cerință exprimată de beneficiar; „Propus” înseamnă alegere inițială a planului, care poate fi revizuită.
 
 ## Actualizare stoc pe mașină — 10 septembrie 2026

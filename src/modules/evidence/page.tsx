@@ -1,3 +1,4 @@
+import { groupProductLines, groupDeclarationLines } from "@/modules/inventory/product-lines";
 import { randomUUID } from "node:crypto";
 import { ActionForm } from "@/components/ui/action-form";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -60,12 +61,30 @@ export async function EvidenceWorkspace({
             <input type="hidden" name="expected_version" value={current?.id ?? ""} />
             <input type="hidden" name="request_key" value={randomUUID()} />
             <div className="closeout-lines">
-              {allocations.map((line, index) => (
+              {groupProductLines(allocations).map((line, index) => (
                 <DeclarationFields
                   key={(current?.id ?? shift.id) + "-" + line.id}
                   line={line}
                   index={index}
-                  previous={current?.content.lines.find((item) => item.allocation_id === line.id)}
+                  previous={
+                    current
+                      ? {
+                          ...current.content.lines[0],
+                          consumed:
+                            current.content.lines
+                              .filter((item) =>
+                                allocations.some(
+                                  (a) =>
+                                    a.id === item.allocation_id && a.product_id === line.product_id,
+                                ),
+                              )
+                              .reduce(
+                                (sum, item) => sum + Math.round(Number(item.consumed) * 1000),
+                                0,
+                              ) / 1000,
+                        }
+                      : undefined
+                  }
                 />
               ))}
             </div>
@@ -85,13 +104,12 @@ export async function EvidenceWorkspace({
 
       {current && ["closed", "pending_close"].includes(shift.state) && (
         <ul className="holder-list closeout-summary">
-          {current.content.lines.map((line) => (
+          {groupDeclarationLines(current.content.lines, allocations).map((line) => (
             <li key={line.allocation_id}>
               <span>
                 <strong>{line.product_name}</strong>
                 <small>
-                  Lot {line.lot_code} · Preluat {formatQuantity(line.issued)}{" "}
-                  {units[line.base_unit as Unit]}
+                  Preluat {formatQuantity(line.issued)} {units[line.base_unit as Unit]}
                 </small>
               </span>
               <span className="closeout-summary-values">

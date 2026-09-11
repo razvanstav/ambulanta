@@ -15,6 +15,20 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
+**În curs de publicare: gestiune numai pe cantități (D69).** Pragurile și selecția
+loturilor/expirării au fost scoase din aplicația funcțională. Stocul și consumul
+sunt agregate per produs, inclusiv după suplimentări. Migrarea 009 a fost aplicată
+în Supabase cu soldurile neschimbate. Au trecut 21 scenarii PostgreSQL locale,
+20 teste unitare și 11 grupuri de acces Supabase. Ambele circuite UI au trecut
+în Chromium desktop și Pixel 7, cu Supabase real: recepție 100, predare 12,
+suplimentare 3, magazie 85, consum 7 și rest 8 în mașină după închiderea efectivă
+la ora programată. Formatul, lint, tipurile și buildul au trecut. Au fost
+inspectate vizual produsele, stocul și închiderea. Filtrul de ture se actualizează
+și după prima cerere. Datele temporare aprobate vor fi curățate după verificarea publicării.
+Reper anterior: `7dc60d0`. Contract: [QUANTITY-INVENTORY](QUANTITY-INVENTORY.md).
+
+Stările de mai jos sunt istorice și se citesc cu D69.
+
 **Publicat: interfață lizibilă și final de tură simplificat.** Interfața a fost trecută pe o paletă deschisă,
 cu text închis și panouri albe. Finalul turei are acum numai cantitatea consumată,
 restul calculat în mașină și un singur buton de închidere. Migrarea 008 face

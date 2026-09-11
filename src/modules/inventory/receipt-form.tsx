@@ -1,7 +1,7 @@
 "use client";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/primitives";
-import { StockLines, type LotOption } from "./lines-form";
+import { StockLines, type ProductOption } from "./lines-form";
 import { postReceipt } from "./actions";
 import type { ActionResult } from "@/components/ui/action-form";
 
@@ -14,7 +14,7 @@ export function ReceiptForm({
   stationId: string;
   requestKey: string;
   today: string;
-  options: LotOption[];
+  options: ProductOption[];
 }) {
   const [key, setKey] = useState(requestKey);
   return (
@@ -43,7 +43,7 @@ function ReceiptEntry({
   stationId: string;
   requestKey: string;
   today: string;
-  options: LotOption[];
+  options: ProductOption[];
 }) {
   const [state, action, pending] = useActionState<ActionResult, FormData>(postReceipt, {
     message: "",

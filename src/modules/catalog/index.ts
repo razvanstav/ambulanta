@@ -47,7 +47,7 @@ export async function getCatalog(stationId: string) {
       .order("lot_code"),
   ]);
   if (products.error || settings.error || lots.error)
-    throw new Error("Catalogul și loturile nu au putut fi încărcate.");
+    throw new Error("Catalogul nu a putut fi încărcat.");
   return {
     products: products.data as Product[],
     settings: settings.data as StationProduct[],

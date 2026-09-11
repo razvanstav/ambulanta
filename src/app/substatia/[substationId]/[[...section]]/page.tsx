@@ -47,7 +47,7 @@ export default async function SubstationPage({
             : page === "stocuri"
               ? "Stocuri și recepții"
               : page === "catalog"
-                ? "Catalog și loturi"
+                ? "Produse"
                 : page === "tura-mea"
                   ? "Tura mea"
                   : page === "personal"

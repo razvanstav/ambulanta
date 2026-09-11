@@ -36,7 +36,7 @@ export async function postReceipt(_previous: ActionResult, form: FormData): Prom
         "Verifică documentul, furnizorul, motivul și liniile. Cantitățile trebuie să fie pozitive, în unitatea de bază.",
     };
   const client = await createSupabaseServerClient();
-  const { error } = await client.rpc("post_receipt", {
+  const { error } = await client.rpc("post_product_receipt", {
     p_substation: station,
     p_request_key: key,
     p_document_number: document,
@@ -49,7 +49,7 @@ export async function postReceipt(_previous: ActionResult, form: FormData): Prom
   if (error)
     return {
       message:
-        "Recepția nu a fost înregistrată. Verifică loturile, precizia, produsele active și cheia cererii. Nu s-a aplicat nicio cantitate parțială.",
+        "Recepția nu a fost înregistrată. Verifică produsele, cantitățile și cheia cererii. Nu s-a aplicat nicio cantitate parțială.",
     };
   revalidatePath("/substatia/[substationId]/[[...section]]", "page");
   return { success: true, message: "Recepția a fost înregistrată și stocul a fost actualizat." };

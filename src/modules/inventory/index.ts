@@ -1,7 +1,6 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCatalog } from "@/modules/catalog";
-import { lotStatus } from "@/modules/catalog/rules";
 
 export type Balance = { lot_id: string; product_id: string; location_id: string; quantity: number };
 export type Location = {
@@ -34,20 +33,20 @@ export async function getInventory(stationId: string) {
   if (balances.error || locations.error || receipts.error)
     throw new Error("Stocul nu a putut fi încărcat.");
   const warehouse = (locations.data as Location[]).find((l) => l.kind === "warehouse");
-  const options = catalog.lots.map((lot) => {
-    const product = catalog.products.find((p) => p.id === lot.product_id)!;
+  const options = catalog.products.map((product) => {
     const active =
       product.active && catalog.settings.some((s) => s.product_id === product.id && s.active);
     const balance =
-      (balances.data as Balance[]).find(
-        (b) => b.location_id === warehouse?.id && b.lot_id === lot.id,
-      )?.quantity ?? 0;
+      (balances.data as Balance[])
+        .filter((b) => b.location_id === warehouse?.id && b.product_id === product.id)
+        .reduce((sum, b) => sum + Math.round(Number(b.quantity) * 1000), 0) / 1000;
     return {
-      ...lot,
+      id: product.id,
+      product_id: product.id,
       product,
       active,
       balance,
-      available: active && lotStatus(lot.blocked, lot.expires_on) === "Valid" ? balance : 0,
+      available: active ? balance : 0,
     };
   });
   return {

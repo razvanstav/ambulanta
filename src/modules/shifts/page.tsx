@@ -1,3 +1,4 @@
+import { groupProductLines } from "@/modules/inventory/product-lines";
 import { getVehicleStock, VehicleStockTable } from "@/modules/vehicles/stock";
 import { setLegacySchedule } from "./actions";
 import { ShiftList } from "./shift-list";
@@ -63,22 +64,10 @@ export async function ShiftsWorkspace({
   const inventory = manage ? await getInventory(stationId) : null;
   const options =
     inventory?.options
-      .filter(
-        (l) =>
-          l.active &&
-          !l.blocked &&
-          (!l.expires_on ||
-            l.expires_on >=
-              new Intl.DateTimeFormat("en-CA", {
-                timeZone: "Europe/Bucharest",
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              }).format(new Date())),
-      )
+      .filter((l) => l.active)
       .map((l) => ({
         id: l.id,
-        label: `${l.product.name} · ${l.lot_code} · ${formatQuantity(l.available)} ${units[l.product.base_unit]} disponibil`,
+        label: `${l.product.name} · ${formatQuantity(l.available)} ${units[l.product.base_unit]} disponibil`,
       })) ?? [];
   return (
     <>
@@ -187,7 +176,10 @@ export async function ShiftsWorkspace({
           />
         </Panel>
       )}
-      <ShiftList states={shifts.map((shift) => shift.state)}>
+      <ShiftList
+        key={own ? (active?.id ?? "no-active-shift") : shifts.map((s) => s.id).join(",")}
+        states={shifts.map((shift) => shift.state)}
+      >
         {shifts.map((shift) => {
           const versions = sheets.filter((s) => s.shift_id === shift.id);
           const pending = versions.find((s) => ["draft", "sent", "disputed"].includes(s.state));
@@ -257,12 +249,9 @@ export async function ShiftsWorkspace({
                   <details>
                     <summary>Materiale preluate în responsabilitatea turei</summary>
                     <ul className="holder-list">
-                      {allocations.map((line) => (
+                      {groupProductLines(allocations).map((line) => (
                         <li key={line.id}>
-                          <span>
-                            {line.product_name}
-                            <small>{line.lot_code}</small>
-                          </span>
+                          <span>{line.product_name}</span>
                           <strong>
                             {formatQuantity(line.quantity)} {units[line.base_unit]}
                           </strong>
@@ -291,21 +280,16 @@ export async function ShiftsWorkspace({
                         </Badge>
                       </summary>
                       <ul className="holder-list">
-                        {lines
-                          .filter((l) => l.sheet_id === sheet.id)
-                          .map((line) => (
+                        {groupProductLines(lines.filter((l) => l.sheet_id === sheet.id)).map(
+                          (line) => (
                             <li key={line.id}>
-                              <span>
-                                {line.product_name}
-                                <small>
-                                  {line.lot_code} · {line.expires_on ?? "fără expirare"}
-                                </small>
-                              </span>
+                              <span>{line.product_name}</span>
                               <strong>
                                 {formatQuantity(line.quantity)} {units[line.base_unit]}
                               </strong>
                             </li>
-                          ))}
+                          ),
+                        )}
                       </ul>
                       <p className="identity-note">{sheet.note}</p>
                       {own && sheet.state === "sent" && (
@@ -379,9 +363,9 @@ export async function ShiftsWorkspace({
                       allowCarryOnly={!shift.started_at && currentStock.length > 0}
                       initial={
                         pending
-                          ? lines
-                              .filter((l) => l.sheet_id === pending.id)
-                              .map((l) => ({ lot_id: l.lot_id, quantity: String(l.quantity) }))
+                          ? groupProductLines(lines.filter((l) => l.sheet_id === pending.id)).map(
+                              (l) => ({ product_id: l.product_id, quantity: String(l.quantity) }),
+                            )
                           : []
                       }
                     />

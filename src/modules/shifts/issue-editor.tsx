@@ -1,7 +1,7 @@
 "use client";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/primitives";
-import { StockLines, type LotOption } from "@/modules/inventory/lines-form";
+import { StockLines, type ProductOption } from "@/modules/inventory/lines-form";
 import type { ActionResult } from "@/components/ui/action-form";
 import { saveIssueSheet } from "./actions";
 export function IssueEditor({
@@ -17,9 +17,9 @@ export function IssueEditor({
   shiftId: string;
   expectedSheet: string;
   requestKey: string;
-  options: LotOption[];
+  options: ProductOption[];
   allowCarryOnly?: boolean;
-  initial: { lot_id: string; quantity: string }[];
+  initial: { product_id: string; quantity: string }[];
 }) {
   const [state, action, pending] = useActionState<ActionResult, FormData>(saveIssueSheet, {
     message: "",

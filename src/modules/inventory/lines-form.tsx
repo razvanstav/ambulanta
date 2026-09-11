@@ -2,30 +2,32 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/primitives";
 
-export type LotOption = { id: string; label: string };
+export type ProductOption = { id: string; label: string };
 export function StockLines({
   options,
   initial = [],
 }: {
-  options: LotOption[];
-  initial?: { lot_id: string; quantity: string }[];
+  options: ProductOption[];
+  initial?: { product_id: string; quantity: string }[];
 }) {
-  const [lines, setLines] = useState(initial.length ? initial : [{ lot_id: "", quantity: "" }]);
+  const [lines, setLines] = useState(initial.length ? initial : [{ product_id: "", quantity: "" }]);
   return (
     <div className="stock-lines">
       {lines.map((line, index) => (
         <div key={index} className="form-columns">
           <label>
-            Lot {index + 1}
+            Produs {index + 1}
             <select
-              name="lot_id"
-              value={line.lot_id}
+              name="product_id"
+              value={line.product_id}
               onChange={(e) =>
-                setLines(lines.map((l, i) => (i === index ? { ...l, lot_id: e.target.value } : l)))
+                setLines(
+                  lines.map((l, i) => (i === index ? { ...l, product_id: e.target.value } : l)),
+                )
               }
               required
             >
-              <option value="">Alege produsul și lotul</option>
+              <option value="">Alege produsul</option>
               {options.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.label}
@@ -63,7 +65,7 @@ export function StockLines({
         type="button"
         variant="secondary"
         disabled={lines.length >= 100}
-        onClick={() => setLines([...lines, { lot_id: "", quantity: "" }])}
+        onClick={() => setLines([...lines, { product_id: "", quantity: "" }])}
       >
         Adaugă linie
       </Button>

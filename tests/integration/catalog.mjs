@@ -161,31 +161,29 @@ await verify("anon și scrierile directe nu pot ocoli validarea", async () => {
   denied(await s.adminA.from("stock_lots").update({ blocked: true }).eq("id", data.lot));
   denied(await publicClient().rpc("save_product", data.medArgs));
 });
-await verify("câmpuri, categorii, unități indivizibile și expirare obligatorie", async () => {
-  for (const invalid of [
-    { p_code: "" },
-    { p_name: "" },
-    { p_category: "unknown" },
-    { p_base_unit: "cutie" },
-    { p_precision: 1 },
-    { p_precision: 4 },
-    { p_track_lots: false, p_track_expiry: true },
-    { p_category: "medication" },
-    { p_reason: "x" },
-  ])
-    denied(await s.adminA.rpc("save_product", productArgs(invalid)));
-  for (const invalid of [
-    { p_lot_code: "" },
-    { p_expires_on: null },
-    { p_expires_on: "2026-02-30" },
-  ])
-    denied(await s.warehouseA.rpc("create_stock_lot", { ...data.lotArgs, ...invalid }));
-  denied(await s.warehouseA.rpc("create_stock_lot", { ...data.lotArgs, p_product: data.simple }));
-  assert.equal(
-    (await rows(s.warehouseA, "stock_lots")).find((l) => l.id === data.internal).is_internal,
-    true,
-  );
-});
+await verify(
+  "câmpuri, categorii și unități indivizibile; metadatele istorice rămân valide",
+  async () => {
+    for (const invalid of [
+      { p_code: "" },
+      { p_name: "" },
+      { p_category: "unknown" },
+      { p_base_unit: "cutie" },
+      { p_precision: 1 },
+      { p_precision: 4 },
+      { p_track_lots: false, p_track_expiry: true },
+      { p_reason: "x" },
+    ])
+      denied(await s.adminA.rpc("save_product", productArgs(invalid)));
+    for (const invalid of [{ p_lot_code: "" }, { p_expires_on: "2026-02-30" }])
+      denied(await s.warehouseA.rpc("create_stock_lot", { ...data.lotArgs, ...invalid }));
+    denied(await s.warehouseA.rpc("create_stock_lot", { ...data.lotArgs, p_product: data.simple }));
+    assert.equal(
+      (await rows(s.warehouseA, "stock_lots")).find((l) => l.id === data.internal).is_internal,
+      true,
+    );
+  },
+);
 await verify(
   "pragurile sunt exacte, fără rotunjire sau fracții pe produse indivizibile",
   async () => {

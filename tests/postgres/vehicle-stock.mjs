@@ -1,3 +1,4 @@
+import { testQuantityOnly } from "./quantity-only.mjs";
 // Real PostgreSQL, isolated database. Auth identity and Storage metadata are test scaffolding;
 // this does not substitute for hosted Supabase Auth/Storage HTTP tests.
 import assert from "node:assert/strict";
@@ -516,6 +517,19 @@ try {
     true,
   );
   check("one-step close records consumption and leaves the remainder in the vehicle");
+  await testQuantityOnly({
+    db,
+    id,
+    rpc,
+    actor,
+    warehouse,
+    holder,
+    next,
+    outsider,
+    elapsed,
+    denied,
+    check,
+  });
   const mismatch = await db.query(`select b.id from public.stock_balances b where b.quantity <>
     coalesce((select sum(case when m.destination_id=b.location_id then m.quantity else -m.quantity end) from public.inventory_movements m where m.lot_id=b.lot_id and (m.source_id=b.location_id or m.destination_id=b.location_id)),0)`);
   assert.equal(mismatch.rowCount, 0);

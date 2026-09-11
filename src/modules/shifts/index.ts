@@ -37,6 +37,7 @@ export type SheetLine = {
   id: string;
   sheet_id: string;
   lot_id: string;
+  product_id: string;
   product_name: string;
   base_unit: Unit;
   lot_code: string;
@@ -77,7 +78,7 @@ export async function getShifts(stationId: string, own: boolean) {
   const lines = sheets.data.length
     ? await client
         .from("issue_sheet_lines")
-        .select("id,sheet_id,lot_id,product_name,base_unit,lot_code,expires_on,quantity")
+        .select("id,sheet_id,lot_id,product_id,product_name,base_unit,lot_code,expires_on,quantity")
         .in(
           "sheet_id",
           sheets.data.map((s) => s.id),
@@ -86,7 +87,7 @@ export async function getShifts(stationId: string, own: boolean) {
   if (lines.error) throw new Error("Liniile fișelor nu au putut fi încărcate.");
   const allocations = await client
     .from("shift_stock_allocations")
-    .select("id,shift_id,lot_id,product_name,base_unit,lot_code,expires_on,quantity")
+    .select("id,shift_id,lot_id,product_id,product_name,base_unit,lot_code,expires_on,quantity")
     .in(
       "shift_id",
       shifts.data.map((s) => s.id),

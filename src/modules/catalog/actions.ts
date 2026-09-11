@@ -6,14 +6,7 @@ import type { ActionResult } from "@/components/ui/action-form";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireSubstation } from "@/modules/identity/server";
 import { canViewLogistics, isUuid } from "@/modules/identity/policy";
-import {
-  canManageCatalog,
-  categories,
-  units,
-  isIndivisible,
-  parseMinimum,
-  validExpiry,
-} from "./rules";
+import { canManageCatalog, categories, units, isIndivisible, validExpiry } from "./rules";
 
 const value = (form: FormData, name: string) => String(form.get(name) ?? "").trim();
 async function context(form: FormData, common = false) {
@@ -30,7 +23,7 @@ function finish(error: { code?: string } | null, message: string): ActionResult 
         error.code === "23505"
           ? "Acest cod există deja. Verifică lista înainte să adaugi din nou."
           : error.code === "23514"
-            ? "Date incompatibile: verifică precizia, urmărirea și activarea produsului. Unitatea și urmărirea sunt fixe după primul lot."
+            ? "Unitatea și tipul cantității sunt fixe după înregistrarea produsului în stoc."
             : "Salvarea a fost refuzată. Verifică datele și drepturile contului.",
     };
   revalidatePath("/substatia/[substationId]/[[...section]]", "page");
@@ -50,8 +43,7 @@ export async function saveProduct(_previous: ActionResult, form: FormData): Prom
   const unit = value(form, "unit");
   const precisionText = value(form, "precision");
   const precision = Number(precisionText);
-  const trackLots = form.get("track_lots") === "on";
-  const trackExpiry = form.get("track_expiry") === "on";
+
   if (
     (id && !isUuid(id)) ||
     code.length < 2 ||
@@ -62,15 +54,12 @@ export async function saveProduct(_previous: ActionResult, form: FormData): Prom
     !Object.hasOwn(units, unit) ||
     !/^[0-3]$/.test(precisionText) ||
     (isIndivisible(unit) && precision !== 0) ||
-    (trackExpiry && !trackLots) ||
-    (category === "medication" && (!trackLots || !trackExpiry)) ||
     !reason(form)
   )
     return {
-      message:
-        "Verifică toate câmpurile. Unitățile indivizibile cer precizie 0; medicamentele cer lot și expirare.",
+      message: "Verifică toate câmpurile. Unitățile indivizibile cer cantități întregi.",
     };
-  const { error } = await client.rpc("save_product", {
+  const { error } = await client.rpc("save_simple_product", {
     p_substation: station,
     p_product: id || null,
     p_code: code,
@@ -78,8 +67,7 @@ export async function saveProduct(_previous: ActionResult, form: FormData): Prom
     p_category: category,
     p_base_unit: unit,
     p_precision: precision,
-    p_track_lots: trackLots,
-    p_track_expiry: trackExpiry,
+
     p_active: form.get("active") === "on",
     p_reason: reason(form),
   });
@@ -92,26 +80,14 @@ export async function saveStationProduct(
   const { station, client } = await context(form);
   const id = value(form, "product");
   if (!isUuid(id) || !reason(form)) return { message: "Produs sau motiv nevalid." };
-  const { data, error: readError } = await client
-    .from("products")
-    .select("quantity_precision")
-    .eq("id", id)
-    .single();
-  if (readError) return { message: "Produsul nu este accesibil." };
-  const minimum = parseMinimum(value(form, "minimum"), data.quantity_precision);
-  if (minimum === null)
-    return {
-      message:
-        "Pragul trebuie să fie pozitiv sau zero și să respecte precizia produsului (maximum 999999999,999).",
-    };
   const { error } = await client.rpc("save_station_product", {
     p_substation: station,
     p_product: id,
-    p_minimum: minimum,
+    p_minimum: 0,
     p_active: form.get("local_active") === "on",
     p_reason: reason(form),
   });
-  return finish(error, "Pragul și activarea au fost salvate numai în această substație.");
+  return finish(error, "Disponibilitatea a fost salvată în această substație.");
 }
 export async function createStockLot(
   _previous: ActionResult,

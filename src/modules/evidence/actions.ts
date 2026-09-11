@@ -1,4 +1,5 @@
 "use server";
+import { expandProductConsumption } from "@/modules/inventory/product-lines";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireSubstation } from "@/modules/identity/server";
@@ -68,7 +69,7 @@ export async function completeSimpleCloseout(
   const shift = String(form.get("shift") ?? "");
   const version = String(form.get("expected_version") ?? "");
   const key = String(form.get("request_key") ?? "");
-  const ids = form.getAll("allocation_id").map(String);
+  const ids = form.getAll("product_id").map(String);
   const consumed = form.getAll("consumed").map((value) => String(value).replace(",", "."));
   if (
     !isUuid(shift) ||
@@ -91,15 +92,25 @@ export async function completeSimpleCloseout(
     .maybeSingle();
   if (!data) return { message: "Tura nu este accesibilă." };
 
+  const { data: allocations, error: allocationError } = await client
+    .from("shift_stock_allocations")
+    .select("id,product_id,quantity")
+    .eq("shift_id", shift);
+  if (allocationError || !allocations) return { message: "Produsele turei nu pot fi încărcate." };
+  let lines;
+  try {
+    lines = expandProductConsumption(
+      allocations,
+      ids.map((id, i) => ({ product_id: id, consumed: consumed[i] })),
+    );
+  } catch (error) {
+    return { message: error instanceof Error ? error.message : "Cantități nevalide." };
+  }
   const { error } = await client.rpc("close_shift_simple", {
     p_shift: shift,
     p_expected_version: version || null,
     p_request_key: key,
-    p_lines: ids.map((id, index) => ({
-      allocation_id: id,
-      consumed: consumed[index],
-      returned: "0",
-    })),
+    p_lines: lines,
   });
   if (error?.message?.includes("finalul programat"))
     return { message: "Tura poate fi închisă numai după data și ora finalului programat." };

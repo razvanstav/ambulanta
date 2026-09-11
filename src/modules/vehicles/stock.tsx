@@ -1,11 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatQuantity } from "@/modules/inventory/rules";
-import { units, lotStatus, type Unit } from "@/modules/catalog/rules";
+import { units, type Unit } from "@/modules/catalog/rules";
 
 export type VehicleStock = {
   vehicle_id: string;
   vehicle_identifier: string;
-  lot_id: string;
+  product_id: string;
   product_name: string;
   base_unit: Unit;
   lot_code: string;
@@ -15,7 +15,7 @@ export type VehicleStock = {
 };
 export async function getVehicleStock(stationId: string, vehicleId?: string) {
   const client = await createSupabaseServerClient();
-  const { data, error } = await client.rpc("list_vehicle_stock", {
+  const { data, error } = await client.rpc("list_vehicle_product_stock", {
     p_substation: stationId,
     p_vehicle: vehicleId ?? null,
   });
@@ -31,24 +31,17 @@ export function VehicleStockTable({ rows }: { rows: VehicleStock[] }) {
       <table className="stock-table">
         <thead>
           <tr>
-            <th>Produs / lot</th>
+            <th>Produs</th>
             <th>În mașină</th>
-            <th>Stare lot</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={`${row.vehicle_id}-${row.lot_id}`}>
-              <td>
-                {row.product_name}
-                <small className="cell-secondary">
-                  {row.lot_code} · {row.expires_on ?? "fără expirare"}
-                </small>
-              </td>
+            <tr key={`${row.vehicle_id}-${row.product_id}`}>
+              <td>{row.product_name}</td>
               <td>
                 {formatQuantity(row.quantity)} {units[row.base_unit]}
               </td>
-              <td>{lotStatus(row.blocked, row.expires_on)}</td>
             </tr>
           ))}
         </tbody>

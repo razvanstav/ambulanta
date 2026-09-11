@@ -1,18 +1,18 @@
 # Gestiune substații
 
-**Increment curent:** stoc permanent pe mașină, preluare între ture și o
-închidere simplă: titularul declară consumul, vede restul și confirmă o singură
-dată. Migrarea 008 activează acest flux. Vezi
-[starea curentă](docs/STATUS.md) și [noul flux](docs/VEHICLE-STOCK.md).
+**Increment curent:** gestiune pe produs și cantitate, fără praguri, loturi
+comerciale sau expirare. Predarea scade magazia și încarcă mașina; titularul
+declară consumul, iar restul rămâne în mașină pentru următoarea tură.
+Migrările 001–009 sunt aplicate. Vezi [starea curentă](docs/STATUS.md) și
+[contractul cantitativ](docs/QUANTITY-INVENTORY.md).
 
 Aplicație în română pentru evidența produselor și a turelor substațiilor de
 ambulanță. Ținta este un MVP cu date fictive, Supabase Free și Netlify Free.
 
-**Stare: M04–M06 — Catalog, recepții și ture.** Autentificarea, personalul,
-catalogul, loturile, stocul și circuitul cerere–fișă–acceptare folosesc Supabase
-real. Roșiori are 10 angajați fictivi, 3 titulari, 5 mașini și 6 produse cu stoc
-inițial. Dovezile, consumul/returul, închiderea și rapoartele urmează în M07–M09.
-Publicarea anticipată a fost autorizată; starea linkului este în STATUS.
+Autentificarea, personalul, produsele, recepțiile, turele și închiderea folosesc
+Supabase real. Datele de prezentare sunt fictive. Dovezile istorice sunt private;
+fluxul curent de închidere nu solicită dovezi. PDF-ul individual M08 și rapoartele
+M09 rămân pentru continuare. Starea publicării este în STATUS.
 Repository: [razvanstav/ambulanta](https://github.com/razvanstav/ambulanta).
 Starea verificată și următorul modul: [STATUS](docs/STATUS.md).
 

@@ -1,5 +1,7 @@
 # Arhitectură — Gestiune substații
 
+Actualizare D69: operațiile curente folosesc numai produs + cantitate, fără praguri, loturi comerciale sau expirare. Identificatorii vechi rămân suport intern al jurnalului. [Contractul curent](QUANTITY-INVENTORY.md).
+
 Versiune de plan: 1.2 · 10 septembrie 2026 · Limbă interfață: română
 
 **Actualizare D61–D64:** stoc permanent pe mașină, preluat între ture; formula curentă este `preluat = consumat + rămas în mașină + retur fizic`. Titularul închide după finalul programat dacă nu există retur; magazia confirmă numai circuitul cu retur fizic. Modelul vechi de mai jos este înlocuit în aceste puncte de [VEHICLE-STOCK](VEHICLE-STOCK.md), inclusiv schema, drepturile și criteriile de acceptare.

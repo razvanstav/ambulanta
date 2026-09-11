@@ -28,41 +28,29 @@ test.describe("M04–M07 circuit real", () => {
     const base = `/substatia/${f.stations.A}`;
     const suffix = randomBytes(4).toString("hex");
     const name = `Produs circuit ${suffix}`;
-    await login(page, f.accounts.adminA);
+    await login(page, f.accounts[info.project.name.startsWith("desktop") ? "adminB" : "adminA"]);
     await page.goto(`${base}/catalog`);
     const create = page
       .locator("form")
       .filter({ has: page.getByRole("button", { name: "Adaugă produsul", exact: true }) });
     await create.getByLabel("Cod produs").fill(`UI-${suffix}`);
     await create.getByLabel("Denumire", { exact: true }).fill(name);
-    await create.getByLabel("Motivul modificării").fill("Produs fictiv circuit complet");
+
     await create.getByRole("button", { name: "Adaugă produsul", exact: true }).click();
     await expect(create.getByRole("status")).toContainText("Produsul a fost salvat");
     const record = page
       .locator("details")
       .filter({ has: page.locator("summary", { hasText: name }) });
     await record.locator("summary").click();
-    const local = record
-      .locator("form")
-      .filter({ has: page.getByRole("button", { name: "Salvează pragul local" }) });
-    await local.getByLabel("Prag minim", { exact: false }).fill("20");
-    await local.getByLabel("Activ în această substație").check();
-    await local.getByLabel("Motivul modificării").fill("Activare locală pentru circuit");
-    await local.getByRole("button", { name: "Salvează pragul local" }).click();
-    await expect(local.getByRole("status")).toContainText("salvate numai în această substație");
-    const lot = record
-      .locator("form")
-      .filter({ has: page.getByRole("button", { name: "Creează lotul intern" }) });
-    await lot.getByLabel("Motivul modificării").fill("Lot intern pentru testul de circuit");
-    await lot.getByRole("button", { name: "Creează lotul intern" }).click();
-    await expect(record.getByText("Lot intern", { exact: true })).toBeVisible();
+    await expect(page.getByText("Prag minim", { exact: false })).toHaveCount(0);
+    await expect(page.getByText("Urmărire expirare", { exact: false })).toHaveCount(0);
     const product = record
       .locator("form")
       .filter({ has: page.getByRole("button", { name: "Salvează produsul", exact: true }) });
     await product.getByLabel("Unitate de bază").selectOption("fiola");
-    await product.getByLabel("Motivul modificării").fill("Încercare unitate după lot");
+
     await product.getByRole("button", { name: "Salvează produsul", exact: true }).click();
-    await expect(product.getByRole("alert")).toContainText("fixe după primul lot");
+    await expect(product.getByRole("alert")).toContainText("fixe după înregistrarea produsului");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -74,8 +62,8 @@ test.describe("M04–M07 circuit real", () => {
     await receipt.getByLabel("Număr document").fill(`DOC-${suffix}`);
     await receipt.getByLabel("Furnizor", { exact: true }).fill("Furnizor fictiv UI");
     await receipt
-      .getByRole("combobox", { name: "Lot 1", exact: true })
-      .selectOption({ label: `${name} · INTERN · bucată` });
+      .getByRole("combobox", { name: "Produs 1", exact: true })
+      .selectOption({ label: `${name} · bucată` });
     await receipt.getByLabel("Cantitate 1", { exact: true }).fill("100");
     await receipt.getByLabel("Motivul înregistrării").fill("Recepție pentru circuit E2E");
     const receiptRequest = page.waitForRequest(
@@ -108,7 +96,19 @@ test.describe("M04–M07 circuit real", () => {
       .getByLabel("Mașina pentru tură")
       .selectOption({ label: `AMB-${account.toUpperCase()} · Mașină fictivă M06` });
     await leader.getByLabel("Început planificat").fill("2026-09-10T00:00");
-    await leader.getByLabel("Sfârșit planificat").fill("2099-09-10T12:00");
+    const end = new Date(Math.ceil(Date.now() / 60000) * 60000 + 60000);
+    const parts = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Europe/Bucharest",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+      .format(end)
+      .replace(" ", "T");
+    await leader.getByLabel("Sfârșit planificat").fill(parts);
     await leader.getByRole("button", { name: "Solicită fișa și rezervă mașina" }).click();
     await expect(leader.getByText("În așteptarea fișei", { exact: true })).toBeVisible();
     await page.goto(`${base}/ture`);
@@ -123,8 +123,8 @@ test.describe("M04–M07 circuit real", () => {
         .locator("form")
         .filter({ has: page.getByRole("button", { name: "Salvează versiunea fișei" }) });
       await editor
-        .getByRole("combobox", { name: "Lot 1", exact: true })
-        .selectOption({ label: `${name} · INTERN · 100 bucată disponibil` });
+        .getByRole("combobox", { name: "Produs 1", exact: true })
+        .selectOption({ label: `${name} · 100 bucată disponibil` });
       await editor.getByLabel("Cantitate 1", { exact: true }).fill(quantity);
       await editor.getByLabel("Motivul fișei").fill("Fișă pentru circuit E2E");
       await editor.getByRole("button", { name: "Salvează versiunea fișei" }).click();
@@ -148,7 +148,9 @@ test.describe("M04–M07 circuit real", () => {
     await leader.reload();
     await leader.getByRole("button", { name: "Accept fișa și pornesc tura" }).click();
     await expect(leader.getByText("Tură pornită", { exact: true })).toBeVisible();
-    await expect(leader.getByRole("heading", { name: "Produse predate în tură" })).toBeVisible();
+    await expect(
+      leader.getByRole("heading", { name: `Stoc în mașină · AMB-${account.toUpperCase()}` }),
+    ).toBeVisible();
     await page.goto(`${base}/stocuri`);
     await expect(stockRow).toContainText("88 bucată");
     await page.screenshot({ path: info.outputPath("stoc.png"), fullPage: true });
@@ -157,13 +159,15 @@ test.describe("M04–M07 circuit real", () => {
       .locator("form")
       .filter({ has: page.getByRole("button", { name: "Salvează versiunea fișei" }) });
     await editor
-      .getByRole("combobox", { name: "Lot 1", exact: true })
-      .selectOption({ label: `${name} · INTERN · 88 bucată disponibil` });
+      .getByRole("combobox", { name: "Produs 1", exact: true })
+      .selectOption({ label: `${name} · 88 bucată disponibil` });
     await editor.getByLabel("Cantitate 1", { exact: true }).fill("3");
     await editor.getByLabel("Motivul fișei").fill("Suplimentare circuit E2E");
     await editor.getByRole("button", { name: "Salvează versiunea fișei" }).click();
+    await shift.locator("details.shift-sheets > summary").click();
     await expect(shift.locator("summary").filter({ hasText: "Trimisă" })).toBeVisible();
     await leader.reload();
+    await leader.locator("details.shift-sheets > summary").click();
     await leader.getByRole("button", { name: "Accept suplimentarea" }).click();
     await expect(leader.locator("summary").filter({ hasText: "Fișa v3" })).toContainText(
       "Acceptată",

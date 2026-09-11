@@ -21,13 +21,11 @@ export function DeclarationFields({
     1000;
   return (
     <div className="closeout-line">
-      <strong>
-        {line.product_name} · {line.lot_code}
-      </strong>
+      <strong>{line.product_name}</strong>
       <p>
         Preluat: {formatQuantity(line.quantity)} {units[line.base_unit]}
       </p>
-      <input type="hidden" name="allocation_id" value={line.id} />
+      <input type="hidden" name="product_id" value={line.product_id} />
       <input type="hidden" name="returned" value="0" />
       <div className="closeout-amounts">
         <label>
@@ -35,7 +33,7 @@ export function DeclarationFields({
           <input
             name="consumed"
             inputMode="decimal"
-            aria-label={`Consumat — ${line.product_name}, alocarea ${index + 1}`}
+            aria-label={`Consumat — ${line.product_name}, produsul ${index + 1}`}
             required
             value={consumed}
             onChange={(event) => setConsumed(event.target.value)}

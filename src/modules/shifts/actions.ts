@@ -28,7 +28,7 @@ function finish(error: { code?: string; message?: string } | null, message: stri
         ? "Stoc insuficient. Fișa nu a fost acceptată și tura nu a fost pornită. Magazia trebuie să verifice disponibilul."
         : error.code === "23505"
           ? "Mașina sau titularul are deja o cerere ori o tură activă. Reîncarcă lista."
-          : "Operația a fost refuzată. Verifică drepturile, eligibilitatea, versiunea fișei și loturile. Reîncarcă pagina înainte să încerci din nou.",
+          : "Operația a fost refuzată. Verifică drepturile, eligibilitatea, versiunea fișei și produsele. Reîncarcă pagina înainte să încerci din nou.",
     };
   revalidatePath("/substatia/[substationId]/[[...section]]", "page");
   return { success: true, message };
@@ -82,7 +82,7 @@ export async function saveIssueSheet(
   )
     return {
       message:
-        "Completează liniile și motivul. Loturile nu se repetă, iar cantitățile sunt pozitive.",
+        "Completează liniile și motivul. Produsele nu se repetă, iar cantitățile sunt pozitive.",
     };
   const { data } = await client
     .from("shifts")
@@ -92,7 +92,7 @@ export async function saveIssueSheet(
     .maybeSingle();
   if (!data) notFound();
   const send = value(form, "send") === "true";
-  const { error } = await client.rpc("save_issue_sheet", {
+  const { error } = await client.rpc("save_product_issue_sheet", {
     p_shift: shift,
     p_expected_sheet: expected || null,
     p_request_key: key,
