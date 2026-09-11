@@ -15,7 +15,7 @@ din M08, apoi rapoartele M09, conform fluxului simplificat D67.
 
 ## Punctul actual
 
-**M08 — PDF individual verificat local, publicare în curs:**
+**M08 — PDF individual publicat și verificat pe live:**
 istoricul turei închise oferă „Descarcă raportul PDF” titularului și logisticii.
 PDF-ul folosește versiunea finală fixată, cu preluat/consumat/rămas, datele turei,
 marcaj anticipat și versiune/hash. Fără loturi, expirări sau praguri. Generarea
@@ -27,7 +27,14 @@ inspectat vizual, cu diacritice, denumire lungă și 65 de produse. Cele două
 circuite E2E desktop/Pixel 7 au trecut la rerulare: descărcare repetată identică,
 logistică autorizată, anonim/alt titular/altă instituție refuzați. Prima rulare
 s-a oprit numai la o aserțiune prea strictă pentru antetul de cache, corectată.
-Reper anterior verificat: `39984bb`. Următorul modul după livrare este M09.
+Commitul `0ac40ec` este publicat pe `main` prin deployul Netlify
+`6aa3bf2b26a1240008a4ae12`. Verificările live desktop/telefon au confirmat
+PDF valid, descărcări repetate identice, acces pentru logistică și refuz pentru
+anonim, alt titular și administrator din altă instituție. PDF-ul live și
+interfața mobilă au fost inspectate vizual. Datele temporare au fost curățate:
+10 solduri, 10 mișcări, 0 diferențe la reconciliere. Tura existentă nu a fost
+modificată. Reper anterior verificat: `0ac40ec`. Următorul modul este M09,
+rapoarte agregate și dashboard; nu este implementat în această livrare.
 
 **D73 publicat:** buton separat „Închide tura înainte”, cu motiv,
 confirmare și posibilitate de renunțare fără pierderea cantităților introduse.
