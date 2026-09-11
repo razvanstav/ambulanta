@@ -15,8 +15,8 @@ export async function InventoryPage({
   stationId: string;
   identity: Identity;
 }) {
-  const inventory = await getInventory(stationId);
-  const [vehicleStock, vehicles] = await Promise.all([
+  const [inventory, vehicleStock, vehicles] = await Promise.all([
+    getInventory(stationId),
     getVehicleStock(stationId),
     getVehicles(stationId),
   ]);

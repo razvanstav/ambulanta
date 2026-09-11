@@ -66,14 +66,23 @@ export async function getShifts(stationId: string, own: boolean) {
       lines: [] as SheetLine[],
       allocations: [] as (SheetLine & { shift_id: string })[],
     };
-  const sheets = await client
-    .from("issue_sheet_versions")
-    .select("id,shift_id,version,kind,state,author_id,created_at,sent_at,note")
-    .in(
-      "shift_id",
-      shifts.data.map((s) => s.id),
-    )
-    .order("version", { ascending: false });
+  const [sheets, allocations] = await Promise.all([
+    client
+      .from("issue_sheet_versions")
+      .select("id,shift_id,version,kind,state,author_id,created_at,sent_at,note")
+      .in(
+        "shift_id",
+        shifts.data.map((s) => s.id),
+      )
+      .order("version", { ascending: false }),
+    client
+      .from("shift_stock_allocations")
+      .select("id,shift_id,lot_id,product_id,product_name,base_unit,lot_code,expires_on,quantity")
+      .in(
+        "shift_id",
+        shifts.data.map((s) => s.id),
+      ),
+  ]);
   if (sheets.error) throw new Error("Fișele nu au putut fi încărcate.");
   const lines = sheets.data.length
     ? await client
@@ -85,13 +94,6 @@ export async function getShifts(stationId: string, own: boolean) {
         )
     : { data: [], error: null };
   if (lines.error) throw new Error("Liniile fișelor nu au putut fi încărcate.");
-  const allocations = await client
-    .from("shift_stock_allocations")
-    .select("id,shift_id,lot_id,product_id,product_name,base_unit,lot_code,expires_on,quantity")
-    .in(
-      "shift_id",
-      shifts.data.map((s) => s.id),
-    );
   if (allocations.error) throw new Error("Stocul preluat în ture nu poate fi încărcat.");
   return {
     allocations: allocations.data as (SheetLine & { shift_id: string })[],

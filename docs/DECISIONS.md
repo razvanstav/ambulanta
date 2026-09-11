@@ -1,5 +1,13 @@
 # Decizii și presupuneri
 
+## D71 — Optimizare tehnică, 11 septembrie 2026
+
+Citirile independente rulează simultan în aceeași cerere pentru a reduce
+așteptările succesive dintre Netlify și Supabase. Se păstrează verificările de
+identitate, drepturile și RLS; nu se introduce cache persistent pentru stoc sau
+acces. Timpii se compară prin încărcări autentificate înainte/după pe același mediu,
+nu prin comparație directă local/live.
+
 ## D70 — Confirmat, 11 septembrie 2026
 
 Consumul este confirmat numai la final, prin „Închide tura”. Până la confirmare,

@@ -55,13 +55,16 @@ export async function ShiftsWorkspace({
   own?: boolean;
 }) {
   const { identity } = await requireSubstation(stationId);
-  const { shifts, sheets, lines, allocations: stockAllocations } = await getShifts(stationId, own);
-  const vehicleStock = await getVehicleStock(stationId);
   const manage = !own && canOperateStock(identity, stationId);
-  const holder = own ? await resolveMyHolder(stationId) : null;
+  const [shiftData, vehicleStock, holder, inventory] = await Promise.all([
+    getShifts(stationId, own),
+    getVehicleStock(stationId),
+    own ? resolveMyHolder(stationId) : Promise.resolve(null),
+    manage ? getInventory(stationId) : Promise.resolve(null),
+  ]);
+  const { shifts, sheets, lines, allocations: stockAllocations } = shiftData;
   const active = shifts.find((s) => !["closed", "cancelled"].includes(s.state));
   const vehicles = own && !active ? await getAvailableVehicles(stationId) : [];
-  const inventory = manage ? await getInventory(stationId) : null;
   const options =
     inventory?.options
       .filter((l) => l.active)
